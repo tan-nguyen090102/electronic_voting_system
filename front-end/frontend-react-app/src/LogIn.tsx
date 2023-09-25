@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Flex, Heading, Input, Wrap } from "@chakra-ui/react";
 
 export default function LoginPanel() {
+  //Change web title
   useEffect(() => {
     document.title = "Log In - Voting System";
   }, []);
@@ -23,7 +24,30 @@ export default function LoginPanel() {
     });
   };
 
-  const handleClick = () => {};
+  //Login button listener
+  const [decision, setDecision] = React.useState("");
+  const handleClick = async () => {
+    //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
+    await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        userID: inputValue["userID"],
+        password: inputValue["password"],
+      }),
+    })
+      //Backend response the result back to the login
+      .then((response) => response.json())
+      .then((data) => {
+        setDecision(data);
+        console.log(data);
+      })
+      .catch((error) => console.log(error));
+  };
 
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
@@ -49,7 +73,7 @@ export default function LoginPanel() {
           type="password"
         ></Input>
         <Wrap spacing="20px">
-          <Link reloadDocument to="/home">
+          <Link reloadDocument to={decision === "true" ? "/home" : "/login"}>
             <Button colorScheme="teal" onClick={handleClick}>
               Login
             </Button>
