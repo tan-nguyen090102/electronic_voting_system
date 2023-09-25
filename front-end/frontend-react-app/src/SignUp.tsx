@@ -75,12 +75,12 @@ export default function SignUpPanel() {
           background="gray.200"
         ></Input>
         <Wrap spacing="20px">
-          <Link reloadDocument to="/">
+          <Link reloadDocument to="/login">
             <Button colorScheme="teal" onClick={handleClick}>
               Sign Up
             </Button>
           </Link>
-          <Link reloadDocument to="/">
+          <Link reloadDocument to="/login">
             <Button colorScheme="teal" variant="outline">
               Cancel
             </Button>
