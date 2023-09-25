@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Button, Flex, Heading, Input, Wrap } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Flex, Heading, Input, Wrap, Text } from "@chakra-ui/react";
 
 export default function LoginPanel() {
   //Change web title
@@ -9,6 +9,7 @@ export default function LoginPanel() {
     document.title = "Log In - Voting System";
   }, []);
 
+  //Input initial values
   const initialValues = {
     userID: "",
     password: "",
@@ -25,8 +26,9 @@ export default function LoginPanel() {
   };
 
   //Login button listener
-  const [decision, setDecision] = React.useState("");
-  const handleClick = async () => {
+  const navigate = useNavigate();
+  const [decision, setDecision] = React.useState(false);
+  const handleLogin = async () => {
     //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
     await fetch("http://localhost:5000/login", {
       method: "POST",
@@ -43,10 +45,26 @@ export default function LoginPanel() {
       //Backend response the result back to the login
       .then((response) => response.json())
       .then((data) => {
-        setDecision(data);
+        //Handle login
+        if (data === "true") {
+          navigate("/home");
+        } else {
+          setDecision(true);
+        }
         console.log(data);
       })
       .catch((error) => console.log(error));
+  };
+
+  //Show invalid credential
+  const InvalidCredit = () => {
+    return (
+      <>
+        <Text color="red" mb={3}>
+          *Invalid Credential*
+        </Text>
+      </>
+    );
   };
 
   return (
@@ -68,16 +86,15 @@ export default function LoginPanel() {
           value={inputValue["password"]}
           placeholder="Password"
           variant="filled"
-          mb={6}
+          mb={3}
           background="gray.200"
           type="password"
         ></Input>
+        {decision && <InvalidCredit></InvalidCredit>}
         <Wrap spacing="20px">
-          <Link reloadDocument to={decision === "true" ? "/home" : "/login"}>
-            <Button colorScheme="teal" onClick={handleClick}>
-              Login
-            </Button>
-          </Link>
+          <Button colorScheme="teal" onClick={handleLogin}>
+            Login
+          </Button>
           <Link reloadDocument to="/signup">
             <Button colorScheme="teal" variant="outline">
               Sign Up
