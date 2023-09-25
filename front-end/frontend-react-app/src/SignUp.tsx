@@ -17,7 +17,6 @@ export default function SignUpPanel() {
 
   //Input listeners
   const [inputValue, setInputValue] = React.useState(initialValues);
-
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
