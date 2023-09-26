@@ -60,7 +60,7 @@ export default function LoginPanel() {
   const InvalidCredit = () => {
     return (
       <>
-        <Text color="red" mb={3}>
+        <Text data-testid="invalidInput" color="red" mb={3}>
           *Invalid Credential*
         </Text>
       </>
@@ -73,6 +73,7 @@ export default function LoginPanel() {
         <Heading mb={6}>Login</Heading>
         <Input
           name="userID"
+          data-testid="userID"
           onChange={handleInput}
           value={inputValue["userID"]}
           placeholder="UserID"
@@ -82,6 +83,7 @@ export default function LoginPanel() {
         ></Input>
         <Input
           name="password"
+          data-testid="password"
           onChange={handleInput}
           value={inputValue["password"]}
           placeholder="Password"
@@ -92,11 +94,19 @@ export default function LoginPanel() {
         ></Input>
         {decision && <InvalidCredit></InvalidCredit>}
         <Wrap spacing="20px">
-          <Button colorScheme="teal" onClick={handleLogin}>
+          <Button
+            data-testid="loginButton"
+            colorScheme="teal"
+            onClick={handleLogin}
+          >
             Login
           </Button>
           <Link reloadDocument to="/signup">
-            <Button colorScheme="teal" variant="outline">
+            <Button
+              data-testid="signupButton"
+              colorScheme="teal"
+              variant="outline"
+            >
               Sign Up
             </Button>
           </Link>
