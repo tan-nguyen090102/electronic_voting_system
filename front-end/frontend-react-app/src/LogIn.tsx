@@ -56,6 +56,10 @@ export default function LoginPanel() {
       .catch((error) => console.log(error));
   };
 
+  const handleSignup = async () => {
+    navigate("/signup");
+  };
+
   //Show invalid credential
   const InvalidCredit = () => {
     return (
@@ -101,15 +105,14 @@ export default function LoginPanel() {
           >
             Login
           </Button>
-          <Link reloadDocument to="/signup">
-            <Button
-              data-testid="signupButton"
-              colorScheme="teal"
-              variant="outline"
-            >
-              Sign Up
-            </Button>
-          </Link>
+          <Button
+            data-testid="signupButton"
+            colorScheme="teal"
+            variant="outline"
+            onClick={handleSignup}
+          >
+            Sign Up
+          </Button>
         </Wrap>
       </Flex>
     </Flex>
