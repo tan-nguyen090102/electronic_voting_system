@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Flex, Heading, Input, Wrap, Text } from "@chakra-ui/react";
 
 export default function LoginPanel() {
