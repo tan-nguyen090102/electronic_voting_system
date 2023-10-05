@@ -13,4 +13,6 @@ BEGIN
     PREPARE create_table_stmt FROM @create_table_sql;
     EXECUTE create_table_stmt;
     DEALLOCATE PREPARE create_table_stmt;
+
+    SELECT @create_table_sql;
 END

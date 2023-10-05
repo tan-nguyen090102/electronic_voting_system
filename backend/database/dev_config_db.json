@@ -1,6 +1,5 @@
 {
     "host": "localhost",
     "user": "root",
-    "password": "your_password",
-    "database": "your_dev_db"
+    "password": "your_password"
 }
