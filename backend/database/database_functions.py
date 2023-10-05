@@ -1,6 +1,5 @@
-import pymysql
 import json
-
+import pymysql
 from pymysql.constants import CLIENT
 
 
@@ -12,7 +11,6 @@ def create_db_connection():
         host=config['host'],
         user=config['user'],
         password=config['password'],
-        database=config['database'],
         client_flag=CLIENT.MULTI_STATEMENTS
     )
     return connection
@@ -47,6 +45,7 @@ def exec_sql_file(connection,sql_file):
     try:
         cursor.execute(sql_script)
         connection.commit()
+        cursor.close()
         print("SUCCESS: SQL script executed")
     except Exception as e:
         print(f"ERROR: SQL script execution failed with the following error: {e}")
