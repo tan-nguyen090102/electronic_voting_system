@@ -495,14 +495,14 @@ export default function SignUpPanel() {
         </Wrap>
         <Wrap spacing="20px">
           <Button
-            data-test="signupButton"
+            data-testid="signupButton"
             colorScheme="teal"
             onClick={handleSignup}
           >
             Sign Up
           </Button>
           <Button
-            data-test="cancelButton"
+            data-testid="cancelButton"
             colorScheme="teal"
             variant="outline"
             onClick={handleCancel}

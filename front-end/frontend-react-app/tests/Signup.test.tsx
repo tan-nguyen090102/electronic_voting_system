@@ -1,8 +1,18 @@
-import React from "react";
+/**
+ * @jest-environment jsdom
+ */
+import "@testing-library/jest-dom";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import SignUpPanel from "./Features/SignUp";
+import SignUpPanel from "../src/Features/SignUp";
+
+//Mock fetch
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({ test: "Successful mock" }),
+  })
+) as jest.Mock;
 
 test("First name input", async () => {
   render(
@@ -145,4 +155,28 @@ test("Security Answer input", async () => {
     userEvent.type(field, "Iowa City");
     expect(field).toHaveValue("Iowa City");
   });
+});
+
+test("Sign up button click", async () => {
+  render(
+    <BrowserRouter>
+      <SignUpPanel />
+    </BrowserRouter>
+  );
+  const sendButton = await screen.getByTestId("signupButton");
+  await act(() => userEvent.click(sendButton));
+  await waitFor(() => {
+    expect(sendButton).toBeDefined();
+  });
+});
+
+test("Cancel button click", async () => {
+  render(
+    <BrowserRouter>
+      <SignUpPanel />
+    </BrowserRouter>
+  );
+  const cancelButton = await screen.getByTestId("cancelButton");
+  await act(() => userEvent.click(cancelButton));
+  await waitFor(() => expect(cancelButton).toBeDefined());
 });

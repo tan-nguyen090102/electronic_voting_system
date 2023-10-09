@@ -1,6 +1,9 @@
-import React from "react";
+/**
+ * @jest-environment jsdom
+ */
+import "@testing-library/jest-dom";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
-import LoginPanel from "./Features/LogIn";
+import LoginPanel from "../src/Features/LogIn";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -8,6 +11,13 @@ import userEvent from "@testing-library/user-event";
 afterEach(() => {
   cleanup();
 });
+
+//Mock fetch
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({ test: "Successful mock" }),
+  })
+) as jest.Mock;
 
 test("UserID input", async () => {
   render(
