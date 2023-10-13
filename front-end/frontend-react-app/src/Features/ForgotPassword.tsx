@@ -20,19 +20,28 @@ export default function ForgotPanel() {
   //Send button listener
   const navigate = useNavigate();
   const handleSend = async () => {
-    //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
-    await fetch("http://localhost:5000/forgot_password", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "content-type": "application/json; charset=UTF-8",
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        email: inputEmail,
-      }),
-    });
-    navigate("/reset_password");
+    let isMatch = false;
+
+    //Check if the email met all requirements
+    if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
+      isMatch = true;
+    }
+
+    if (isMatch) {
+      //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
+      await fetch("http://localhost:5000/forgot_password", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          email: inputEmail,
+        }),
+      });
+      navigate("/change_password");
+    }
   };
 
   //Cancel button listener

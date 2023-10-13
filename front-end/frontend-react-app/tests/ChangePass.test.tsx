@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
+import React from "react";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import ForgotPanel from "../src/Features/ForgotPassword";
+import ChangePasswordPanel from "../src/Features/ChangePassword";
 import { testObject } from "./testData.js";
 
 //Clean up after each test
@@ -20,26 +21,39 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-test("Email input", async () => {
+test("New Password input", async () => {
   render(
     <BrowserRouter>
-      <ForgotPanel />
+      <ChangePasswordPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("email");
-    userEvent.type(field, testObject.email);
-    expect(field).toHaveValue(testObject.email);
+    const field = screen.getByTestId("password");
+    userEvent.type(field, testObject.password);
+    expect(field).toHaveValue(testObject.password);
   });
 });
 
-test("Send button click", async () => {
+test("New Password Retype input", async () => {
   render(
     <BrowserRouter>
-      <ForgotPanel />
+      <ChangePasswordPanel />
     </BrowserRouter>
   );
-  const sendButton = await screen.getByTestId("sendButton");
+  await act(() => {
+    const field = screen.getByTestId("passwordRetype");
+    userEvent.type(field, testObject.password);
+    expect(field).toHaveValue(testObject.password);
+  });
+});
+
+test("Confirm button click", async () => {
+  render(
+    <BrowserRouter>
+      <ChangePasswordPanel />
+    </BrowserRouter>
+  );
+  const sendButton = await screen.getByTestId("confirmButton");
   await act(() => userEvent.click(sendButton));
   await waitFor(() => {
     expect(sendButton).toBeDefined();
@@ -49,7 +63,7 @@ test("Send button click", async () => {
 test("Cancel button click", async () => {
   render(
     <BrowserRouter>
-      <ForgotPanel />
+      <ChangePasswordPanel />
     </BrowserRouter>
   );
   const cancelButton = await screen.getByTestId("cancelButton");

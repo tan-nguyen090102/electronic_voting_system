@@ -6,6 +6,7 @@ import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import LoginPanel from "../src/Features/LogIn";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import { testObject } from "./testData";
 
 //Clean up after each test
 afterEach(() => {
@@ -27,8 +28,8 @@ test("UserID input", async () => {
   );
   await act(() => {
     const userIDInputField = screen.getByTestId("userID");
-    userEvent.type(userIDInputField, "danielnguyen");
-    expect(userIDInputField).toHaveValue("danielnguyen");
+    userEvent.type(userIDInputField, testObject.userName);
+    expect(userIDInputField).toHaveValue(testObject.userName);
   });
 });
 
@@ -40,8 +41,8 @@ test("Password input", async () => {
   );
   await act(() => {
     const passwordInputField = screen.getByTestId("password");
-    userEvent.type(passwordInputField, "12345");
-    expect(passwordInputField).toHaveValue("12345");
+    userEvent.type(passwordInputField, testObject.password);
+    expect(passwordInputField).toHaveValue(testObject.password);
   });
 });
 

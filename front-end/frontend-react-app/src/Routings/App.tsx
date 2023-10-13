@@ -4,6 +4,7 @@ import LoginPanel from "../Features/LogIn";
 import HomePage from "../Features/Home";
 import SignUpPanel from "../Features/SignUp";
 import ForgotPanel from "../Features/ForgotPassword";
+import ChangePasswordPanel from "../Features/ChangePassword";
 
 export default function App() {
   return (
@@ -13,6 +14,10 @@ export default function App() {
         <Route path="/" element={<HomePage />}></Route>
         <Route path="signup" element={<SignUpPanel />}></Route>
         <Route path="/forgot_password" element={<ForgotPanel />}></Route>
+        <Route
+          path="/change_password"
+          element={<ChangePasswordPanel />}
+        ></Route>
       </Routes>
     </>
   );
