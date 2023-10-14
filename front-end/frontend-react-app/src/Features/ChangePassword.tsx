@@ -158,6 +158,11 @@ export default function ChangePasswordPanel() {
             Cancel
           </Button>
         </Wrap>
+        <Wrap justify="center">
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
+        </Wrap>
       </Flex>
     </Flex>
   );

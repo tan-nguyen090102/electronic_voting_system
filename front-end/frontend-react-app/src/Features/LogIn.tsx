@@ -9,6 +9,8 @@ import {
   Wrap,
   Text,
   Link,
+  Stack,
+  Select,
 } from "@chakra-ui/react";
 
 export default function LoginPanel() {
@@ -21,6 +23,8 @@ export default function LoginPanel() {
   const initialValues = {
     userID: "",
     password: "",
+    role: "",
+    employeeID: "",
   };
 
   //Input listeners
@@ -33,9 +37,26 @@ export default function LoginPanel() {
     });
   };
 
+  //Selection listener
+  const [inputSelection, setInputSelection] = React.useState("voter");
+  const [isPopUp, setPopUp] = React.useState(false);
+  const handleSelection = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setInputSelection(e.target.value);
+
+    //Check the role for third input popup
+    if (e.target.value === "manager" || e.target.value === "admin") {
+      setPopUp(true);
+    } else {
+      setPopUp(false);
+    }
+  };
+
   //Login button listener
   const navigate = useNavigate();
   const [decision, setDecision] = React.useState(false);
+  const [isTimeOutPopUp, setTimeOutPopUp] = React.useState(false);
   const handleLogin = async () => {
     //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
     await fetch("http://localhost:5000/login", {
@@ -46,8 +67,10 @@ export default function LoginPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        userID: inputValue["userID"],
-        password: inputValue["password"],
+        userID: inputValue.userID,
+        password: inputValue.password,
+        role: inputSelection,
+        employeeID: inputValue.employeeID,
       }),
     })
       //Backend response the result back to the login
@@ -55,7 +78,7 @@ export default function LoginPanel() {
       .then((data) => {
         //Handle login
         if (data === "true") {
-          navigate("/home");
+          navigate("/");
         } else {
           setDecision(true);
         }
@@ -64,6 +87,7 @@ export default function LoginPanel() {
       .catch((error) => console.log(error));
   };
 
+  //Sign up button listener
   const handleSignup = async () => {
     navigate("/signup");
   };
@@ -79,33 +103,68 @@ export default function LoginPanel() {
     );
   };
 
+  //Container for role options
+  const roleOptions = (
+    <>
+      <option value="voter">Voter</option>
+      <option value="manager">Manager</option>
+      <option value="admin">Administrator</option>
+    </>
+  );
+
+  //DOM
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
       <Flex direction="column" background="gray.100" p={12} rounded={6}>
-        <Heading mb={6}>Login</Heading>
-        <Input
-          name="userID"
-          data-testid="userID"
-          onChange={handleInput}
-          value={inputValue["userID"]}
-          placeholder="UserID"
-          variant="filled"
-          mb={3}
-          background="gray.200"
-        ></Input>
-        <Input
-          name="password"
-          data-testid="password"
-          onChange={handleInput}
-          value={inputValue["password"]}
-          placeholder="Password"
-          variant="filled"
-          mb={6}
-          background="gray.200"
-          type="password"
-        ></Input>
-        {decision && <InvalidCredit></InvalidCredit>}
-        <Wrap spacing="20px">
+        <Stack direction="row" justify="left">
+          <Heading mb={6}>Login</Heading>
+          <Heading>as: </Heading>
+          <Select
+            name="role"
+            data-testid="role"
+            borderWidth={3}
+            onChange={handleSelection}
+            defaultValue="voter"
+          >
+            {roleOptions}
+          </Select>
+        </Stack>
+        <Stack direction="column" justify="center">
+          <Input
+            name="userID"
+            data-testid="userID"
+            onChange={handleInput}
+            value={inputValue.userID}
+            placeholder="UserID"
+            variant="filled"
+            mb={3}
+            background="gray.200"
+          ></Input>
+          <Input
+            name="password"
+            data-testid="password"
+            onChange={handleInput}
+            value={inputValue.password}
+            placeholder="Password"
+            variant="filled"
+            mb={3}
+            background="gray.200"
+            type="password"
+          ></Input>
+          <Input
+            name="employeeID"
+            data-testid="employeeID"
+            onChange={handleInput}
+            value={inputValue["employeeID"]}
+            placeholder="VS-ID"
+            variant="filled"
+            mb={3}
+            background="gray.200"
+            style={{ display: isPopUp ? "block" : "none" }}
+          ></Input>
+          {decision && <InvalidCredit></InvalidCredit>}
+        </Stack>
+        <Wrap spacing="20px" mt={3}>
           <Button
             data-testid="loginButton"
             colorScheme="teal"
@@ -125,6 +184,11 @@ export default function LoginPanel() {
         <Link href="/forgot_password" color="blue" mt={6}>
           Forgot your Password?
         </Link>
+        <Wrap justify="center">
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
+        </Wrap>
       </Flex>
     </Flex>
   );

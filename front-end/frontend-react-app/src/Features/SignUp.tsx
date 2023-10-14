@@ -12,6 +12,7 @@ import {
   Stack,
   FormControl,
   FormLabel,
+  Link,
 } from "@chakra-ui/react";
 
 export default function SignUpPanel() {
@@ -194,7 +195,7 @@ export default function SignUpPanel() {
   };
 
   //Container for state options
-  const stateOption = (
+  const stateOptions = (
     <>
       <option selected hidden disabled value="">
         State
@@ -253,7 +254,7 @@ export default function SignUpPanel() {
   );
 
   //Container for security questions
-  const questionOption = (
+  const questionOptions = (
     <>
       <option value="0">What is your mother's hometown?</option>
       <option value="1">What is your chilhood's name?</option>
@@ -362,7 +363,7 @@ export default function SignUpPanel() {
                 borderWidth={2}
                 onChange={handleSelection}
               >
-                {stateOption}
+                {stateOptions}
               </Select>
               <Input
                 name="zip"
@@ -476,7 +477,7 @@ export default function SignUpPanel() {
                   defaultValue="0"
                   value={inputSelection["questionIndex"]}
                 >
-                  {questionOption}
+                  {questionOptions}
                 </Select>
                 <Input
                   name="securityAnswer"
@@ -510,7 +511,15 @@ export default function SignUpPanel() {
             Cancel
           </Button>
         </Wrap>
-        <Text fontSize="xs" mt={10}>
+        <Link
+          href="/admin_verification"
+          color="blue"
+          mt={6}
+          onChange={handleSignup}
+        >
+          Sign up as Manager/Administrator of Voting System
+        </Link>
+        <Text fontSize="xs" mt={6}>
           Voting System
         </Text>
       </Flex>

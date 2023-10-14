@@ -33,6 +33,19 @@ test("Email input", async () => {
   });
 });
 
+test("Security Answer input", async () => {
+  render(
+    <BrowserRouter>
+      <ForgotPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const field = screen.getByTestId("securityAnswer");
+    userEvent.type(field, testObject.securityAnswer);
+    expect(field).toHaveValue(testObject.securityAnswer);
+  });
+});
+
 test("Send button click", async () => {
   render(
     <BrowserRouter>

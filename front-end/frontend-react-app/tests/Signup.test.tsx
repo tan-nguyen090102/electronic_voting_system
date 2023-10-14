@@ -85,6 +85,19 @@ test("City input", async () => {
   });
 });
 
+test("State select", async () => {
+  render(
+    <BrowserRouter>
+      <SignUpPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const selection = screen.getByTestId("state");
+    userEvent.selectOptions(selection, testObject.state);
+    expect(screen.getByText(testObject.state)).toBeInTheDocument();
+  });
+});
+
 test("Zip input", async () => {
   render(
     <BrowserRouter>

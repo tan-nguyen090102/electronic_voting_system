@@ -13,6 +13,8 @@ module.exports = {
         phone: "3197777777",
         driverID: "yyyyyyyy",
         securityAnswer: "Iowa City",
-        email: "tannguyen@uiowa.edu"
+        email: "tannguyen@uiowa.edu",
+        employeeID: "NoSQLAlchemy",
+        role: "Manager"
     }
 } 
