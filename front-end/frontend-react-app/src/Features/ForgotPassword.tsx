@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -107,28 +106,6 @@ export default function ForgotPanel() {
     navigate("/login");
   };
 
-  //Show invalid email format
-  const InvalidEmail = () => {
-    return (
-      <>
-        <Text data-testid="invalidEmail" color="red" mb={3}>
-          *Please use correct email format*
-        </Text>
-      </>
-    );
-  };
-
-  //Show invalid credential
-  const InvalidCredit = () => {
-    return (
-      <>
-        <Text data-testid="invalidInput" color="red" mb={3}>
-          *Invalid Credential*
-        </Text>
-      </>
-    );
-  };
-
   //DOM
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
@@ -156,7 +133,11 @@ export default function ForgotPanel() {
             mb={3}
             background="gray.200"
           ></Input>
-          {isInvalidPopUp && <InvalidCredit></InvalidCredit>}
+          {isInvalidPopUp && (
+            <Text data-testid="invalidInput" color="red" mb={3}>
+              *Invalid Credential*
+            </Text>
+          )}
         </Stack>
         <Stack
           direction="column"
@@ -181,7 +162,11 @@ export default function ForgotPanel() {
           {!inputEmail.match(
             "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
           ) &&
-            inputEmail.length > 0 && <InvalidEmail></InvalidEmail>}
+            inputEmail.length > 0 && (
+              <Text data-testid="invalidEmail" color="red" mb={3}>
+                *Please use correct email format*
+              </Text>
+            )}
         </Stack>
         <Wrap spacing="20px" mt={3}>
           <Button

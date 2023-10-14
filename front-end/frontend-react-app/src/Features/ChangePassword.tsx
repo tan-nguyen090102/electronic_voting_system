@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -106,28 +105,6 @@ export default function ChangePasswordPanel() {
     </>
   );
 
-  //Show invalid retype password
-  const InvalidPasswordRetype = () => {
-    return (
-      <>
-        <Text data-testid="invalidRetype" color="red" mb={3}>
-          *Your password does not match up*
-        </Text>
-      </>
-    );
-  };
-
-  //Show invalid repeated password
-  const InvalidPasswordRepeated = () => {
-    return (
-      <>
-        <Text data-testid="invalidRetype" color="red" mb={3}>
-          *Your new password is the same as the old password.*
-        </Text>
-      </>
-    );
-  };
-
   //DOM
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
@@ -162,10 +139,14 @@ export default function ChangePasswordPanel() {
               type="password"
             ></Input>
             {inputRetype !== inputPassword && inputRetype.length > 0 && (
-              <InvalidPasswordRetype></InvalidPasswordRetype>
+              <Text data-testid="invalidRetype" color="red" mb={3}>
+                *Your password does not match up*
+              </Text>
             )}
             {isRepeatedPopUp && (
-              <InvalidPasswordRepeated></InvalidPasswordRepeated>
+              <Text data-testid="invalidRetype" color="red" mb={3}>
+                *Your new password is the same as the old password.*
+              </Text>
             )}
           </Stack>
           <Stack direction="column" justify="left" ml={70}>

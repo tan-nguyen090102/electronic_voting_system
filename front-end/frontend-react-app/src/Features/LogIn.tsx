@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -56,7 +55,6 @@ export default function LoginPanel() {
   //Login button listener
   const navigate = useNavigate();
   const [decision, setDecision] = React.useState(false);
-  //const [isTimeOutPopUp, setTimeOutPopUp] = React.useState(false);
   const handleLogin = async () => {
     //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
     await fetch("http://localhost:5000/login", {
@@ -90,17 +88,6 @@ export default function LoginPanel() {
   //Sign up button listener
   const handleSignup = async () => {
     navigate("/signup");
-  };
-
-  //Show invalid credential
-  const InvalidCredit = () => {
-    return (
-      <>
-        <Text data-testid="invalidInput" color="red" mb={3}>
-          *Invalid Credential*
-        </Text>
-      </>
-    );
   };
 
   //Container for role options
@@ -162,7 +149,11 @@ export default function LoginPanel() {
             background="gray.200"
             style={{ display: isPopUp ? "block" : "none" }}
           ></Input>
-          {decision && <InvalidCredit></InvalidCredit>}
+          {decision && (
+            <Text data-testid="invalidInput" color="red" mb={3}>
+              *Invalid Credential*
+            </Text>
+          )}
         </Stack>
         <Wrap spacing="20px" mt={3}>
           <Button
