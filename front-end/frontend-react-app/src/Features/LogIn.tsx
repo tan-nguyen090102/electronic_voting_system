@@ -56,7 +56,7 @@ export default function LoginPanel() {
   //Login button listener
   const navigate = useNavigate();
   const [decision, setDecision] = React.useState(false);
-  const [isTimeOutPopUp, setTimeOutPopUp] = React.useState(false);
+  //const [isTimeOutPopUp, setTimeOutPopUp] = React.useState(false);
   const handleLogin = async () => {
     //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
     await fetch("http://localhost:5000/login", {
@@ -135,7 +135,7 @@ export default function LoginPanel() {
             data-testid="userID"
             onChange={handleInput}
             value={inputValue.userID}
-            placeholder="UserID"
+            placeholder="Email"
             variant="filled"
             mb={3}
             background="gray.200"
