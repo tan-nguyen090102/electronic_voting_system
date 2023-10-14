@@ -1,7 +1,15 @@
 import React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Flex, Heading, Input, Wrap, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Wrap,
+  Text,
+  Link,
+} from "@chakra-ui/react";
 
 export default function LoginPanel() {
   //Change web title
@@ -92,7 +100,7 @@ export default function LoginPanel() {
           value={inputValue["password"]}
           placeholder="Password"
           variant="filled"
-          mb={3}
+          mb={6}
           background="gray.200"
           type="password"
         ></Input>
@@ -114,6 +122,9 @@ export default function LoginPanel() {
             Sign Up
           </Button>
         </Wrap>
+        <Link href="/forgot_password" color="blue" mt={6}>
+          Forgot your Password?
+        </Link>
       </Flex>
     </Flex>
   );

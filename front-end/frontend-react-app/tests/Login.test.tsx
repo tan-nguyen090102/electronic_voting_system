@@ -1,13 +1,24 @@
-import React from "react";
+/**
+ * @jest-environment jsdom
+ */
+import "@testing-library/jest-dom";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
-import LoginPanel from "./Features/LogIn";
+import LoginPanel from "../src/Features/LogIn";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import { testObject } from "./testData";
 
 //Clean up after each test
 afterEach(() => {
   cleanup();
 });
+
+//Mock fetch
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({ test: "Successful mock" }),
+  })
+) as jest.Mock;
 
 test("UserID input", async () => {
   render(
@@ -17,8 +28,8 @@ test("UserID input", async () => {
   );
   await act(() => {
     const userIDInputField = screen.getByTestId("userID");
-    userEvent.type(userIDInputField, "danielnguyen");
-    expect(userIDInputField).toHaveValue("danielnguyen");
+    userEvent.type(userIDInputField, testObject.userName);
+    expect(userIDInputField).toHaveValue(testObject.userName);
   });
 });
 
@@ -30,8 +41,8 @@ test("Password input", async () => {
   );
   await act(() => {
     const passwordInputField = screen.getByTestId("password");
-    userEvent.type(passwordInputField, "12345");
-    expect(passwordInputField).toHaveValue("12345");
+    userEvent.type(passwordInputField, testObject.password);
+    expect(passwordInputField).toHaveValue(testObject.password);
   });
 });
 

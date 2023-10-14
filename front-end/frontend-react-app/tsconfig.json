@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "tests/ForgotPass.test.tsx", "tests/Login.test.tsx", "tests/Signup.test.tsx"  ]
 }
