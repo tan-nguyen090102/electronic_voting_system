@@ -1,19 +1,19 @@
 module.exports = {
     "testObject":
     {
-        firstName: "Tan",
-        middleName: "Thanh",
-        lastName: "Nguyen",
-        street: "447 Cameron Way",
-        city: "North Liberty",
+        firstName: "David",
+        middleName: "Naval",
+        lastName: "Cotton",
+        street: "3452 Somewhere",
+        city: "Ground",
         state: "IA",
-        zip: "52317",
-        userName: "tannguyen@uiowa.edu",
+        zip: "64543",
+        userName: "idontknowmuch@school.edu",
         password: "Yveltal453760",
         phone: "3197777777",
         driverID: "yyyyyyyy",
-        securityAnswer: "Iowa City",
-        email: "tannguyen@uiowa.edu",
+        securityAnswer: "Summer City",
+        email: "idontknowmuch@school.edu",
         employeeID: "NoSQLAlchemy",
         role: "Manager"
     }
