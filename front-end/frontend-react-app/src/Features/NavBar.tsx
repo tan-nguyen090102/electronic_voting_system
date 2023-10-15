@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
 import { Flex, Heading, Spacer } from "@chakra-ui/react";
-import { Center, Square, Circle } from '@chakra-ui/react'
-import { Button, ButtonGroup } from '@chakra-ui/react'
-import { Stack, HStack, VStack } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
+import { HStack } from '@chakra-ui/react'
 import { Link } from '@chakra-ui/react'
 import { Image } from '@chakra-ui/react'
 
