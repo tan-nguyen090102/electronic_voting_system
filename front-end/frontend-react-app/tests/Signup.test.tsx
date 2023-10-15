@@ -132,8 +132,8 @@ test("Password input", async () => {
   );
   await act(() => {
     const field = screen.getByTestId("password");
-    userEvent.type(field, testObject.password);
-    expect(field).toHaveValue(testObject.password);
+    userEvent.type(field, testObject.testPass);
+    expect(field).toHaveValue(testObject.testPass);
   });
 });
 
@@ -145,8 +145,8 @@ test("Password Retype input", async () => {
   );
   await act(() => {
     const field = screen.getByTestId("passwordRetype");
-    userEvent.type(field, testObject.password);
-    expect(field).toHaveValue(testObject.password);
+    userEvent.type(field, testObject.testPass);
+    expect(field).toHaveValue(testObject.testPass);
   });
 });
 

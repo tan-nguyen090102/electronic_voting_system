@@ -9,7 +9,7 @@ module.exports = {
         state: "IA",
         zip: "64543",
         userName: "idontknowmuch@school.edu",
-        password: "Yveltal453760",
+        testPass: "none",
         phone: "3197777777",
         driverID: "yyyyyyyy",
         securityAnswer: "Summer City",

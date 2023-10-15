@@ -41,8 +41,8 @@ test("Password input", async () => {
   );
   await act(() => {
     const passwordInputField = screen.getByTestId("password");
-    userEvent.type(passwordInputField, testObject.password);
-    expect(passwordInputField).toHaveValue(testObject.password);
+    userEvent.type(passwordInputField, testObject.testPass);
+    expect(passwordInputField).toHaveValue(testObject.testPass);
   });
 });
 
