@@ -4,5 +4,5 @@ module.exports = {
   testEnvironment: 'jsdom',
   collectCoverageFrom: ["src/**/*.js", "!**/node_modules/**"],
   coverageReporters: ["html", "text", "text-summary", "cobertura"],
-  testMatch: ["**/*.test.js"]
+  testMatch: ["**/*.test.tsx"]
 };

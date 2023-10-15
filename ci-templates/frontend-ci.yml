@@ -17,6 +17,8 @@ build:
       - front-end/frontend-react-app/node_modules
 test:
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  needs:
+    - build
   dependencies:
     - build
   script:
@@ -35,6 +37,8 @@ test:
         coverage_format: cobertura
         path: front-end/frontend-react-app/coverage/cobertura-coverage.xml
 pages:
+  needs:
+    - test
   dependencies:
     - test
   script:
