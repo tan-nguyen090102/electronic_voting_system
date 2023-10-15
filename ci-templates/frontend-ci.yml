@@ -32,7 +32,7 @@ test:
     when: always
     reports:
       junit:
-        - junit.xml
+        - front-end/frontend-react-app/junit.xml
       coverage_report:
         coverage_format: cobertura
         path: front-end/frontend-react-app/coverage/cobertura-coverage.xml
