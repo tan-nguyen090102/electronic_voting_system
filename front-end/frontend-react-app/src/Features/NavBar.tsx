@@ -43,9 +43,7 @@ export default function NavBar() {
               <Image boxSize='50px' objectFit='cover' src='https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3415254/election-day-clipart-md.png' alt='Voting Icon' />
               <HStack spacing='24px' >
                 <Spacer />
-                <Link href='/home'>
                 <Heading>My Vote</Heading>
-                </Link>
               </HStack>
             </Flex>
     
