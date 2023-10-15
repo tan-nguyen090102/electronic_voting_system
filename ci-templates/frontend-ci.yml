@@ -1,0 +1,48 @@
+image: node:18-alpine
+
+default:
+  before_script:
+    - cd front-end/frontend-react-app
+
+build:
+  script:
+    - npm install
+  cache:
+    paths:
+      - front-end/frontend-react-app/node_modules
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - front-end/frontend-react-app/node_modules
+test:
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  dependencies:
+    - build
+  script:
+    - npm run test:ci
+  cache:
+    paths:
+      - front-end/frontend-react-app/coverage/
+  artifacts:
+    paths:
+      - front-end/frontend-react-app/coverage/
+    when: always
+    reports:
+      junit:
+        - junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: front-end/frontend-react-app/coverage/cobertura-coverage.xml
+pages:
+  dependencies:
+    - test
+  script:
+    - mkdir .public
+    - cp -r coverage/* .public
+    - mv .public ../../public
+  artifacts:
+    paths:
+      - public
+  only:
+    - "continuous-integration-setup"
