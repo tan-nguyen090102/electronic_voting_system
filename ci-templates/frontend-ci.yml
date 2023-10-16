@@ -29,6 +29,7 @@ test:
   artifacts:
     paths:
       - front-end/frontend-react-app/coverage/
+      - front-end/frontend-react-app/test-report.xml
     when: always
     reports:
       junit:
