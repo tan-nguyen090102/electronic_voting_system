@@ -48,6 +48,7 @@ pages:
     - mv .public ../../public
   artifacts:
     paths:
+      - front-end/frontend-react-app/coverage/
       - public
   only:
     - "continuous-integration-setup"
