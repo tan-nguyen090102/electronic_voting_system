@@ -19,7 +19,6 @@ run-sonarqube:
   needs:
     - job: build-and-test-frontend
       artifacts: true
-      pipeline: other
   trigger:
     include:
       - local: ci-templates/sonarqube-check.yml
