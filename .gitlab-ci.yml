@@ -7,3 +7,8 @@ build-and-test-frontend:
   trigger:
     include:
        - local: ci-templates/frontend-ci.yml
+
+run-sonarqube:
+  trigger:
+    include:
+      - local: ci-templates/sonarqube-check.yml
