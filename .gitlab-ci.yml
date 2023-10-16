@@ -3,14 +3,25 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "continuous-integration-setup" && $CI_PIPELINE_SOURCE == "push"
 
+stages:
+  - build-test
+  - sonarqube
+
 build-and-test-frontend:
+  stage: build-test
   trigger:
     include:
        - local: ci-templates/frontend-ci.yml
+    strategy: depend
 
 run-sonarqube:
+  stage: sonarqube
   needs:
-    - build-and-test-frontend
+    - job: build-and-test-frontend
+      artifacts: true
+      pipeline: other
   trigger:
     include:
       - local: ci-templates/sonarqube-check.yml
+    strategy: depend
+
