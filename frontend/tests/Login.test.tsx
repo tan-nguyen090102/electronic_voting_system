@@ -41,8 +41,8 @@ test("Password input", async () => {
   );
   await act(() => {
     const passwordInputField = screen.getByTestId("password");
-    userEvent.type(passwordInputField, testObject.password);
-    expect(passwordInputField).toHaveValue(testObject.password);
+    userEvent.type(passwordInputField, testObject.testPass);
+    expect(passwordInputField).toHaveValue(testObject.testPass);
   });
 });
 
@@ -52,10 +52,12 @@ test("Login button click", async () => {
       <LoginPanel />
     </BrowserRouter>
   );
-  const loginButton = await screen.getByTestId("loginButton");
-  await act(() => userEvent.click(loginButton));
-  await waitFor(() => {
-    expect(loginButton).toBeDefined();
+  await act(() => {
+    const loginButton = screen.getByTestId("loginButton");
+    act(() => userEvent.click(loginButton));
+    waitFor(() => {
+      expect(loginButton).toBeDefined();
+    });
   });
 });
 
@@ -65,7 +67,35 @@ test("Signup button click", async () => {
       <LoginPanel />
     </BrowserRouter>
   );
-  const signupButton = await screen.getByTestId("signupButton");
-  await act(() => userEvent.click(signupButton));
-  await waitFor(() => expect(signupButton).toBeDefined());
+  await act(() => {
+    const signupButton = screen.getByTestId("signupButton");
+    act(() => userEvent.click(signupButton));
+    waitFor(() => expect(signupButton).toBeDefined());
+  });
+});
+
+test("Select role", async () => {
+  render(
+    <BrowserRouter>
+      <LoginPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const selection = screen.getByTestId("role");
+    userEvent.selectOptions(selection, testObject.role);
+    expect(screen.getByText(testObject.role)).toBeInTheDocument();
+  });
+});
+
+test("VS-ID input", async () => {
+  render(
+    <BrowserRouter>
+      <LoginPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const IDInputField = screen.getByTestId("employeeID");
+    userEvent.type(IDInputField, testObject.employeeID);
+    expect(IDInputField).toHaveValue(testObject.employeeID);
+  });
 });

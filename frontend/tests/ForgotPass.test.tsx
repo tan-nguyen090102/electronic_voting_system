@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
-import React from "react";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import ChangePasswordPanel from "../src/Features/ChangePassword";
+import ForgotPanel from "../src/Features/ForgotPassword";
 import { testObject } from "./testData.js";
 
 //Clean up after each test
@@ -21,39 +20,39 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-test("New Password input", async () => {
+test("Email input", async () => {
   render(
     <BrowserRouter>
-      <ChangePasswordPanel />
+      <ForgotPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("password");
-    userEvent.type(field, testObject.password);
-    expect(field).toHaveValue(testObject.password);
+    const field = screen.getByTestId("email");
+    userEvent.type(field, testObject.email);
+    expect(field).toHaveValue(testObject.email);
   });
 });
 
-test("New Password Retype input", async () => {
+test("Security Answer input", async () => {
   render(
     <BrowserRouter>
-      <ChangePasswordPanel />
+      <ForgotPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("passwordRetype");
-    userEvent.type(field, testObject.password);
-    expect(field).toHaveValue(testObject.password);
+    const field = screen.getByTestId("securityAnswer");
+    userEvent.type(field, testObject.securityAnswer);
+    expect(field).toHaveValue(testObject.securityAnswer);
   });
 });
 
-test("Confirm button click", async () => {
+test("Send button click", async () => {
   render(
     <BrowserRouter>
-      <ChangePasswordPanel />
+      <ForgotPanel />
     </BrowserRouter>
   );
-  const sendButton = await screen.getByTestId("confirmButton");
+  const sendButton = await screen.getByTestId("sendButton");
   await act(() => userEvent.click(sendButton));
   await waitFor(() => {
     expect(sendButton).toBeDefined();
@@ -63,7 +62,7 @@ test("Confirm button click", async () => {
 test("Cancel button click", async () => {
   render(
     <BrowserRouter>
-      <ChangePasswordPanel />
+      <ForgotPanel />
     </BrowserRouter>
   );
   const cancelButton = await screen.getByTestId("cancelButton");

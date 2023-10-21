@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -15,6 +14,17 @@ export default function ChangePasswordPanel() {
   //Change web title
   useEffect(() => {
     document.title = "Change Password - Voting System";
+  }, []);
+
+  //Backend response the password request back to the panel
+  const [receivedPassword, setPassword] = React.useState("");
+  useEffect(() => {
+    fetch("http://localhost:5000/change_password")
+      .then((response) => response.json())
+      .then((data) => {
+        setPassword(data["password"]);
+        //console.log(data["password"]);
+      });
   }, []);
 
   //Input listeners
@@ -33,17 +43,25 @@ export default function ChangePasswordPanel() {
     setRetypePass(e.target.value);
   };
 
-  //Send button listener
+  //Confirm button listener
   const navigate = useNavigate();
+  const [isRepeatedPopUp, setRepeatedPopUp] = React.useState(false);
   const handleConfirm = async () => {
     let isMatch = false;
+    let isRepeated = false;
 
     //Check if the password met all requirements
     if (inputPassword.match("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}")) {
       isMatch = true;
     }
 
-    if (inputRetype === inputPassword && isMatch) {
+    //Check if the password is the same as the old one
+    if (inputPassword === receivedPassword) {
+      setRepeatedPopUp(true);
+      isRepeated = true;
+    }
+
+    if (inputRetype === inputPassword && isMatch && !isRepeated) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       await fetch("http://localhost:5000/change_password", {
         method: "POST",
@@ -87,17 +105,6 @@ export default function ChangePasswordPanel() {
     </>
   );
 
-  //Show invalid retype password
-  const InvalidPasswordRetype = () => {
-    return (
-      <>
-        <Text data-testid="invalidRetype" color="red" mb={3}>
-          *Your password does not match up*
-        </Text>
-      </>
-    );
-  };
-
   //DOM
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
@@ -132,7 +139,14 @@ export default function ChangePasswordPanel() {
               type="password"
             ></Input>
             {inputRetype !== inputPassword && inputRetype.length > 0 && (
-              <InvalidPasswordRetype></InvalidPasswordRetype>
+              <Text data-testid="invalidRetype" color="red" mb={3}>
+                *Your password does not match up*
+              </Text>
+            )}
+            {isRepeatedPopUp && (
+              <Text data-testid="invalidRetype" color="red" mb={3}>
+                *Your new password is the same as the old password.*
+              </Text>
             )}
           </Stack>
           <Stack direction="column" justify="left" ml={70}>
@@ -157,6 +171,11 @@ export default function ChangePasswordPanel() {
           >
             Cancel
           </Button>
+        </Wrap>
+        <Wrap justify="center">
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Wrap>
       </Flex>
     </Flex>

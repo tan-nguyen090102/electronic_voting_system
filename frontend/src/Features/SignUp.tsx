@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Flex,
@@ -12,6 +11,7 @@ import {
   Stack,
   FormControl,
   FormLabel,
+  Link,
 } from "@chakra-ui/react";
 
 export default function SignUpPanel() {
@@ -138,63 +138,8 @@ export default function SignUpPanel() {
     setRetypePass(e.target.value);
   };
 
-  //Show invalid zip code format
-  const InvalidZip = () => {
-    return (
-      <>
-        <Text data-testid="invalidZip" color="red" mb={3}>
-          *Please enter correct zip code format (0-9)*
-        </Text>
-      </>
-    );
-  };
-
-  //Show invalid email format
-  const InvalidEmail = () => {
-    return (
-      <>
-        <Text data-testid="invalidEmail" color="red" mb={3} ml={50} mt={3}>
-          *Please use correct email format*
-        </Text>
-      </>
-    );
-  };
-
-  //Show invalid retype password
-  const InvalidPasswordRetype = () => {
-    return (
-      <>
-        <Text data-testid="invalidRetype" color="red" mb={3}>
-          *Your password does not match up*
-        </Text>
-      </>
-    );
-  };
-
-  //Show invalid phone number format
-  const InvalidPhoneNumber = () => {
-    return (
-      <>
-        <Text data-testid="invalidPhone" color="red" mb={3}>
-          *Please use correct phone number format (0-9)*
-        </Text>
-      </>
-    );
-  };
-
-  //Show not all field has been filled
-  const UnfilledFields = () => {
-    return (
-      <>
-        <Text data-testid="unfilledFields" color="red" mb={3}>
-          *Please fill out all required fields*
-        </Text>
-      </>
-    );
-  };
-
   //Container for state options
-  const stateOption = (
+  const stateOptions = (
     <>
       <option selected hidden disabled value="">
         State
@@ -253,7 +198,7 @@ export default function SignUpPanel() {
   );
 
   //Container for security questions
-  const questionOption = (
+  const questionOptions = (
     <>
       <option value="0">What is your mother's hometown?</option>
       <option value="1">What is your chilhood's name?</option>
@@ -362,7 +307,7 @@ export default function SignUpPanel() {
                 borderWidth={2}
                 onChange={handleSelection}
               >
-                {stateOption}
+                {stateOptions}
               </Select>
               <Input
                 name="zip"
@@ -377,7 +322,11 @@ export default function SignUpPanel() {
               ></Input>
             </Stack>
             {!inputValue.zip.match("^[0-9]{0,5}$") &&
-              inputValue.zip.length > 0 && <InvalidZip></InvalidZip>}
+              inputValue.zip.length > 0 && (
+                <Text data-testid="invalidZip" color="red" mb={3}>
+                  *Please enter correct zip code format (0-9)*
+                </Text>
+              )}
           </FormControl>
           <Stack justify="left">
             <FormControl isRequired>
@@ -397,7 +346,17 @@ export default function SignUpPanel() {
                 {!inputValue.email.match(
                   "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
                 ) &&
-                  inputValue.email.length > 0 && <InvalidEmail></InvalidEmail>}
+                  inputValue.email.length > 0 && (
+                    <Text
+                      data-testid="invalidEmail"
+                      color="red"
+                      mb={3}
+                      ml={50}
+                      mt={3}
+                    >
+                      *Please use correct email format*
+                    </Text>
+                  )}
               </Stack>
               <Stack direction="row" justify="left">
                 <Stack direction="column" justify="center">
@@ -426,7 +385,9 @@ export default function SignUpPanel() {
                   ></Input>
                   {inputRetype !== inputValue.password &&
                     inputRetype.length > 0 && (
-                      <InvalidPasswordRetype></InvalidPasswordRetype>
+                      <Text data-testid="invalidRetype" color="red" mb={3}>
+                        *Your password does not match up*
+                      </Text>
                     )}
                 </Stack>
                 <Stack direction="column" justify="left" ml={70}>
@@ -462,7 +423,9 @@ export default function SignUpPanel() {
               </Stack>
               {!inputValue.phone.match("^[0-9]{0,15}$") &&
                 inputValue.phone.length > 0 && (
-                  <InvalidPhoneNumber></InvalidPhoneNumber>
+                  <Text data-testid="invalidPhone" color="red" mb={3}>
+                    *Please use correct phone number format (0-9)*
+                  </Text>
                 )}
             </FormControl>
             <FormControl isRequired>
@@ -476,7 +439,7 @@ export default function SignUpPanel() {
                   defaultValue="0"
                   value={inputSelection["questionIndex"]}
                 >
-                  {questionOption}
+                  {questionOptions}
                 </Select>
                 <Input
                   name="securityAnswer"
@@ -488,7 +451,11 @@ export default function SignUpPanel() {
                   mb={6}
                   background="gray.200"
                 ></Input>
-                {decision && <UnfilledFields></UnfilledFields>}
+                {decision && (
+                  <Text data-testid="unfilledFields" color="red" mb={3}>
+                    *Please fill out all required fields*
+                  </Text>
+                )}
               </Stack>
             </FormControl>
           </Stack>
@@ -510,7 +477,15 @@ export default function SignUpPanel() {
             Cancel
           </Button>
         </Wrap>
-        <Text fontSize="xs" mt={10}>
+        <Link
+          href="/admin_verification"
+          color="blue"
+          mt={6}
+          onChange={handleSignup}
+        >
+          Sign up as Manager/Administrator of Voting System
+        </Link>
+        <Text fontSize="xs" mt={6}>
           Voting System
         </Text>
       </Flex>
