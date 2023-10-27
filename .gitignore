@@ -1,2 +1,5 @@
 # ignores .idea files from Netbrains IDEs
 .idea
+
+#ignoring pycache files
+*.pyc
