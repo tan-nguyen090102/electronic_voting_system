@@ -17,7 +17,7 @@ export default function HomePage() {
 
   return (
     <>
-      <NavBar isLoggedIn={false} />
+      <NavBar title={"My Vote"} isLoggedIn={false} />
       <Stack direction="column">
         <Spacer />
         <Box

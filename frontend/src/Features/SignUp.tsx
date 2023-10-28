@@ -122,6 +122,7 @@ export default function SignUpPanel() {
           driverID: inputValue["driverID"],
           questionIndex: inputSelection["questionIndex"],
           securityAnswer: inputValue["securityAnswer"],
+          approvalStatus: "pending",
         }),
       }).catch((error) => console.log(error));
       navigate("/login");
