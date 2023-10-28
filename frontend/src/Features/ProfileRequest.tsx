@@ -13,7 +13,7 @@ import {
   Stack,
   Button,
   Wrap,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBar } from "./NavBar";
 
@@ -116,6 +116,16 @@ export default function ProfileRequestPanel() {
               </Text>
             </Stack>
           </Wrap>
+          <Wrap justify="center">
+            <Stack direction="column">
+              <Text fontSize="md" mt={0}>
+                Current registered voter: {receivedApprovedList?.length}
+              </Text>
+              <Text fontSize="md" mb={3}>
+                Users to be approved: {receivedPendingList?.length}
+              </Text>
+            </Stack>
+          </Wrap>
           <Accordion allowMultiple>
             <AccordionItem data-testid="pending-accordion" width="container.md">
               <h2>
@@ -162,6 +172,7 @@ export default function ProfileRequestPanel() {
     </div>
   );
 
+  //Helper function to create each accordion box
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
     const userDetails = jsonList?.map((user, index) => {
