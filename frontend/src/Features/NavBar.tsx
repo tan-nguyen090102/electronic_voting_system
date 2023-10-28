@@ -11,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 
 interface TopNavProps {
   title: string;
-  isLoggedIn: boolean;
+  isLoggedIn: string;
+  userName: string;
 }
 
 interface ListNavProps {
@@ -66,14 +67,14 @@ export default function NavBar(props: TopNavProps) {
 
       <Flex flex={{ base: 1 }} justify={{ base: "center", md: "end" }}>
         <HStack spacing="24px">
-          <Button colorScheme="teal" onClick={handleLogin}>
-            {isLoggedIn ? "Log out" : "Log in"}
-          </Button>
           <Button
             colorScheme="teal"
-            onClick={isLoggedIn ? handleUserProfile : handleSignup}
+            onClick={isLoggedIn === "true" ? handleUserProfile : handleSignup}
           >
-            {isLoggedIn ? "User Profile" : "Sign up"}
+            {isLoggedIn ? props.userName : "Sign up"}
+          </Button>
+          <Button colorScheme="teal" onClick={handleLogin}>
+            {isLoggedIn === "true" ? "Log out" : "Log in"}
           </Button>
         </HStack>
       </Flex>

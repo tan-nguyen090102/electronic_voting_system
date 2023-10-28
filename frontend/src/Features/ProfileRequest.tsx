@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Flex,
   Accordion,
@@ -12,6 +12,8 @@ import {
   ListItem,
   Stack,
   Button,
+  Wrap,
+  Text,
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBar } from "./NavBar";
 
@@ -21,10 +23,14 @@ export default function ProfileRequestPanel() {
     document.title = "User Profile Manager - Voting System Administrator";
   }, []);
 
+  //Receive data from other page.
+  const { state } = useLocation();
+  const { user } = state;
+
+  //Retrieve the list of all user to the page
   const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
   const [receivedPendingList, setPendingList] = React.useState<Array<any>>();
   const [receivedDeniedList, setDeniedList] = React.useState<Array<any>>();
-
   useEffect(() => {
     fetch("http://localhost:5000/request")
       .then((response) => response.json())
@@ -36,6 +42,7 @@ export default function ProfileRequestPanel() {
       });
   }, []);
 
+  //Approve button listener
   const handleApprove = async (user: any, index: number) => {
     console.log(user);
     await fetch("http://localhost:5000/request", {
@@ -59,6 +66,7 @@ export default function ProfileRequestPanel() {
       });
   };
 
+  //Deny button listener
   const handleDeny = async (user: any, index: number) => {
     console.log(index);
     await fetch("http://localhost:5000/request", {
@@ -85,7 +93,11 @@ export default function ProfileRequestPanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"User Profile Request"} isLoggedIn={true}></NavBar>
+      <NavBar
+        title={"User Profile Request"}
+        isLoggedIn="true"
+        userName={user}
+      ></NavBar>
       <ListNavigationBar indexClick="4"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
@@ -96,12 +108,22 @@ export default function ProfileRequestPanel() {
           p={10}
           rounded={6}
         >
+          <Wrap justify="center">
+            <Stack direction="column">
+              <Text fontSize="md" mt={0}>
+                Current registered voter: {receivedApprovedList?.length}
+              </Text>
+              <Text fontSize="md" mb={3}>
+                Users to be approved: {receivedPendingList?.length}
+              </Text>
+            </Stack>
+          </Wrap>
           <Accordion allowMultiple>
             <AccordionItem width="container.md">
               <h2>
                 <AccordionButton>
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
-                    <b>PENDING REQUEST</b>
+                    <b>PENDING REQUEST ({receivedPendingList?.length})</b>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -114,7 +136,7 @@ export default function ProfileRequestPanel() {
               <h2>
                 <AccordionButton>
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
-                    <b>DENIED REQUEST</b>
+                    <b>DENIED REQUEST ({receivedDeniedList?.length})</b>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -127,7 +149,7 @@ export default function ProfileRequestPanel() {
               <h2>
                 <AccordionButton>
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
-                    <b>APPROVED REQUEST</b>
+                    <b>APPROVED REQUEST ({receivedApprovedList?.length})</b>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -142,6 +164,7 @@ export default function ProfileRequestPanel() {
     </div>
   );
 
+  //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
     const userDetails = jsonList?.map((user, index) => {
       return (

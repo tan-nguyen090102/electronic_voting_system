@@ -26,7 +26,7 @@ export default function ForgotPanel() {
       "What is your chilhood's name?",
       "What is your elementary school name?",
       "How many pets do you currently have?",
-      "What is your grandmotherr's first name?",
+      "What is your grandmother's first name?",
       "What is your favorite country to visit?",
     ];
 
