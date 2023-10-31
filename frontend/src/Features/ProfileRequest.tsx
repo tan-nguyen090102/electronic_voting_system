@@ -25,7 +25,7 @@ export default function ProfileRequestPanel() {
 
   //Receive data from other page.
   const { state } = useLocation();
-  const { user } = state;
+  const { user } = state || { user: "" };
 
   //Retrieve the list of all user to the page
   const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
@@ -119,7 +119,7 @@ export default function ProfileRequestPanel() {
             </Stack>
           </Wrap>
           <Accordion allowMultiple>
-            <AccordionItem width="container.md">
+            <AccordionItem data-testid="pending-accordion" width="container.md">
               <h2>
                 <AccordionButton>
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
@@ -168,7 +168,7 @@ export default function ProfileRequestPanel() {
   function CreateAccordionItem(jsonList: any[]) {
     const userDetails = jsonList?.map((user, index) => {
       return (
-        <AccordionItem width="container.md" key={index}>
+        <AccordionItem data-testid="accordion" width="container.md" key={index}>
           <h2>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
@@ -197,6 +197,7 @@ export default function ProfileRequestPanel() {
                 <ListItem>Driver License ID: {user.driverID}</ListItem>
               </List>
               <Button
+                data-testid="approveButton"
                 bg="teal.400"
                 isDisabled={
                   user.approvalStatus === "denied" ||
@@ -211,6 +212,7 @@ export default function ProfileRequestPanel() {
                 Approve
               </Button>
               <Button
+                data-testid="denyButton"
                 bg="red.400"
                 isDisabled={user.approvalStatus === "denied" ? true : false}
                 onClick={() => {

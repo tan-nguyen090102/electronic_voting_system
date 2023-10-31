@@ -71,7 +71,7 @@ export default function NavBar(props: TopNavProps) {
             colorScheme="teal"
             onClick={isLoggedIn === "true" ? handleUserProfile : handleSignup}
           >
-            {isLoggedIn ? props.userName : "Sign up"}
+            {isLoggedIn === "true" ? props.userName : "Sign up"}
           </Button>
           <Button colorScheme="teal" onClick={handleLogin}>
             {isLoggedIn === "true" ? "Log out" : "Log in"}

@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import ForgotPanel from "../src/Features/ForgotPassword";
 import { testObject } from "./testData.js";
+import React from "react";
 
 //Clean up after each test
 afterEach(() => {

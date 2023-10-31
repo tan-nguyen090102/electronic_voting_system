@@ -7,6 +7,7 @@ import LoginPanel from "../src/Features/LogIn";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { testObject } from "./testData";
+import React from "react";
 
 //Clean up after each test
 afterEach(() => {

@@ -11,7 +11,6 @@ import {
   Stack,
   FormControl,
   FormLabel,
-  Link,
 } from "@chakra-ui/react";
 
 export default function SignUpPanel() {
@@ -36,6 +35,7 @@ export default function SignUpPanel() {
   };
 
   const initialSelections = {
+    role: "voter",
     state: "",
     questionIndex: "0",
   };
@@ -101,7 +101,7 @@ export default function SignUpPanel() {
     if (inputRetype === inputValue.password && isFilled && isMatch) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       setDecision(false);
-      await fetch("http://localhost:5000/signup", {
+      await fetch(`http://localhost:5000/${inputSelection.role}s/create`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -232,6 +232,14 @@ export default function SignUpPanel() {
     </>
   );
 
+  //Container for role options
+  const roleOptions = (
+    <>
+      <option value="voter">Voter</option>
+      <option value="manager">Manager</option>
+    </>
+  );
+
   //DOM
   return (
     <Flex height="auto" alignItems="left" justifyContent="center">
@@ -243,7 +251,18 @@ export default function SignUpPanel() {
         p={10}
         rounded={6}
       >
-        <Heading mb={6}>Sign up for Voting</Heading>
+        <Stack direction="row">
+          <Heading mb={6}>Sign up for Voting</Heading>
+          <Select
+            name="role"
+            data-testid="role"
+            borderWidth={3}
+            onChange={handleSelection}
+            defaultValue="voter"
+          >
+            {roleOptions}
+          </Select>
+        </Stack>
         <Wrap>
           <FormControl isRequired>
             <FormLabel>Name and Address: </FormLabel>
@@ -478,14 +497,6 @@ export default function SignUpPanel() {
             Cancel
           </Button>
         </Wrap>
-        <Link
-          href="/admin_verification"
-          color="blue"
-          mt={6}
-          onChange={handleSignup}
-        >
-          Sign up as Manager/Administrator of Voting System
-        </Link>
         <Text fontSize="xs" mt={6}>
           Voting System
         </Text>

@@ -18,7 +18,7 @@ export default function HomePage() {
 
   //Receive data from other page.
   const { state } = useLocation();
-  const { user, isLoggedIn } = state;
+  const { user, isLoggedIn } = state || { user: "", isLoggedIn: "false" };
 
   return (
     <>
