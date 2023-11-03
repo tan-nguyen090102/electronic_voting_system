@@ -20,7 +20,7 @@ import NavBar, { ListNavigationBar } from "./NavBar";
 export default function ProfileRequestPanel() {
   //Change web title
   useEffect(() => {
-    document.title = "User Profile Manager - Voting System Administrator";
+    document.title = "User Request - Voting System Administrator";
   }, []);
 
   //Receive data from other page.
@@ -44,7 +44,6 @@ export default function ProfileRequestPanel() {
 
   //Approve button listener
   const handleApprove = async (user: any, index: number) => {
-    console.log(user);
     await fetch("http://localhost:5000/request", {
       method: "POST",
       headers: {
@@ -68,7 +67,6 @@ export default function ProfileRequestPanel() {
 
   //Deny button listener
   const handleDeny = async (user: any, index: number) => {
-    console.log(index);
     await fetch("http://localhost:5000/request", {
       method: "POST",
       headers: {
@@ -98,7 +96,7 @@ export default function ProfileRequestPanel() {
         isLoggedIn="true"
         userName={user}
       ></NavBar>
-      <ListNavigationBar indexClick="4"></ListNavigationBar>
+      <ListNavigationBar indexClick="5"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"

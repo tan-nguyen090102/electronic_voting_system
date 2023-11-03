@@ -7,7 +7,7 @@ import {
   Image,
   Stack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface TopNavProps {
   title: string;
@@ -88,26 +88,34 @@ export function ListNavigationBar(props: ListNavProps) {
   const RACE_INDEX = "1";
   const PRECINCT_INDEX = "2";
   const CANDIDATE_INDEX = "3";
-  const REQUEST_INDEX = "4";
+  const SEARCH_INDEX = "4";
+  const REQUEST_INDEX = "5";
+
+  //Receive data from other page.
+  const { state } = useLocation();
+  const { user } = state || { user: "" };
 
   //Button Listeners
   const navigate = useNavigate();
   const handleClick = (index: string) => {
     switch (index) {
       case ELECTION_INDEX:
-        navigate("/election");
+        navigate("/election", { state: { user: user } });
         break;
       case RACE_INDEX:
-        navigate("/race");
+        navigate("/race", { state: { user: user } });
         break;
       case PRECINCT_INDEX:
-        navigate("/precinct");
+        navigate("/precinct", { state: { user: user } });
         break;
       case CANDIDATE_INDEX:
-        navigate("/candidate");
+        navigate("/candidate", { state: { user: user } });
         break;
       case REQUEST_INDEX:
-        navigate("/request");
+        navigate("/request", { state: { user: user } });
+        break;
+      case SEARCH_INDEX:
+        navigate("/search", { state: { user: user } });
         break;
     }
   };
@@ -155,6 +163,16 @@ export function ListNavigationBar(props: ListNavProps) {
           isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
         >
           CANDIDATES
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(SEARCH_INDEX)}
+          isDisabled={props.indexClick === SEARCH_INDEX ? true : false}
+        >
+          USER SEARCH
         </Button>
         <Button
           bg="teal.400"
