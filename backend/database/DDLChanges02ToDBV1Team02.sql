@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `test_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 
 USE `test_db`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: test_db
+-- Host: 127.0.0.1    Database: test_db
 -- ------------------------------------------------------
 -- Server version	8.0.34
 
@@ -18,35 +18,6 @@ USE `test_db`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `info`
---
-
-DROP TABLE IF EXISTS `info`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `info` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(60) DEFAULT NULL,
-  `lastname` varchar(60) DEFAULT NULL,
-  `address` text,
-  `phone_num` varchar(20) DEFAULT NULL,
-  `password` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `info`
---
-
-LOCK TABLES `info` WRITE;
-/*!40000 ALTER TABLE `info` DISABLE KEYS */;
-INSERT INTO `info` VALUES (1,'Ryan','Edwall','5th street','(827) 392-8654','NoSQLAlchemy'),(2,'Tan','Nguyen','123 Street','(827) 392-8654','NoSQLAlchemy');
-/*!40000 ALTER TABLE `info` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `voters`
 --
 
@@ -55,13 +26,23 @@ DROP TABLE IF EXISTS `voters`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `voters` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(60) DEFAULT NULL,
-  `lastname` varchar(60) DEFAULT NULL,
-  `address` text,
+  `first_name` varchar(60) DEFAULT NULL,
+  `middle_name` varchar(60) DEFAULT NULL,
+  `last_name` varchar(60) DEFAULT NULL,
+  `street_address` text,
+  `email` text,
   `phone_num` varchar(20) DEFAULT NULL,
   `password` text,
+  `age` int DEFAULT NULL,
+  `drivers_license` text,
+  `approval_status` enum('pending','approved','declined') DEFAULT 'pending',
+  `question_index` int DEFAULT NULL,
+  `question_answer` text,
+  `zip` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `zip` (`zip`),
+  CONSTRAINT `voters_ibfk_1` FOREIGN KEY (`zip`) REFERENCES `zips` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -72,6 +53,32 @@ CREATE TABLE `voters` (
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `zips`
+--
+
+DROP TABLE IF EXISTS `zips`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `zips` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `zip_code` varchar(10) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `state` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `zips`
+--
+
+LOCK TABLES `zips` WRITE;
+/*!40000 ALTER TABLE `zips` DISABLE KEYS */;
+/*!40000 ALTER TABLE `zips` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -213,12 +220,12 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-16 20:05:54
+-- Dump completed on 2023-11-08  3:58:29
 CREATE DATABASE  IF NOT EXISTS `dev_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `dev_db`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: dev_db
+-- Host: 127.0.0.1    Database: dev_db
 -- ------------------------------------------------------
 -- Server version	8.0.34
 
@@ -234,35 +241,6 @@ USE `dev_db`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `info`
---
-
-DROP TABLE IF EXISTS `info`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `info` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(60) DEFAULT NULL,
-  `lastname` varchar(60) DEFAULT NULL,
-  `address` text,
-  `phone_num` varchar(20) DEFAULT NULL,
-  `password` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `info`
---
-
-LOCK TABLES `info` WRITE;
-/*!40000 ALTER TABLE `info` DISABLE KEYS */;
-INSERT INTO `info` VALUES (1,'Ryan','Edwall','5th street','(827) 392-8654','NoSQLAlchemy'),(2,'Tan','Nguyen','123 Street','(827) 392-8654','NoSQLAlchemy');
-/*!40000 ALTER TABLE `info` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `voters`
 --
 
@@ -271,13 +249,23 @@ DROP TABLE IF EXISTS `voters`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `voters` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(60) DEFAULT NULL,
-  `lastname` varchar(60) DEFAULT NULL,
-  `address` text,
+  `first_name` varchar(60) DEFAULT NULL,
+  `middle_name` varchar(60) DEFAULT NULL,
+  `last_name` varchar(60) DEFAULT NULL,
+  `street_address` text,
+  `email` text,
   `phone_num` varchar(20) DEFAULT NULL,
   `password` text,
+  `age` int DEFAULT NULL,
+  `drivers_license` text,
+  `approval_status` enum('pending','approved','declined') DEFAULT 'pending',
+  `question_index` int DEFAULT NULL,
+  `question_answer` text,
+  `zip` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
+  UNIQUE KEY `id` (`id`),
+  KEY `zip` (`zip`),
+  CONSTRAINT `voters_ibfk_1` FOREIGN KEY (`zip`) REFERENCES `zips` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -288,6 +276,32 @@ CREATE TABLE `voters` (
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `zips`
+--
+
+DROP TABLE IF EXISTS `zips`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `zips` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `zip_code` varchar(10) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `state` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `zips`
+--
+
+LOCK TABLES `zips` WRITE;
+/*!40000 ALTER TABLE `zips` DISABLE KEYS */;
+/*!40000 ALTER TABLE `zips` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -429,4 +443,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-16 20:05:54
+-- Dump completed on 2023-11-08  3:58:29
