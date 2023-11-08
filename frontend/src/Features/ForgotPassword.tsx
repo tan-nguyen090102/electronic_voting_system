@@ -18,16 +18,6 @@ export default function ForgotPanel() {
   }, []);
 
   //Backend response the security question and answer back to the panel
-  const [receivedAnswer, setReceivedAnswer] = React.useState("");
-  const [receivedQuestion, setQuestion] = React.useState("0");
-  useEffect(() => {
-    fetch("http://localhost:5000/forgot_password")
-      .then((response) => response.json())
-      .then((data) => {
-        setReceivedAnswer(data["securityAnswer"]);
-        setQuestion(data["questionIndex"]);
-      });
-  }, []);
 
   //Security question lists
   function questionListIndexing() {
@@ -45,10 +35,18 @@ export default function ForgotPanel() {
 
   //Input email listener
   const [inputEmail, setInputEmail] = React.useState("");
-  const handleInput = (e: {
+  const [isAccepted, setDecision] = React.useState(false);
+  const handleInput = async (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setInputEmail(e.target.value);
+
+    //Check if the email met all requirements
+    if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
+      setDecision(true);
+    } else {
+      setDecision(false);
+    }
   };
 
   //Input answer listener
@@ -61,32 +59,53 @@ export default function ForgotPanel() {
 
   //Send button listener
   const navigate = useNavigate();
-  const [isInvalidPopUp, setPopUp] = React.useState(false);
-  const [isAccepted, setDecision] = React.useState(false);
-  const [isEmailPopUp, setEmailPopup] = React.useState(false);
+  const [receivedAnswer, setReceivedAnswer] = React.useState("");
+  const [receivedQuestion, setQuestion] = React.useState("0");
+  const [isSecurityPopUp, setSecurityPopup] = React.useState(false);
+  const [isInvalidCredential, setInvalidCredential] = React.useState(false);
   const handleSend = async () => {
-    let isMatch = false;
-
-    //Check if the person has answer the security question
-    if (inputEmail !== "") {
-      //Check if the email met all requirements
-      if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
-        isMatch = true;
-        setDecision(true);
-      }
-    } else {
-      if (inputAnswer === receivedAnswer) {
-        setEmailPopup(true);
-        setPopUp(false);
-      } else {
-        setEmailPopup(false);
-        setPopUp(true);
-      }
+    //If the email is accepted, proceed to fetch the backend
+    if (isAccepted && !isSecurityPopUp) {
+      await fetch("http://localhost:5000/forgot_password/verify", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          email: inputEmail,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "false") {
+            setSecurityPopup(false);
+            setInvalidCredential(true);
+          } else {
+            setQuestion(data["questionIndex"]);
+            setReceivedAnswer(data["securityAnswer"]);
+            setSecurityPopup(true);
+            setInvalidCredential(false);
+          }
+        })
+        .catch((error) => console.log(error));
     }
+  };
 
-    if (isMatch && !isAccepted) {
-      //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
-      await fetch("http://localhost:5000/forgot_password", {
+  const [isValidAnswer, setValid] = React.useState(false);
+  const handleVerifyAnswer = () => {
+    //Check if the security answer matches the registerd answer
+    if (inputAnswer === receivedAnswer) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
+  };
+
+  const handleSendLink = async () => {
+    if (isValidAnswer && isSecurityPopUp) {
+      await fetch("http://localhost:5000/forgot_password/send_email", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -97,7 +116,8 @@ export default function ForgotPanel() {
           email: inputEmail,
         }),
       });
-      navigate("/change_password");
+
+      //navigate("/change_password");
     }
   };
 
@@ -119,35 +139,9 @@ export default function ForgotPanel() {
         <Heading mb={6}>Change your password</Heading>
         <Stack direction="column">
           <Text>Let's get into your account!</Text>
-          <Text mb={3}>First, please answer the security question.</Text>
-          <Select borderWidth={3}>
-            <option value="0">{questionListIndexing()}</option>
-          </Select>
-          <Input
-            name="securityAnswer"
-            data-testid="securityAnswer"
-            onChange={handleAnswer}
-            value={inputAnswer}
-            placeholder="Answer"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-          ></Input>
-          {isInvalidPopUp && (
-            <Text data-testid="invalidInput" color="red" mb={3}>
-              *Invalid Credential*
-            </Text>
-          )}
-        </Stack>
-        <Stack
-          direction="column"
-          style={{
-            display: isEmailPopUp ? "block" : "none",
-          }}
-        >
           <Text mb={3}>
-            Provide us your registered email so that we can send you a link to
-            change your password.
+            First, provide us your registered email so that we can send you a
+            link to change your password.
           </Text>
           <Input
             name="email"
@@ -167,22 +161,69 @@ export default function ForgotPanel() {
                 *Please use correct email format*
               </Text>
             )}
+          {isInvalidCredential && (
+            <Text data-testid="invalidInput" color="red" mb={3}>
+              *Invalid Credential*
+            </Text>
+          )}
+        </Stack>
+        <Stack
+          direction="column"
+          style={{
+            display: isSecurityPopUp ? "block" : "none",
+          }}
+        >
+          <Text mb={3}>Please answer the security question.</Text>
+          <Select borderWidth={3}>
+            <option value="0">{questionListIndexing()}</option>
+          </Select>
+          <Input
+            name="securityAnswer"
+            data-testid="securityAnswer"
+            onChange={handleAnswer}
+            value={inputAnswer}
+            placeholder="Answer"
+            variant="filled"
+            mb={3}
+            background="gray.200"
+          ></Input>
+          {!isValidAnswer && (
+            <Text data-testid="invalidInput" color="red" mb={3}>
+              *Invalid Credential*
+            </Text>
+          )}
         </Stack>
         <Wrap spacing="20px" mt={3}>
           <Button
             data-testid="sendButton"
             colorScheme="teal"
-            onClick={handleSend}
+            onClick={isSecurityPopUp ? handleVerifyAnswer : handleSend}
+            style={{
+              display: isValidAnswer ? "none" : "block",
+            }}
           >
-            {isEmailPopUp ? "Send" : "Answer"}
+            {isSecurityPopUp ? "Answer" : "Verify"}
           </Button>
           <Button
             data-testid="cancelButton"
             colorScheme="teal"
             variant="outline"
             onClick={handleCancel}
+            style={{
+              display: isValidAnswer ? "none" : "block",
+            }}
           >
             Cancel
+          </Button>
+          <Button
+            data-testid="cancelButton"
+            colorScheme="teal"
+            onClick={handleSendLink}
+            style={{
+              display: isValidAnswer ? "block" : "none",
+            }}
+          >
+            Send the link
           </Button>
         </Wrap>
         <Wrap justify="center">
