@@ -5,7 +5,7 @@ class Settings:
 
     my_sql_config_dict = {
         "user": "root",
-        "password": "ff4_Rydia",
+        "password": "your_password",
         "server": "localhost",
         "port": 3306,
         "db": "dev_db"
