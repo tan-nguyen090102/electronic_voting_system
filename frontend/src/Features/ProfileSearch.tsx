@@ -47,7 +47,7 @@ export default function SearchPanel() {
     });
   };
 
-  //Signup button listener
+  //Search button listener
   const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
   const [isAny, setAny] = React.useState(false);
   const handleSearch = async () => {
