@@ -70,3 +70,14 @@ test("Cancel button click", async () => {
   await act(() => userEvent.click(cancelButton));
   await waitFor(() => expect(cancelButton).toBeDefined());
 });
+
+test("Send link button click", async () => {
+  render(
+    <BrowserRouter>
+      <ForgotPanel />
+    </BrowserRouter>
+  );
+  const sendLinkButton = await screen.getByTestId("sendLinkButton");
+  await act(() => userEvent.click(sendLinkButton));
+  await waitFor(() => expect(sendLinkButton).toBeDefined());
+});
