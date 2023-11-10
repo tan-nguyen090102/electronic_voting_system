@@ -15,6 +15,8 @@ module.exports = {
         securityAnswer: "Summer City",
         email: "idontknowmuch@school.edu",
         employeeID: "NoSQLAlchemy",
-        role: "Manager"
+        role: "Manager",
+        name: "David Naval Cotton",
+        stationID: "52317-6757"
     }
 } 

@@ -86,7 +86,6 @@ export default function LoginPanel() {
         } else {
           setDecision(true);
         }
-        console.log(data);
       })
       .catch((error) => console.log(error));
   };

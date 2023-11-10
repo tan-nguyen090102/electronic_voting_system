@@ -30,6 +30,11 @@ export default function SearchPanel() {
   const { state } = useLocation();
   const { user } = state || { user: "" };
 
+  //Set the initial list to be empty
+  useEffect(() => {
+    setApprovedList([]);
+  }, []);
+
   //Sets of initial values
   const initialValues = {
     name: "",
@@ -49,28 +54,41 @@ export default function SearchPanel() {
 
   //Search button listener
   const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
-  const [isAny, setAny] = React.useState(false);
+  const [isInvalidSearch, setInvalidSearch] = React.useState(false);
   const handleSearch = async () => {
-    //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
-    await fetch(`http://localhost:5000/search`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "content-type": "application/json; charset=UTF-8",
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        name: inputValue.name,
-        zip: inputValue.zip,
-        stationID: inputValue.stationID,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        var jsonList = DecomposeJSONObject(data);
-        setApprovedList(jsonList.pop());
-        if (receivedApprovedList?.length !== 0) setAny(true);
-      });
+    let isFilled = false;
+
+    //Check if there is at least one field filled in
+    if (inputValue.name || inputValue.stationID || inputValue.zip) {
+      isFilled = true;
+      setInvalidSearch(false);
+    } else {
+      setInvalidSearch(true);
+    }
+
+    if (isFilled) {
+      //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
+      await fetch(`http://localhost:5000/search`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          name: inputValue.name,
+          zip: inputValue.zip,
+          stationID: inputValue.stationID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          var jsonList = DecomposeJSONObject(data);
+          setApprovedList(jsonList.pop());
+        });
+    } else {
+      setApprovedList([]);
+    }
   };
 
   //DOM
@@ -113,7 +131,7 @@ export default function SearchPanel() {
                 </Text>
                 <Input
                   name="zip"
-                  data-testid="zipSearch"
+                  data-testid="zip"
                   onChange={handleInput}
                   value={inputValue.zip}
                   variant="filled"
@@ -134,6 +152,12 @@ export default function SearchPanel() {
                   background="gray.200"
                 ></Input>
               </Stack>
+              {isInvalidSearch && (
+                <Text data-testid="invalidZip" color="red" mb={3}>
+                  *The criteria is too broad. Please narrow it down by filling
+                  some fields*
+                </Text>
+              )}
             </Stack>
           </FormControl>
           <Wrap spacing="20px">
@@ -149,7 +173,7 @@ export default function SearchPanel() {
           <FormControl mt={6}>
             <FormLabel>Search results:</FormLabel>
           </FormControl>
-          {!isAny && (
+          {!(receivedApprovedList?.length !== 0) && (
             <Text data-testid="invalidInput" mb={3}>
               There is no user that matched the search criteria.
             </Text>
@@ -196,6 +220,9 @@ export default function SearchPanel() {
                     user.zip}
                 </ListItem>
                 <ListItem>Driver License ID: {user.driverID}</ListItem>
+                <ListItem>
+                  Current status: <b>{user.approvalStatus.toUpperCase()}</b>
+                </ListItem>
               </List>
             </Stack>
           </AccordionPanel>
@@ -215,9 +242,7 @@ function DecomposeJSONObject(allJson: JSON) {
   });
 
   jsonList.forEach((user) => {
-    if (user.approvalStatus === "approved") {
-      approvedList.push(user);
-    }
+    approvedList.push(user);
   });
 
   jsonList = [];
