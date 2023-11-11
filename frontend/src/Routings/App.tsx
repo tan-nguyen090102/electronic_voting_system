@@ -7,6 +7,7 @@ import ForgotPanel from "../Features/ForgotPassword";
 import ChangePasswordPanel from "../Features/ChangePassword";
 import ProfileRequestPanel from "../Features/ProfileRequest";
 import SearchPanel from "../Features/ProfileSearch";
+import PrecinctPanel from "../Features/Precinct";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         ></Route>
         <Route path="/request" element={<ProfileRequestPanel />}></Route>
         <Route path="/search" element={<SearchPanel />}></Route>
+        <Route path="/precinct" element={<PrecinctPanel />}></Route>
       </Routes>
     </>
   );

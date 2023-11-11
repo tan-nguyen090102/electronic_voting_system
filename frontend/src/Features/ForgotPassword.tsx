@@ -291,6 +291,7 @@ export default function ForgotPanel() {
           onClose={onClose}
           motionPreset="slideInBottom"
           isCentered
+          closeOnOverlayClick={false}
         >
           <AlertDialogOverlay>
             <AlertDialogContent>
