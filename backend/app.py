@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify
+from flask_bcrypt import Bcrypt
 from pathlib import Path
 
 from flask_cors import CORS,cross_origin
 from database.database_functions import create_db_connection
 from routers.voters import voters_bp
 from routers.auth import auth_bp
-from config.config import config
+
 
 current_directory = Path.cwd()
 db_connection = create_db_connection("dev_db", current_directory / "database/config_db.json")
 
 app = Flask(__name__)
 CORS(app)
+bcrypt = Bcrypt(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 

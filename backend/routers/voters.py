@@ -1,5 +1,6 @@
 import flask
 from flask import Blueprint, request, jsonify
+from flask_bcrypt import Bcrypt
 from flask_cors import cross_origin
 from backend.dependencies import db
 from backend.services.voters import create_voter
@@ -9,14 +10,14 @@ import json
 
 
 voters_bp = Blueprint('voters_bp', __name__)
-
+bcrypt = Bcrypt()
 
 @voters_bp.route('/', methods=["POST"])
 @cross_origin()
-def voters(database=db):
+def voters(database=db, bcrypt_input=bcrypt):
 
     json_object = request.json
-    response = create_voter(database, json_object)
+    response = create_voter(database,bcrypt_input, json_object)
 
     if response == 200:
         return "Voter Created", 200

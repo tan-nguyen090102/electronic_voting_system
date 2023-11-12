@@ -1,9 +1,14 @@
 from backend.database.database_functions import execute_stored_proc
-def verify_voter(db, login_info):
-    table_name = "voters"
-    voter_where_clause = f"voters.email='{login_info['userID']}' and voters.password='{login_info['password']}'"
-    get_voter = execute_stored_proc(db, "select_all_from_table_with_where", (table_name, voter_where_clause,))
-    if get_voter is None:
-        return "false"
+
+
+def voter_login(db, bcrypt, login_info):
+    get_voter = execute_stored_proc(db, "check_voter", (login_info['userID'],))
+    if get_voter:
+        voter=get_voter[0]
+        print(voter[6])
+        if bcrypt.check_password_hash(voter[6], login_info['password']):
+            return "true"
+        else:
+            return "false"
     else:
-        return "true"
+        return "false"
