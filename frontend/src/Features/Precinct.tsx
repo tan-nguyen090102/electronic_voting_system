@@ -54,14 +54,23 @@ export default function PrecinctPanel() {
   const { user } = state || { user: "" };
 
   //Retrieve the list of all user to the page
-  const [receivedPrecinctList, setPrecinctList] = React.useState<Array<any>>();
-  const [copyPrecinctList, setCopyPrecinctList] = React.useState<Array<any>>();
+  const [receivedPrecinctList, setPrecinctList] = React.useState<Array<any>>(
+    []
+  );
+  const [copyPrecinctList, setCopyPrecinctList] = React.useState<Array<any>>(
+    []
+  );
   useEffect(() => {
     fetch("http://localhost:5000/precinct")
       .then((response) => response.json())
       .then((data) => {
-        setPrecinctList(data);
-        setCopyPrecinctList(data);
+        if (data.length === 0) {
+          setPrecinctList([]);
+          setCopyPrecinctList([]);
+        } else {
+          setPrecinctList(data);
+          setCopyPrecinctList(data);
+        }
       });
   }, []);
 
@@ -193,7 +202,7 @@ export default function PrecinctPanel() {
             </Stack>
           </Wrap>
           <Accordion allowMultiple>
-            {CreateAccordionItem(receivedPrecinctList as any[])}
+            {CreateAccordionItem(receivedPrecinctList)}
           </Accordion>
           <CreateAddModalBox
             isOpen={isOpen}
@@ -215,9 +224,9 @@ export default function PrecinctPanel() {
 
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
-    const precinctDetails = jsonList
-      ?.slice(0, MAX_PRECINCT_SHOWN)
-      .map((precinct, index) => {
+    const precinctDetails =
+      Array.isArray(jsonList) &&
+      jsonList.slice(0, MAX_PRECINCT_SHOWN).map((precinct, index) => {
         if (precinct.length === 0) {
           return <div key={index}></div>;
         } else {

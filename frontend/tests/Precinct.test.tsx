@@ -18,7 +18,7 @@ afterEach(() => {
 //Mock fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    json: () => Promise.resolve({ test: "Successful mock" }),
+    json: () => Promise.resolve({ test: "" }),
   })
 ) as jest.Mock;
 
