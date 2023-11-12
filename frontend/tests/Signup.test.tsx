@@ -60,6 +60,19 @@ test("Last name input", async () => {
   });
 });
 
+test("Date of Birth input", async () => {
+  render(
+    <BrowserRouter>
+      <SignUpPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const field = screen.getByTestId("dob");
+    userEvent.type(field, testObject.dob);
+    expect(field).toHaveValue(testObject.dob);
+  });
+});
+
 test("Street input", async () => {
   render(
     <BrowserRouter>
@@ -151,16 +164,16 @@ test("Password Retype input", async () => {
   });
 });
 
-test("Phone input", async () => {
+test("Passport input", async () => {
   render(
     <BrowserRouter>
       <SignUpPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("phone");
-    userEvent.type(field, testObject.phone);
-    expect(field).toHaveValue(testObject.phone);
+    const field = screen.getByTestId("passport");
+    userEvent.type(field, testObject.passport);
+    expect(field).toHaveValue(testObject.passport);
   });
 });
 

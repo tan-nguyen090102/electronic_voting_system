@@ -25,11 +25,12 @@ export default function SignUpPanel() {
     middleName: "",
     lastName: "",
     street: "",
+    dob: "",
     city: "",
     zip: "",
     email: "",
     password: "",
-    phone: "",
+    passport: "",
     driverID: "",
     securityAnswer: "",
   };
@@ -58,6 +59,8 @@ export default function SignUpPanel() {
       ...inputSelection,
       [name]: value,
     });
+
+    console.log(initialValues.dob);
   };
 
   //Cancel button listener
@@ -78,12 +81,13 @@ export default function SignUpPanel() {
       inputValue.middleName &&
       inputValue.lastName &&
       inputValue.street &&
+      inputValue.dob &&
       inputValue.city &&
       inputValue.zip &&
       inputSelection.state &&
       inputValue.email &&
       inputValue.password &&
-      inputValue.phone &&
+      inputValue.passport &&
       inputValue.driverID &&
       inputValue.securityAnswer
     ) {
@@ -101,7 +105,7 @@ export default function SignUpPanel() {
     if (inputRetype === inputValue.password && isFilled && isMatch) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       setDecision(false);
-      await fetch(`http://localhost:5000/${inputSelection.role}s/create`, {
+      await fetch(`http://localhost:5000/${inputSelection.role}s`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -109,19 +113,20 @@ export default function SignUpPanel() {
         },
         mode: "cors",
         body: JSON.stringify({
-          firstName: inputValue["firstName"],
-          middleName: inputValue["middleName"],
-          lastName: inputValue["lastName"],
-          street: inputValue["street"],
-          city: inputValue["city"],
-          state: inputSelection["state"],
-          zip: inputValue["zip"],
-          email: inputValue["email"],
-          password: inputValue["password"],
-          phone: inputValue["phone"],
-          driverID: inputValue["driverID"],
-          questionIndex: inputSelection["questionIndex"],
-          securityAnswer: inputValue["securityAnswer"],
+          firstName: inputValue.firstName,
+          middleName: inputValue.middleName,
+          lastName: inputValue.lastName,
+          dob: inputValue.dob,
+          street: inputValue.street,
+          city: inputValue.city,
+          state: inputSelection.state,
+          zip: inputValue.zip,
+          email: inputValue.email,
+          password: inputValue.password,
+          passport: inputValue.passport,
+          driverID: inputValue.driverID,
+          questionIndex: inputSelection.questionIndex,
+          securityAnswer: inputValue.securityAnswer,
           approvalStatus: "pending",
         }),
       }).catch((error) => console.log(error));
@@ -254,6 +259,7 @@ export default function SignUpPanel() {
         <Stack direction="row">
           <Heading mb={6}>Sign up for Voting</Heading>
           <Select
+            id="role"
             name="role"
             data-testid="role"
             borderWidth={3}
@@ -267,6 +273,7 @@ export default function SignUpPanel() {
           <FormControl isRequired>
             <FormLabel>Name and Address: </FormLabel>
             <Input
+              id="firstName"
               name="firstName"
               data-testid="firstName"
               onChange={handleInput}
@@ -278,6 +285,7 @@ export default function SignUpPanel() {
               required
             ></Input>
             <Input
+              id="middleName"
               name="middleName"
               data-testid="middleName"
               onChange={handleInput}
@@ -288,6 +296,7 @@ export default function SignUpPanel() {
               background="gray.200"
             ></Input>
             <Input
+              id="lastName"
               name="lastName"
               data-testid="lastName"
               onChange={handleInput}
@@ -299,6 +308,7 @@ export default function SignUpPanel() {
             ></Input>
             <Stack direction="row">
               <Input
+                id="street"
                 name="street"
                 data-testid="street"
                 width={500}
@@ -310,6 +320,7 @@ export default function SignUpPanel() {
                 background="gray.200"
               ></Input>
               <Input
+                id="city"
                 name="city"
                 data-testid="city"
                 width={200}
@@ -321,6 +332,7 @@ export default function SignUpPanel() {
                 background="gray.200"
               ></Input>
               <Select
+                id="state"
                 name="state"
                 data-testid="state"
                 width={24}
@@ -330,6 +342,7 @@ export default function SignUpPanel() {
                 {stateOptions}
               </Select>
               <Input
+                id="zip"
                 name="zip"
                 data-testid="zip"
                 width={100}
@@ -347,12 +360,29 @@ export default function SignUpPanel() {
                   *Please enter correct zip code format (0-9)*
                 </Text>
               )}
+            <Wrap align="baseline" spacing="20px">
+              <FormLabel>Date of Birth: </FormLabel>
+              <Input
+                id="dob"
+                name="dob"
+                data-testid="dob"
+                placeholder="Date of Birth"
+                type="date"
+                width="auto"
+                variant="outline"
+                border="2px"
+                onChange={handleInput}
+                value={inputValue["dob"]}
+                max={new Date().toISOString().split("T")[0]}
+              ></Input>
+            </Wrap>
           </FormControl>
           <Stack justify="left">
             <FormControl isRequired>
               <FormLabel>Username and Password:</FormLabel>
               <Stack direction="row">
                 <Input
+                  id="email"
                   name="email"
                   data-testid="email"
                   width={500}
@@ -381,6 +411,7 @@ export default function SignUpPanel() {
               <Stack direction="row" justify="left">
                 <Stack direction="column" justify="center">
                   <Input
+                    id="password"
                     name="password"
                     data-testid="password"
                     width={500}
@@ -393,6 +424,7 @@ export default function SignUpPanel() {
                     type="password"
                   ></Input>
                   <Input
+                    id="passwordRetype"
                     name="passwordRetype"
                     data-testid="passwordRetype"
                     width={500}
@@ -419,17 +451,19 @@ export default function SignUpPanel() {
               <FormLabel>Additional Verifications:</FormLabel>
               <Stack direction="row">
                 <Input
-                  name="phone"
-                  data-testid="phone"
+                  id="passport"
+                  name="passport"
+                  data-testid="passport"
                   width={412}
                   onChange={handleInput}
-                  value={inputValue["phone"]}
-                  placeholder="Phone Number"
+                  value={inputValue["passport"]}
+                  placeholder="Passport ID"
                   variant="filled"
                   mb={3}
                   background="gray.200"
                 ></Input>
                 <Input
+                  id="driverID"
                   name="driverID"
                   data-testid="driverID"
                   width={412}
@@ -441,17 +475,12 @@ export default function SignUpPanel() {
                   background="gray.200"
                 ></Input>
               </Stack>
-              {!inputValue.phone.match("^[0-9]{0,15}$") &&
-                inputValue.phone.length > 0 && (
-                  <Text data-testid="invalidPhone" color="red" mb={3}>
-                    *Please use correct phone number format (0-9)*
-                  </Text>
-                )}
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Security Questions:</FormLabel>
               <Stack direction="column">
                 <Select
+                  id="questionIndex"
                   name="questionIndex"
                   data-testid="question"
                   borderWidth={2}
@@ -462,6 +491,7 @@ export default function SignUpPanel() {
                   {questionOptions}
                 </Select>
                 <Input
+                  id="securityAnswer"
                   name="securityAnswer"
                   data-testid="securityAnswer"
                   onChange={handleInput}
