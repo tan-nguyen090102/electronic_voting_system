@@ -18,6 +18,9 @@ module.exports = {
         employeeID: "NoSQLAlchemy",
         role: "Manager",
         name: "David Naval Cotton",
-        stationID: "52317-6757"
+        stationID: "52317-6757",
+        stationIDInput: "LA-42",
+        head: "Tesla McDonald",
+        address: "7867 York Avenue, Richardson, NV 67622"
     }
 } 
