@@ -15,10 +15,27 @@ import {
   Wrap,
   Text,
   Select,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Input,
+  ModalFooter,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBar } from "./NavBar";
 
 export default function PrecinctPanel() {
+  //Adding box
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   //Change web title
   useEffect(() => {
     document.title = "Precinct - Voting System Administrator";
@@ -39,6 +56,14 @@ export default function PrecinctPanel() {
         setCopyPrecinctList(data);
       });
   }, []);
+
+  //Sets of initial values
+  const initialValues = {
+    stationID: "",
+    head: "",
+    address: "",
+    covers: "",
+  };
 
   //Selection listener
   const [inputSelection, setInputSelection] = React.useState("");
@@ -64,9 +89,6 @@ export default function PrecinctPanel() {
       setPrecinctList(copyPrecinctList);
     }
   };
-
-  //Add button listener
-  const handleAdd = () => {};
 
   //Container for state options
   const stateOptions = (
@@ -128,11 +150,7 @@ export default function PrecinctPanel() {
   //DOM
   return (
     <div>
-      <NavBar
-        title={"User Profile Request"}
-        isLoggedIn="true"
-        userName={user}
-      ></NavBar>
+      <NavBar title={"Precincts"} isLoggedIn="true" userName={user}></NavBar>
       <ListNavigationBar indexClick="2"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
@@ -177,11 +195,12 @@ export default function PrecinctPanel() {
           <Accordion allowMultiple>
             {CreateAccordionItem(receivedPrecinctList as any[])}
           </Accordion>
+          <CreateAddModalBox></CreateAddModalBox>
           <Button
             data-testid="addButton"
             colorScheme="teal"
             mt={3}
-            onClick={handleAdd}
+            onClick={onOpen}
             alignSelf="left"
           >
             Add
@@ -225,5 +244,246 @@ export default function PrecinctPanel() {
       }
     });
     return precinctDetails;
+  }
+
+  //Helper function to create the add box
+  function CreateAddModalBox() {
+    //Toast
+    const addToast = useToast();
+
+    //Backend fetch the list of available zip
+    useEffect(() => {
+      fetch("http://localhost:5000/precinct/add")
+        .then((response) => response.json())
+        .then((data) => {
+          setListOnScreen(data);
+        });
+    }, []);
+
+    //Input listener
+    const [inputValue, setInputValue] = React.useState(initialValues);
+    const [listJSX, setListJSX] = React.useState<JSX.Element>();
+    const handleInput = (e: { target: { name: any; value: any } }) => {
+      const { name, value } = e.target;
+      setInputValue({
+        ...inputValue,
+        [name]: value,
+      });
+
+      if (name === "covers") {
+        CreateListOnScreen(listOnScreen);
+      }
+    };
+
+    //Add button listener
+    const handleAdd = async () => {
+      //Fetch the backend to send the data
+      await fetch(`http://localhost:5000/precinct/add`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          stationID: inputValue.stationID,
+          head: inputValue.head,
+          address: inputValue.address,
+          covers: StrinifyZip(listZipHasBeenTagged),
+        }),
+      });
+      onClose();
+    };
+
+    //Tag open button listeners
+    const [listZipHasBeenTagged, setListZipBeenTagged] = React.useState<
+      Array<any>
+    >([]);
+    const [tagJSX, setTagJSX] = React.useState<Array<JSX.Element>>([]);
+    const [listOnScreen, setListOnScreen] = React.useState<Array<any>>([]);
+    const handleRemoveZip = (zip: any, tagValue: string) => {
+      //Make Tags
+      tagJSX.push(
+        <Tag
+          size="sm"
+          key={tagValue}
+          borderRadius="full"
+          variant="solid"
+          colorScheme="green"
+        >
+          <TagLabel>{tagValue}</TagLabel>
+          <TagCloseButton
+            onClick={() => {
+              handleAddBackZip(zip);
+            }}
+          ></TagCloseButton>
+        </Tag>
+      );
+      listZipHasBeenTagged.push(zip);
+      var filtered: any[] = [];
+      listOnScreen.forEach((element) => {
+        if (!listZipHasBeenTagged.includes(element)) {
+          filtered.push(element);
+        }
+      });
+      CreateListOnScreen(filtered);
+    };
+
+    //Close tag icon listeners
+    const handleAddBackZip = (zip: any) => {
+      //Move item to the back and pop it
+      let index = listZipHasBeenTagged.indexOf(zip);
+      listZipHasBeenTagged.push(listZipHasBeenTagged.splice(index, 1)[0]);
+      listZipHasBeenTagged.pop();
+
+      var filtered: any[] = [];
+      listOnScreen.forEach((element) => {
+        if (!listZipHasBeenTagged.includes(element)) {
+          filtered.push(element);
+        }
+      });
+      //Move item to the back and pop it
+      tagJSX.push(tagJSX.splice(index, 1)[0]);
+      tagJSX.pop();
+
+      CreateListOnScreen(filtered);
+    };
+
+    //Box DOM
+    return (
+      <>
+        <Modal
+          isOpen={isOpen}
+          onClose={onClose}
+          closeOnOverlayClick={false}
+          motionPreset="slideInBottom"
+        >
+          <ModalOverlay></ModalOverlay>
+          <ModalContent>
+            <ModalHeader>Add new precinct</ModalHeader>
+            <ModalBody>
+              <FormControl>
+                <FormLabel>ID:</FormLabel>
+                <Input
+                  name="stationID"
+                  data-testid="stationIDInput"
+                  onChange={handleInput}
+                  value={inputValue.stationID}
+                  variant="filled"
+                  background="gray.200"
+                ></Input>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Head manager:</FormLabel>
+                <Input
+                  name="head"
+                  data-testid="head"
+                  onChange={handleInput}
+                  value={inputValue.head}
+                  variant="filled"
+                  background="gray.200"
+                ></Input>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Address:</FormLabel>
+                <Input
+                  name="address"
+                  data-testid="address"
+                  onChange={handleInput}
+                  value={inputValue.address}
+                  variant="filled"
+                  background="gray.200"
+                ></Input>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Zip covers:</FormLabel>
+                <Wrap mb={3} spacing="10px">
+                  {tagJSX}
+                </Wrap>
+                <Input
+                  name="covers"
+                  data-testid="covers"
+                  onChange={handleInput}
+                  value={inputValue.covers}
+                  variant="filled"
+                  background="gray.200"
+                ></Input>
+              </FormControl>
+              {listJSX}
+              <ModalFooter>
+                <Wrap spacing="20px">
+                  <Button
+                    data-testid="addButton"
+                    colorScheme="teal"
+                    onClick={() => {
+                      handleAdd();
+                      addToast({
+                        title: "Precinct Added!",
+                        description: `The precinct station ${inputValue.stationID} is ready to be deployed.`,
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    }}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    data-testid="cancelButton"
+                    colorScheme="teal"
+                    variant="outline"
+                    onClick={onClose}
+                  >
+                    Cancel
+                  </Button>
+                </Wrap>
+              </ModalFooter>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </>
+    );
+
+    //Helper functions to create the tags and lists of zipcodes
+    function CreateListOfZipCode(character: string, listToShown: any[]) {
+      return <Wrap mt={3}>{ListTheZipCode(listToShown, character)}</Wrap>;
+    }
+
+    function CreateListOnScreen(list: any[]) {
+      setListZipBeenTagged(listZipHasBeenTagged);
+      setTagJSX(tagJSX);
+      setListOnScreen(list);
+      setListJSX(CreateListOfZipCode(inputValue.covers, list));
+    }
+
+    function ListTheZipCode(listofZip: any[], filterChar: string) {
+      const zipList = listofZip?.map((zip, index) => {
+        if (zip.zip.includes(filterChar)) {
+          return (
+            <Button
+              key={zip.zip}
+              onClick={() => {
+                handleRemoveZip(zip, zip.zip);
+              }}
+            >
+              {zip.zip}
+            </Button>
+          );
+        } else {
+          return <div key={index}></div>;
+        }
+      });
+
+      return zipList;
+    }
+
+    function StrinifyZip(listofZip: any[]) {
+      var zipList: string[] = [];
+      listofZip.forEach((zip) => {
+        zipList.push(zip.zip);
+      });
+
+      return zipList;
+    }
   }
 }
