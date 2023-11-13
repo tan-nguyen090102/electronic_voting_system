@@ -105,7 +105,7 @@ export default function SignUpPanel() {
     if (inputRetype === inputValue.password && isFilled && isMatch) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       setDecision(false);
-      await fetch(`http://localhost:5000/${inputSelection.role}s`, {
+      await fetch(`http://localhost:5000/${inputSelection.role}s/`, {
         method: "POST",
         headers: {
           Accept: "application/json",
