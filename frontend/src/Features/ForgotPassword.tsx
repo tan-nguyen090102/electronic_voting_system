@@ -9,12 +9,21 @@ import {
   Text,
   Stack,
   Select,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogBody,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 export default function ForgotPanel() {
+  //Alert box
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   //Change web title
   useEffect(() => {
     document.title = "Forgot Password - Voting System";
+    setInvalidPopUp(false);
   }, []);
 
   //Backend response the security question and answer back to the panel
@@ -26,7 +35,7 @@ export default function ForgotPanel() {
       "What is your chilhood's name?",
       "What is your elementary school name?",
       "How many pets do you currently have?",
-      "What is your grandmotherr's first name?",
+      "What is your grandmother's first name?",
       "What is your favorite country to visit?",
     ];
 
@@ -58,11 +67,12 @@ export default function ForgotPanel() {
   };
 
   //Send button listener
-  const navigate = useNavigate();
+
   const [receivedAnswer, setReceivedAnswer] = React.useState("");
   const [receivedQuestion, setQuestion] = React.useState("0");
   const [isSecurityPopUp, setSecurityPopup] = React.useState(false);
   const [isInvalidCredential, setInvalidCredential] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
   const handleSend = async () => {
     //If the email is accepted, proceed to fetch the backend
     if (isAccepted && !isSecurityPopUp) {
@@ -93,16 +103,21 @@ export default function ForgotPanel() {
     }
   };
 
+  const navigate = useNavigate();
   const [isValidAnswer, setValid] = React.useState(false);
+  const [isInvalidPopUp, setInvalidPopUp] = React.useState(false);
   const handleVerifyAnswer = () => {
     //Check if the security answer matches the registerd answer
     if (inputAnswer === receivedAnswer) {
       setValid(true);
+      setInvalidPopUp(false);
     } else {
       setValid(false);
+      setInvalidPopUp(true);
     }
   };
 
+  //Send link button listener
   const handleSendLink = async () => {
     if (isValidAnswer && isSecurityPopUp) {
       await fetch("http://localhost:5000/forgot_password/send_email", {
@@ -115,9 +130,25 @@ export default function ForgotPanel() {
         body: JSON.stringify({
           email: inputEmail,
         }),
-      });
-
-      //navigate("/change_password");
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          //After sucessfully send an email, return to home page
+          console.log(data);
+          if (data === "true") {
+            setAlertMessage(
+              "The link has been sent. Returning to the home page..."
+            );
+            Navigate(true);
+          }
+          //Otherwise, automatically reload the page.
+          else {
+            setAlertMessage(
+              "There is something wrong with our system. Please wait for reloading..."
+            );
+            Navigate(false);
+          }
+        });
     }
   };
 
@@ -152,6 +183,7 @@ export default function ForgotPanel() {
             variant="filled"
             mb={3}
             background="gray.200"
+            disabled={isValidAnswer ? true : false}
           ></Input>
           {!inputEmail.match(
             "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
@@ -186,8 +218,9 @@ export default function ForgotPanel() {
             variant="filled"
             mb={3}
             background="gray.200"
+            disabled={isValidAnswer ? true : false}
           ></Input>
-          {!isValidAnswer && (
+          {isInvalidPopUp && (
             <Text data-testid="invalidInput" color="red" mb={3}>
               *Invalid Credential*
             </Text>
@@ -215,16 +248,28 @@ export default function ForgotPanel() {
           >
             Cancel
           </Button>
-          <Button
-            data-testid="cancelButton"
-            colorScheme="teal"
-            onClick={handleSendLink}
+          <Stack
+            direction="column"
             style={{
               display: isValidAnswer ? "block" : "none",
             }}
           >
-            Send the link
-          </Button>
+            <Text mb={3}>
+              <b>Verification completed</b>. Please click the button to receive
+              an email with a link
+            </Text>
+            <AlertAfterCompletion></AlertAfterCompletion>
+            <Button
+              data-testid="sendLinkButton"
+              colorScheme="teal"
+              onClick={() => {
+                handleSendLink();
+                onOpen();
+              }}
+            >
+              Send the link
+            </Button>
+          </Stack>
         </Wrap>
         <Wrap justify="center">
           <Text fontSize="xs" mt={6}>
@@ -234,4 +279,42 @@ export default function ForgotPanel() {
       </Flex>
     </Flex>
   );
+
+  //Helper function to create an alert box
+  function AlertAfterCompletion() {
+    const cancelReference = React.useRef<HTMLButtonElement>(null);
+    return (
+      <>
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelReference}
+          onClose={onClose}
+          motionPreset="slideInBottom"
+          isCentered
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogBody>{alertMessage}</AlertDialogBody>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </>
+    );
+  }
+
+  //Helper function to delay navigation
+  function Delay(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  async function Navigate(isNavigate: boolean) {
+    await Delay(3000);
+    if (isNavigate) {
+      navigate("/");
+    } else {
+      window.location.reload();
+    }
+  }
 }

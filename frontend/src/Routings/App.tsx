@@ -5,6 +5,8 @@ import HomePage from "../Features/Home";
 import SignUpPanel from "../Features/SignUp";
 import ForgotPanel from "../Features/ForgotPassword";
 import ChangePasswordPanel from "../Features/ChangePassword";
+import ProfileRequestPanel from "../Features/ProfileRequest";
+import SearchPanel from "../Features/ProfileSearch";
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
           path="/change_password"
           element={<ChangePasswordPanel />}
         ></Route>
+        <Route path="/request" element={<ProfileRequestPanel />}></Route>
+        <Route path="/search" element={<SearchPanel />}></Route>
       </Routes>
     </>
   );

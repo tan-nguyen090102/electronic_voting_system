@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import ForgotPanel from "../src/Features/ForgotPassword";
 import { testObject } from "./testData.js";
+import React from "react";
 
 //Clean up after each test
 afterEach(() => {
@@ -68,4 +69,15 @@ test("Cancel button click", async () => {
   const cancelButton = await screen.getByTestId("cancelButton");
   await act(() => userEvent.click(cancelButton));
   await waitFor(() => expect(cancelButton).toBeDefined());
+});
+
+test("Send link button click", async () => {
+  render(
+    <BrowserRouter>
+      <ForgotPanel />
+    </BrowserRouter>
+  );
+  const sendLinkButton = await screen.getByTestId("sendLinkButton");
+  await act(() => userEvent.click(sendLinkButton));
+  await waitFor(() => expect(sendLinkButton).toBeDefined());
 });

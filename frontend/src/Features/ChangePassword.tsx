@@ -23,7 +23,6 @@ export default function ChangePasswordPanel() {
       .then((response) => response.json())
       .then((data) => {
         setPassword(data["password"]);
-        //console.log(data["password"]);
       });
   }, []);
 

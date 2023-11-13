@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Heading,
   Spacer,
@@ -15,9 +16,13 @@ export default function HomePage() {
     document.title = "Home - Voting System";
   }, []);
 
+  //Receive data from other page.
+  const { state } = useLocation();
+  const { user, isLoggedIn } = state || { user: "", isLoggedIn: "false" };
+
   return (
     <>
-      <NavBar isLoggedIn={false} />
+      <NavBar title={"My Vote"} isLoggedIn={isLoggedIn} userName={user} />
       <Stack direction="column">
         <Spacer />
         <Box

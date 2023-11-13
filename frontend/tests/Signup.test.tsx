@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import SignUpPanel from "../src/Features/SignUp";
 import { testObject } from "./testData.js";
+import React from "react";
 
 //Clean up after each test
 afterEach(() => {
@@ -56,6 +57,19 @@ test("Last name input", async () => {
     const field = screen.getByTestId("lastName");
     userEvent.type(field, testObject.lastName);
     expect(field).toHaveValue(testObject.lastName);
+  });
+});
+
+test("Date of Birth input", async () => {
+  render(
+    <BrowserRouter>
+      <SignUpPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const field = screen.getByTestId("dob");
+    userEvent.type(field, testObject.dob);
+    expect(field).toHaveValue(testObject.dob);
   });
 });
 
@@ -150,16 +164,16 @@ test("Password Retype input", async () => {
   });
 });
 
-test("Phone input", async () => {
+test("Passport input", async () => {
   render(
     <BrowserRouter>
       <SignUpPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("phone");
-    userEvent.type(field, testObject.phone);
-    expect(field).toHaveValue(testObject.phone);
+    const field = screen.getByTestId("passport");
+    userEvent.type(field, testObject.passport);
+    expect(field).toHaveValue(testObject.passport);
   });
 });
 
