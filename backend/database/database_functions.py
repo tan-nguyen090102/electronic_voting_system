@@ -8,11 +8,11 @@ def create_db_connection(database_name, config_file_path):
         config = json.load(config_file)
 
     connection = pymysql.connect(
-        host=config['host'],
-        user=config['user'],
-        password=config['password'],
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
         client_flag=CLIENT.MULTI_STATEMENTS,
-        database=database_name
+        database=database_name,
     )
     return connection
 
@@ -22,13 +22,16 @@ def execute_stored_proc(connection, proc_name, parameters):
     try:
         db_response = None
         cursor.callproc(proc_name, parameters)
-        if "select" in proc_name:
+        if "select" in proc_name or "check" in proc_name:
             db_response = cursor.fetchall()
         print(f"SUCCESS: {proc_name} stored procedure executed")
         if db_response:
             return db_response
     except Exception as e:
-        print(f"ERROR: {proc_name} Stored procedure failed with the following error: {e}")
+        raise Exception(
+            f"ERROR: {proc_name} Stored procedure failed with the following error: {e}"
+        )
+
     finally:
         cursor.close()
 
@@ -50,7 +53,7 @@ def exec_db_query(connection, sql_query):
 
 
 def exec_sql_file(connection, sql_file):
-    with open(sql_file, 'r') as file:
+    with open(sql_file, "r") as file:
         sql_script = file.read()
     cursor = connection.cursor()
     try:
