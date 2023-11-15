@@ -41,9 +41,9 @@ export default function ProfileRequestPanel() {
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   }, []);
 
@@ -65,9 +65,9 @@ export default function ProfileRequestPanel() {
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   };
 
@@ -89,9 +89,9 @@ export default function ProfileRequestPanel() {
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   };
 
@@ -126,7 +126,7 @@ export default function ProfileRequestPanel() {
           <Accordion allowMultiple defaultIndex={MAX_PENDING_INITIAL_SHOWN}>
             <AccordionItem className="pendingAccordion" width="container.md">
               <h2>
-                <AccordionButton border="2px">
+                <AccordionButton data-testid="pendingButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>PENDING REQUEST ({receivedPendingList?.length})</b>
                   </Box>
@@ -139,7 +139,7 @@ export default function ProfileRequestPanel() {
             </AccordionItem>
             <AccordionItem width="container.md" className="deniedAccordion">
               <h2>
-                <AccordionButton border="2px">
+                <AccordionButton data-testid="deniedButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>DENIED REQUEST ({receivedDeniedList?.length})</b>
                   </Box>
@@ -152,7 +152,7 @@ export default function ProfileRequestPanel() {
             </AccordionItem>
             <AccordionItem width="container.md" className="approvedAccordion">
               <h2>
-                <AccordionButton border="2px">
+                <AccordionButton data-testid="approvedButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>APPROVED REQUEST ({receivedApprovedList?.length})</b>
                   </Box>
@@ -172,7 +172,7 @@ export default function ProfileRequestPanel() {
   //Helper function to create each accordion box. Approved list only shown the maximum defined
   function CreateAccordionItem(jsonList: any[], status: String) {
     const userDetails = jsonList
-      ?.slice(0, status === "approved" ? MAX_APPROVED_SHOWN : jsonList.length)
+      ?.slice(0, status === "pending" ? jsonList.length : MAX_APPROVED_SHOWN)
       .map((user, index) => {
         return (
           <AccordionItem
@@ -245,12 +245,12 @@ export default function ProfileRequestPanel() {
   }
 }
 
-function DecomposeJSONObject(jsonList: any[]) {
+function DecomposeJSONObject(jsonList: any[] = []) {
   var pendingList: any[] = [];
   var deniedList: any[] = [];
   var approvedList: any[] = [];
 
-  jsonList.forEach((user) => {
+  Object.values(jsonList).forEach((user) => {
     if (user.approvalStatus === "pending") {
       pendingList.push(user);
     } else if (user.approvalStatus === "denied") {
@@ -262,9 +262,5 @@ function DecomposeJSONObject(jsonList: any[]) {
     }
   });
 
-  jsonList = [];
-  jsonList.push(approvedList);
-  jsonList.push(deniedList);
-  jsonList.push(pendingList);
-  return jsonList;
+  return [pendingList, deniedList, approvedList];
 }
