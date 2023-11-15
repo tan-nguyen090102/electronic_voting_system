@@ -8,7 +8,6 @@ import ProfileRequestPanel from "../src/Features/ProfileRequest";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { testObject } from "./testData.js";
-import { Accordion } from "@chakra-ui/react";
 
 //Clean up after each test
 afterEach(() => {
