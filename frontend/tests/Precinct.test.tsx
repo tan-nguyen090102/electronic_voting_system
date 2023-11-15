@@ -8,7 +8,6 @@ import userEvent from "@testing-library/user-event";
 import PrecinctPanel, { CreateAddModalBox } from "../src/Features/Precinct";
 import { testObject } from "./testData.js";
 import React from "react";
-import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 
 //Clean up after each test
 afterEach(() => {
