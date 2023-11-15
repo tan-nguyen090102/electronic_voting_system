@@ -8,11 +8,9 @@ class Settings:
         "password": "your_password",
         "server": "localhost",
         "port": 3306,
-        "db": "dev_db"
+        "db": "dev_db",
     }
 
     @property
     def database_config(self):
         return self.my_sql_config_dict
-
-
