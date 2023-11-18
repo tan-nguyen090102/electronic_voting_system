@@ -18,6 +18,9 @@ import {
 import NavBar, { ListNavigationBar } from "./NavBar";
 
 export default function ProfileRequestPanel() {
+  const MAX_APPROVED_SHOWN = 20;
+  const MAX_PENDING_INITIAL_SHOWN = [0, 1, 2];
+
   //Change web title
   useEffect(() => {
     document.title = "User Request - Voting System Administrator";
@@ -28,17 +31,19 @@ export default function ProfileRequestPanel() {
   const { user } = state || { user: "" };
 
   //Retrieve the list of all user to the page
-  const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
-  const [receivedPendingList, setPendingList] = React.useState<Array<any>>();
-  const [receivedDeniedList, setDeniedList] = React.useState<Array<any>>();
+  const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>(
+    []
+  );
+  const [receivedPendingList, setPendingList] = React.useState<Array<any>>([]);
+  const [receivedDeniedList, setDeniedList] = React.useState<Array<any>>([]);
   useEffect(() => {
     fetch("http://localhost:5000/request")
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   }, []);
 
@@ -52,16 +57,17 @@ export default function ProfileRequestPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        userID: user.userID,
+        email: user.email,
         approvalStatus: "approved",
       }),
     })
+      //After sending the updated status, fetch the backend again for a new list
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   };
 
@@ -75,16 +81,17 @@ export default function ProfileRequestPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        userID: user.userID,
+        email: user.email,
         approvalStatus: "denied",
       }),
     })
+      //After sending the updated status, fetch the backend again for a new list
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
-        setPendingList(jsonList.pop());
-        setDeniedList(jsonList.pop());
-        setApprovedList(jsonList.pop());
+        setPendingList(jsonList[0]);
+        setDeniedList(jsonList[1]);
+        setApprovedList(jsonList[2]);
       });
   };
 
@@ -116,10 +123,10 @@ export default function ProfileRequestPanel() {
               </Text>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
-            <AccordionItem data-testid="pending-accordion" width="container.md">
+          <Accordion allowMultiple defaultIndex={MAX_PENDING_INITIAL_SHOWN}>
+            <AccordionItem className="pendingAccordion" width="container.md">
               <h2>
-                <AccordionButton>
+                <AccordionButton data-testid="pendingButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>PENDING REQUEST ({receivedPendingList?.length})</b>
                   </Box>
@@ -127,12 +134,12 @@ export default function ProfileRequestPanel() {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4} width="100%">
-                {CreateAccordionItem(receivedPendingList as any[])}
+                {CreateAccordionItem(receivedPendingList as any[], "pending")}
               </AccordionPanel>
             </AccordionItem>
-            <AccordionItem width="container.md">
+            <AccordionItem width="container.md" className="deniedAccordion">
               <h2>
-                <AccordionButton>
+                <AccordionButton data-testid="deniedButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>DENIED REQUEST ({receivedDeniedList?.length})</b>
                   </Box>
@@ -140,12 +147,12 @@ export default function ProfileRequestPanel() {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4} width="100%">
-                {CreateAccordionItem(receivedDeniedList as any[])}
+                {CreateAccordionItem(receivedDeniedList as any[], "denied")}
               </AccordionPanel>
             </AccordionItem>
-            <AccordionItem width="container.md">
+            <AccordionItem width="container.md" className="approvedAccordion">
               <h2>
-                <AccordionButton>
+                <AccordionButton data-testid="approvedButton" border="2px">
                   <Box as="span" flex="1" textAlign="left" textStyle="bold">
                     <b>APPROVED REQUEST ({receivedApprovedList?.length})</b>
                   </Box>
@@ -153,7 +160,7 @@ export default function ProfileRequestPanel() {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4} width="100%">
-                {CreateAccordionItem(receivedApprovedList as any[])}
+                {CreateAccordionItem(receivedApprovedList as any[], "approved")}
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
@@ -162,97 +169,98 @@ export default function ProfileRequestPanel() {
     </div>
   );
 
-  //Helper function to create each accordion box
-  function CreateAccordionItem(jsonList: any[]) {
-    const userDetails = jsonList?.map((user, index) => {
-      return (
-        <AccordionItem data-testid="accordion" width="container.md" key={index}>
-          <h2>
-            <AccordionButton>
-              <Box as="span" flex="1" textAlign="left">
-                User #{user.userID}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4} width="100%">
-            <Stack direction="row" justifyContent="flex-end">
-              <List marginRight="auto">
-                <ListItem>
-                  Name:{" "}
-                  {user.firstName + " " + user.middleName + " " + user.lastName}
-                </ListItem>
-                <ListItem>
-                  Address:{" "}
-                  {user.street +
-                    ", " +
-                    user.city +
-                    ", " +
-                    user.state +
-                    " " +
-                    user.zip}
-                </ListItem>
-                <ListItem>Driver License ID: {user.driverID}</ListItem>
-              </List>
-              <Button
-                data-testid="approveButton"
-                bg="teal.400"
-                isDisabled={
-                  user.approvalStatus === "denied" ||
-                  user.approvalStatus === "approved"
-                    ? true
-                    : false
-                }
-                onClick={() => {
-                  handleApprove(user, index);
-                }}
-              >
-                Approve
-              </Button>
-              <Button
-                data-testid="denyButton"
-                bg="red.400"
-                isDisabled={user.approvalStatus === "denied" ? true : false}
-                onClick={() => {
-                  handleDeny(user, index);
-                }}
-              >
-                Deny
-              </Button>
-            </Stack>
-          </AccordionPanel>
-        </AccordionItem>
-      );
-    });
+  //Helper function to create each accordion box. Approved list only shown the maximum defined
+  function CreateAccordionItem(jsonList: any[], status: String) {
+    const userDetails = jsonList
+      ?.slice(0, status === "pending" ? jsonList.length : MAX_APPROVED_SHOWN)
+      .map((user, index) => {
+        return (
+          <AccordionItem
+            data-testid="accordion"
+            width="container.md"
+            key={index}
+          >
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex="1" textAlign="left">
+                  User #{user.userID}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4} width="100%">
+              <Stack direction="row" justifyContent="flex-end">
+                <List marginRight="auto">
+                  <ListItem>
+                    Name:{" "}
+                    {user.firstName +
+                      " " +
+                      user.middleName +
+                      " " +
+                      user.lastName}
+                  </ListItem>
+                  <ListItem>
+                    Address:{" "}
+                    {user.street +
+                      ", " +
+                      user.city +
+                      ", " +
+                      user.state +
+                      " " +
+                      user.zip}
+                  </ListItem>
+                  <ListItem>Driver License ID: {user.driverID}</ListItem>
+                </List>
+                <Button
+                  data-testid="approveButton"
+                  bg="teal.400"
+                  isDisabled={
+                    user.approvalStatus === "denied" ||
+                    user.approvalStatus === "approved"
+                      ? true
+                      : false
+                  }
+                  onClick={() => {
+                    handleApprove(user, index);
+                  }}
+                >
+                  Approve
+                </Button>
+                <Button
+                  data-testid="denyButton"
+                  bg="red.400"
+                  isDisabled={user.approvalStatus === "denied" ? true : false}
+                  onClick={() => {
+                    handleDeny(user, index);
+                  }}
+                >
+                  Deny
+                </Button>
+              </Stack>
+            </AccordionPanel>
+          </AccordionItem>
+        );
+      });
     return userDetails;
   }
 }
 
-function DecomposeJSONObject(allJson: JSON) {
+function DecomposeJSONObject(jsonList: any[] = []) {
   var pendingList: any[] = [];
   var deniedList: any[] = [];
   var approvedList: any[] = [];
-  var jsonList: any[] = [];
 
-  Object.keys(allJson).forEach((key) => {
-    jsonList.push(allJson[key as keyof JSON]);
-  });
-
-  jsonList.forEach((user) => {
+  Object.values(jsonList).forEach((user) => {
     if (user.approvalStatus === "pending") {
       pendingList.push(user);
-    }
-    if (user.approvalStatus === "denied") {
+    } else if (user.approvalStatus === "denied") {
       deniedList.push(user);
-    }
-    if (user.approvalStatus === "approved") {
+    } else if (user.approvalStatus === "approved") {
       approvedList.push(user);
+    } else {
+      return;
     }
   });
 
-  jsonList = [];
-  jsonList.push(approvedList);
-  jsonList.push(deniedList);
-  jsonList.push(pendingList);
-  return jsonList;
+  return [pendingList, deniedList, approvedList];
 }

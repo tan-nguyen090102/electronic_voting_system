@@ -7,7 +7,7 @@ import {
   Container,
   Box,
   Stack,
-  Center
+  Center,
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
@@ -34,17 +34,17 @@ export default function HomePage() {
           borderColor="teal"
         >
           <Center>
-          RIGHT NOW: Candidate A vs Candidate B in Random Location's Presidental
-          Race
+            RIGHT NOW: Candidate A vs Candidate B in Random Location's
+            Presidental Race
           </Center>
         </Box>
         <Stack direction="row" w="100%">
           <Container w="50px"></Container>
           <Stack direction="column">
             <Container maxW="600">
-            <Center>
-            <Heading>Your Vote Matters!</Heading>
-            </Center>
+              <Center>
+                <Heading>Your Vote Matters!</Heading>
+              </Center>
               <Image
                 boxSize="350px"
                 w="500"
@@ -62,10 +62,10 @@ export default function HomePage() {
             </Container>
           </Stack>
           <Stack direction="column">
-          <Spacer />
-          <Spacer />
-          <Spacer />
-          <Spacer />
+            <Spacer />
+            <Spacer />
+            <Spacer />
+            <Spacer />
             <Container maxW="2xl" centerContent>
               <Box
                 padding="4"
