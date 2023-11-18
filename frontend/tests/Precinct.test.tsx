@@ -60,80 +60,118 @@ test("Add button click", async () => {
   });
 });
 
-// test("Add StationID input", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   await act(() => {
-//     const field = screen.getByTestId("stationIDInput");
-//     userEvent.type(field, testObject.stationIDInput);
-//     expect(field).toHaveValue(testObject.stationIDInput);
-//   });
-// });
+test("Add Precinct ID input", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("precinctIDInput")).toBeInTheDocument();
+    const field = screen.getByTestId("precinctIDInput");
+    userEvent.type(field, testObject.stationIDInput);
+    expect(field).toHaveValue(testObject.stationIDInput);
+  });
+});
 
-// test("Add Head Manager input", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   await act(() => {
-//     const field = screen.getByTestId("head");
-//     userEvent.type(field, testObject.head);
-//     expect(field).toHaveValue(testObject.head);
-//   });
-// });
+test("Add Head Manager input", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("head")).toBeInTheDocument();
+    const field = screen.getByTestId("head");
+    userEvent.type(field, testObject.head);
+    expect(field).toHaveValue(testObject.head);
+  });
+});
 
-// test("Add Address input", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   await act(() => {
-//     const field = screen.getByTestId("address");
-//     userEvent.type(field, testObject.address);
-//     expect(field).toHaveValue(testObject.address);
-//   });
-// });
+test("Add Address input", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("address")).toBeInTheDocument();
+    const field = screen.getByTestId("address");
+    userEvent.type(field, testObject.address);
+    expect(field).toHaveValue(testObject.address);
+  });
+});
 
-// test("Cover Zips input", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   await act(() => {
-//     const field = screen.getByTestId("covers");
-//     userEvent.type(field, testObject.zip);
-//     expect(field).toHaveValue(testObject.zip);
-//   });
-// });
+test("Add Geography ID input", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("geographyID")).toBeInTheDocument();
+    const field = screen.getByTestId("geographyID");
+    userEvent.type(field, testObject.geographyID);
+    expect(field).toHaveValue(testObject.geographyID);
+  });
+});
 
-// test("Add Add button click", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   const addButton = await screen.getByTestId("addAddButton");
-//   await act(() => userEvent.click(addButton));
-//   await waitFor(() => {
-//     expect(addButton).toBeDefined();
-//   });
-// });
+test("Cover Zips input", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("covers")).toBeInTheDocument();
+    const field = screen.getByTestId("covers");
+    userEvent.type(field, testObject.covers);
+    expect(field).toHaveValue(testObject.covers);
+  });
+});
 
-// test("Add Cancel button click", async () => {
-//   render(
-//     <BrowserRouter>
-//       <CreateAddModalBox isOpen={null} onClose={null} />
-//     </BrowserRouter>
-//   );
-//   const cancelButton = await screen.getByTestId("cancelButton");
-//   await act(() => userEvent.click(cancelButton));
-//   await waitFor(() => {
-//     expect(cancelButton).toBeDefined();
-//   });
-// });
+test("Add Add button click", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("addAddButton")).toBeInTheDocument();
+    const addButton = screen.getByTestId("addAddButton");
+    act(() => userEvent.click(addButton));
+    waitFor(() => {
+      expect(addButton).toBeDefined();
+    });
+  });
+});
+
+test("Add Cancel button click", async () => {
+  render(
+    <BrowserRouter>
+      <PrecinctPanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("cancelButton")).toBeInTheDocument();
+    const cancelButton = screen.getByTestId("cancelButton");
+    act(() => userEvent.click(cancelButton));
+    waitFor(() => {
+      expect(cancelButton).toBeDefined();
+    });
+  });
+});

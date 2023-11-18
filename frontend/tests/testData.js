@@ -21,6 +21,8 @@ module.exports = {
         stationID: "52317-6757",
         stationIDInput: "LA-42",
         head: "Tesla McDonald",
-        address: "7867 York Avenue, Richardson, NV 67622"
+        address: "7867 York Avenue, New York City, NY 67622",
+        geographyID: "New York City-Manhattan-NY",
+        covers: "67622"
     }
 } 

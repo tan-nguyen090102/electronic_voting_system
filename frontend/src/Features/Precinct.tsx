@@ -35,6 +35,7 @@ import NavBar, { ListNavigationBar } from "./NavBar";
 interface ModalProps {
   isOpen: any;
   onClose: any;
+  handleRefreshList: any;
 }
 
 export default function PrecinctPanel() {
@@ -75,7 +76,7 @@ export default function PrecinctPanel() {
   }, []);
 
   //Selection listener
-  const [inputSelection, setInputSelection] = React.useState("");
+  const [inputSelection, setInputSelection] = React.useState("ALL");
   const handleSelection = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
@@ -83,20 +84,71 @@ export default function PrecinctPanel() {
   };
 
   //Filter button listener
+  const [isNoMatchPopUp, setNoMatchPopUp] = React.useState(false);
   const handleFilter = () => {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
       const filteredPrecinct = copyPrecinctList?.map((precinct, index) => {
-        if (precinct.state === inputSelection) {
+        if (precinct.district.split("-")[0] === inputSelection) {
           return precinct;
         } else {
           return [];
         }
       });
+      for (let i = 0; i < filteredPrecinct.length; i++) {
+        if (filteredPrecinct[i].length !== 0) {
+          setNoMatchPopUp(false);
+          break;
+        } else {
+          setNoMatchPopUp(true);
+        }
+      }
+
       setPrecinctList(filteredPrecinct);
     } else {
       setPrecinctList(copyPrecinctList);
+      setNoMatchPopUp(false);
     }
+  };
+
+  //Delete button listener
+  const handleDelete = async (precinct: any, index: number) => {
+    await fetch("http://localhost:5000/precinct", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        index: index,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length === 0) {
+          setPrecinctList([]);
+          setCopyPrecinctList([]);
+        } else {
+          setPrecinctList(data);
+          setCopyPrecinctList(data);
+        }
+      });
+  };
+
+  //Refresh from adding box listener
+  const handleRefreshList = () => {
+    fetch("http://localhost:5000/precinct")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length === 0) {
+          setPrecinctList([]);
+          setCopyPrecinctList([]);
+        } else {
+          setPrecinctList(data);
+          setCopyPrecinctList(data);
+        }
+      });
   };
 
   //Container for state options
@@ -204,9 +256,15 @@ export default function PrecinctPanel() {
           <Accordion allowMultiple>
             {CreateAccordionItem(receivedPrecinctList)}
           </Accordion>
+          {isNoMatchPopUp && (
+            <Text data-testid="invalidInput" mb={3}>
+              There is no precinct that matched the filtered state.
+            </Text>
+          )}
           <CreateAddModalBox
             isOpen={isOpen}
             onClose={onClose}
+            handleRefreshList={handleRefreshList}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
@@ -224,6 +282,9 @@ export default function PrecinctPanel() {
 
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
+    //Toast
+    const addToast = useToast();
+
     const precinctDetails =
       Array.isArray(jsonList) &&
       jsonList.slice(0, MAX_PRECINCT_SHOWN).map((precinct, index) => {
@@ -239,7 +300,7 @@ export default function PrecinctPanel() {
               <h2>
                 <AccordionButton>
                   <Box as="span" flex="1" textAlign="left">
-                    Station #{precinct.stationID}
+                    Station #{precinct.precinctID}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -252,7 +313,25 @@ export default function PrecinctPanel() {
                     <ListItem>
                       District registered: {precinct.district}
                     </ListItem>
+                    <ListItem>Geography cover: {precinct.geographyID}</ListItem>
                   </List>
+                  <Button
+                    data-testid="deleteButton"
+                    bg="red.400"
+                    onClick={() => {
+                      handleDelete(precinct, index);
+                      //Adding toast
+                      addToast({
+                        title: "Precinct Deleted!",
+                        description: `The precinct station ${precinct.precinctID} is deleted.`,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </Stack>
               </AccordionPanel>
             </AccordionItem>
@@ -270,14 +349,16 @@ export function CreateAddModalBox(props: ModalProps) {
 
   //Sets of initial values
   const initialValues = {
-    stationID: "",
+    precinctID: "",
     head: "",
     address: "",
+    geographyID: "",
     covers: "",
   };
 
   //Backend fetch the list of available zip
   const [recievedZipList, setReceiveZipList] = React.useState<Array<any>>([]);
+  const [listOnScreen, setListOnScreen] = React.useState<Array<any>>([]);
   useEffect(() => {
     fetch("http://localhost:5000/precinct/add")
       .then((response) => response.json())
@@ -309,9 +390,10 @@ export function CreateAddModalBox(props: ModalProps) {
 
     //Check if all the field is filled
     if (
-      inputValue.stationID &&
+      inputValue.precinctID &&
       inputValue.head &&
       inputValue.address &&
+      inputValue.geographyID &&
       listZipHasBeenTagged.length !== 0
     ) {
       isFilled = true;
@@ -328,16 +410,22 @@ export function CreateAddModalBox(props: ModalProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          stationID: inputValue.stationID,
+          precinctID: inputValue.precinctID,
           head: inputValue.head,
           address: inputValue.address,
+          geographyID: inputValue.geographyID,
           covers: StrinifyZip(listZipHasBeenTagged),
         }),
       });
+
+      //Call from the top DOM
       props.onClose();
+      props.handleRefreshList();
+
+      //Adding toast
       addToast({
         title: "Precinct Added!",
-        description: `The precinct station ${inputValue.stationID} is ready to be deployed.`,
+        description: `The precinct station ${inputValue.precinctID} is ready to be deployed.`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -352,7 +440,7 @@ export function CreateAddModalBox(props: ModalProps) {
     Array<any>
   >([]);
   const [tagJSX, setTagJSX] = React.useState<Array<JSX.Element>>([]);
-  const [listOnScreen, setListOnScreen] = React.useState<Array<any>>([]);
+
   const handleRemoveZip = (zip: any, tagValue: string) => {
     //Make Tags
     tagJSX.push(
@@ -421,10 +509,10 @@ export function CreateAddModalBox(props: ModalProps) {
           <FormControl>
             <FormLabel>ID:</FormLabel>
             <Input
-              name="stationID"
-              data-testid="stationIDInput"
+              name="precinctID"
+              data-testid="precinctIDInput"
               onChange={handleInput}
-              value={inputValue.stationID}
+              value={inputValue.precinctID}
               variant="filled"
               background="gray.200"
             ></Input>
@@ -447,6 +535,17 @@ export function CreateAddModalBox(props: ModalProps) {
               data-testid="address"
               onChange={handleInput}
               value={inputValue.address}
+              variant="filled"
+              background="gray.200"
+            ></Input>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Geography ID:</FormLabel>
+            <Input
+              name="geographyID"
+              data-testid="geographyID"
+              onChange={handleInput}
+              value={inputValue.geographyID}
               variant="filled"
               background="gray.200"
             ></Input>
