@@ -29,8 +29,22 @@ import {
   TagLabel,
   TagCloseButton,
   useToast,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBar } from "./NavBar";
+
+interface AlertProps {
+  isOpen: any;
+  onClose: any;
+  handleDelete: any;
+  precinct: any;
+  index: number;
+}
 
 interface ModalProps {
   isOpen: any;
@@ -40,7 +54,11 @@ interface ModalProps {
 
 export default function PrecinctPanel() {
   //Adding box
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const modalBox = useDisclosure();
+  const alertBox = useDisclosure();
+
+  //Toast
+  const addToast = useToast();
 
   //Limit of element shown on lists
   const MAX_PRECINCT_SHOWN = 20;
@@ -134,6 +152,14 @@ export default function PrecinctPanel() {
           setCopyPrecinctList(data);
         }
       });
+    //Adding toast
+    addToast({
+      title: "Precinct Deleted!",
+      description: `The precinct station ${precinct.precinctID} is deleted.`,
+      status: "warning",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
   //Refresh from adding box listener
@@ -262,15 +288,15 @@ export default function PrecinctPanel() {
             </Text>
           )}
           <CreateAddModalBox
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={modalBox.isOpen}
+            onClose={modalBox.onClose}
             handleRefreshList={handleRefreshList}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
             colorScheme="teal"
             mt={3}
-            onClick={onOpen}
+            onClick={modalBox.onOpen}
             alignSelf="left"
           >
             Add
@@ -282,9 +308,6 @@ export default function PrecinctPanel() {
 
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
-    //Toast
-    const addToast = useToast();
-
     const precinctDetails =
       Array.isArray(jsonList) &&
       jsonList.slice(0, MAX_PRECINCT_SHOWN).map((precinct, index) => {
@@ -319,19 +342,18 @@ export default function PrecinctPanel() {
                     data-testid="deleteButton"
                     bg="red.400"
                     onClick={() => {
-                      handleDelete(precinct, index);
-                      //Adding toast
-                      addToast({
-                        title: "Precinct Deleted!",
-                        description: `The precinct station ${precinct.precinctID} is deleted.`,
-                        status: "warning",
-                        duration: 5000,
-                        isClosable: true,
-                      });
+                      alertBox.onOpen();
                     }}
                   >
                     Delete
                   </Button>
+                  <CreateAlertBox
+                    isOpen={alertBox.isOpen}
+                    onClose={alertBox.onClose}
+                    handleDelete={handleDelete}
+                    precinct={precinct}
+                    index={index}
+                  ></CreateAlertBox>
                 </Stack>
               </AccordionPanel>
             </AccordionItem>
@@ -340,6 +362,52 @@ export default function PrecinctPanel() {
       });
     return precinctDetails;
   }
+}
+
+//Alert box for deleting precinct
+export function CreateAlertBox(props: AlertProps) {
+  const cancelRef = React.useRef(null);
+  return (
+    <AlertDialog
+      isOpen={props.isOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={props.onClose}
+    >
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Delete Precinct
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <b>Are you sure to remove this precinct from the system?</b>
+            <List marginRight="auto" mt={3}>
+              <ListItem>Station ID: {props.precinct.precinctID}</ListItem>
+              <ListItem>Station address: {props.precinct.address}</ListItem>
+              <ListItem>Head manager: {props.precinct.head}</ListItem>
+              <ListItem>
+                District registered: {props.precinct.district}
+              </ListItem>
+              <ListItem>Geography cover: {props.precinct.geographyID}</ListItem>
+            </List>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                props.handleDelete(props.precinct, props.index);
+                props.onClose();
+              }}
+            >
+              Delete
+            </Button>
+            <Button ref={cancelRef} onClick={props.onClose} ml={3}>
+              Cancel
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
 }
 
 //Modal box for adding precinct
@@ -427,7 +495,7 @@ export function CreateAddModalBox(props: ModalProps) {
         title: "Precinct Added!",
         description: `The precinct station ${inputValue.precinctID} is ready to be deployed.`,
         status: "success",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
     } else {
@@ -565,23 +633,22 @@ export function CreateAddModalBox(props: ModalProps) {
           </FormControl>
           {listJSX}
           <ModalFooter>
-            <Wrap spacing="20px">
-              <Button
-                data-testid="addAddButton"
-                colorScheme="teal"
-                onClick={handleAdd}
-              >
-                Add
-              </Button>
-              <Button
-                data-testid="cancelButton"
-                colorScheme="teal"
-                variant="outline"
-                onClick={props.onClose}
-              >
-                Cancel
-              </Button>
-            </Wrap>
+            <Button
+              data-testid="addAddButton"
+              colorScheme="teal"
+              onClick={handleAdd}
+            >
+              Add
+            </Button>
+            <Button
+              data-testid="cancelButton"
+              colorScheme="teal"
+              variant="outline"
+              onClick={props.onClose}
+              ml={3}
+            >
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalBody>
       </ModalContent>
@@ -602,7 +669,7 @@ export function CreateAddModalBox(props: ModalProps) {
 
   function ListTheZipCode(listofZip: any[], filterChar: string) {
     var zipList: any[] = [];
-    if (filterChar !== "") {
+    if (filterChar !== "" && Array.isArray(listofZip)) {
       zipList = listofZip.map((zip, index) => {
         if (zip.zip.includes(filterChar)) {
           return (
