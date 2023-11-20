@@ -79,6 +79,8 @@ export default function PrecinctPanel() {
   const [copyPrecinctList, setCopyPrecinctList] = React.useState<Array<any>>(
     []
   );
+  const [currentPrecinct, setCurrentPrecinct] = React.useState<any>([]);
+  const [currentIndex, setCurrentIndex] = React.useState(-1);
   useEffect(() => {
     fetch("http://localhost:5000/precinct")
       .then((response) => response.json())
@@ -86,9 +88,11 @@ export default function PrecinctPanel() {
         if (data.length === 0) {
           setPrecinctList([]);
           setCopyPrecinctList([]);
+          handlePointer([], -1);
         } else {
           setPrecinctList(data);
           setCopyPrecinctList(data);
+          handlePointer(data[0], 0);
         }
       });
   }, []);
@@ -127,6 +131,12 @@ export default function PrecinctPanel() {
       setPrecinctList(copyPrecinctList);
       setNoMatchPopUp(false);
     }
+  };
+
+  //Pointer to current Accordion item
+  const handlePointer = (precinct: any, index: number) => {
+    setCurrentPrecinct(precinct);
+    setCurrentIndex(index);
   };
 
   //Delete button listener
@@ -321,7 +331,11 @@ export default function PrecinctPanel() {
               key={index}
             >
               <h2>
-                <AccordionButton>
+                <AccordionButton
+                  onClick={() => {
+                    handlePointer(precinct, index);
+                  }}
+                >
                   <Box as="span" flex="1" textAlign="left">
                     Station #{precinct.precinctID}
                   </Box>
@@ -351,8 +365,8 @@ export default function PrecinctPanel() {
                     isOpen={alertBox.isOpen}
                     onClose={alertBox.onClose}
                     handleDelete={handleDelete}
-                    precinct={precinct}
-                    index={index}
+                    precinct={currentPrecinct}
+                    index={currentIndex}
                   ></CreateAlertBox>
                 </Stack>
               </AccordionPanel>
