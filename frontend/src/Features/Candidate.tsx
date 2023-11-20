@@ -58,7 +58,7 @@ export default function CandidatePanel() {
   const addToast = useToast();
 
   //Limit of element shown on lists
-  const MAX_CANDIDATE_SHOWN = 20;
+  const MAX_CANDIDATE_SHOWN = 100;
 
   //Change web title
   useEffect(() => {
@@ -76,6 +76,8 @@ export default function CandidatePanel() {
   const [copyCandidateList, setCopyCandiadteList] = React.useState<Array<any>>(
     []
   );
+  const [currentCandidate, setCurrentCandidate] = React.useState<any>([]);
+  const [currentIndex, setCurrentIndex] = React.useState(-1);
   useEffect(() => {
     fetch("http://localhost:5000/candidate")
       .then((response) => response.json())
@@ -83,9 +85,11 @@ export default function CandidatePanel() {
         if (data.length === 0) {
           setCandidateList([]);
           setCopyCandiadteList([]);
+          handlePointer([], -1);
         } else {
           setCandidateList(data);
           setCopyCandiadteList(data);
+          handlePointer(data[0], 0);
         }
       });
   }, []);
@@ -124,6 +128,12 @@ export default function CandidatePanel() {
       setCandidateList(copyCandidateList);
       setNoMatchPopUp(false);
     }
+  };
+
+  //Pointer to current Accordion item
+  const handlePointer = (candidate: any, index: number) => {
+    setCurrentCandidate(candidate);
+    setCurrentIndex(index);
   };
 
   //Delete button listener
@@ -318,7 +328,11 @@ export default function CandidatePanel() {
               key={index}
             >
               <h2>
-                <AccordionButton>
+                <AccordionButton
+                  onClick={() => {
+                    handlePointer(candidate, index);
+                  }}
+                >
                   <Box as="span" flex="1" textAlign="left">
                     Runner #{candidate.runnerID}
                   </Box>
@@ -347,8 +361,8 @@ export default function CandidatePanel() {
                     isOpen={alertBox.isOpen}
                     onClose={alertBox.onClose}
                     handleDelete={handleDelete}
-                    candidate={candidate}
-                    index={index}
+                    candidate={currentCandidate}
+                    index={currentIndex}
                   ></CreateAlertBox>
                 </Stack>
               </AccordionPanel>
