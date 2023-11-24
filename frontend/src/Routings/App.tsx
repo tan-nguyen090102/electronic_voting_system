@@ -10,6 +10,7 @@ import SearchPanel from "../Features/ProfileSearch";
 import PrecinctPanel from "../Features/Precinct";
 import CandidatePanel from "../Features/Candidate";
 import RacePanel from "../Features/Race";
+import DistrictPanel from "../Features/District";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/precinct" element={<PrecinctPanel />}></Route>
         <Route path="/candidate" element={<CandidatePanel />}></Route>
         <Route path="/race" element={<RacePanel />}></Route>
+        <Route path="/district" element={<DistrictPanel />}></Route>
       </Routes>
     </>
   );
