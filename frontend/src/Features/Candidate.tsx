@@ -237,7 +237,13 @@ export default function CandidatePanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"Candidates"} isLoggedIn="true" userName={user}></NavBar>
+      <NavBar
+        title={"Candidates"}
+        isLoggedIn="true"
+        isBlank="false"
+        userName={user}
+        role="admin"
+      ></NavBar>
       <ListNavigationBar indexClick="4"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex

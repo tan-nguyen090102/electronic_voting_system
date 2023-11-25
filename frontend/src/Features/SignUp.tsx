@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
+import NavBar from "./NavBar";
 
 export default function SignUpPanel() {
   //Change web title
@@ -292,322 +293,331 @@ export default function SignUpPanel() {
 
   //DOM
   return (
-    <Flex height="auto" alignItems="left" justifyContent="center">
-      <Flex
-        width="1000px"
-        alignItems="center"
-        direction="column"
-        background="gray.100"
-        p={10}
-        rounded={6}
-      >
-        <Stack direction="column">
-          <Heading mb={3}>
-            Sign up{" "}
-            {inputSelection.role === "voter" ? "for Voting" : "as a Manager"}
-          </Heading>
-          <Select
-            id="role"
-            name="role"
-            data-testid="role"
-            borderWidth={3}
-            onChange={handleSelection}
-            defaultValue="voter"
-          >
-            {roleOptions}
-          </Select>
-        </Stack>
-        <Wrap>
-          <FormControl isRequired>
-            <FormLabel>
-              Name {inputSelection.role === "voter" ? "and Address" : ""}
-            </FormLabel>
-            <Input
-              id="firstName"
-              name="firstName"
-              data-testid="firstName"
-              onChange={handleInput}
-              value={inputValue["firstName"]}
-              placeholder="First Name"
-              variant="filled"
-              mb={3}
-              background="gray.200"
-              required
-            ></Input>
-            <Input
-              id="middleName"
-              name="middleName"
-              data-testid="middleName"
-              onChange={handleInput}
-              value={inputValue["middleName"]}
-              placeholder="Middle Name"
-              variant="filled"
-              mb={3}
-              background="gray.200"
-            ></Input>
-            <Input
-              id="lastName"
-              name="lastName"
-              data-testid="lastName"
-              onChange={handleInput}
-              value={inputValue["lastName"]}
-              placeholder="Last Name"
-              variant="filled"
-              mb={3}
-              background="gray.200"
-            ></Input>
-            <Stack direction="row">
+    <div>
+      <NavBar
+        title={"Sign up"}
+        isLoggedIn="false"
+        isBlank="true"
+        userName={""}
+        role="voter"
+      ></NavBar>
+      <Flex height="auto" alignItems="left" justifyContent="center">
+        <Flex
+          width="1000px"
+          alignItems="center"
+          direction="column"
+          background="gray.100"
+          p={10}
+          rounded={6}
+        >
+          <Stack direction="column">
+            <Heading mb={3}>
+              Sign up{" "}
+              {inputSelection.role === "voter" ? "for Voting" : "as a Manager"}
+            </Heading>
+            <Select
+              id="role"
+              name="role"
+              data-testid="role"
+              borderWidth={3}
+              onChange={handleSelection}
+              defaultValue="voter"
+            >
+              {roleOptions}
+            </Select>
+          </Stack>
+          <Wrap>
+            <FormControl isRequired>
+              <FormLabel>
+                Name {inputSelection.role === "voter" ? "and Address" : ""}
+              </FormLabel>
               <Input
-                id="street"
-                name="street"
-                data-testid="street"
-                width={500}
+                id="firstName"
+                name="firstName"
+                data-testid="firstName"
                 onChange={handleInput}
-                value={inputValue["street"]}
-                placeholder="Street"
+                value={inputValue["firstName"]}
+                placeholder="First Name"
                 variant="filled"
                 mb={3}
                 background="gray.200"
-                style={{
-                  display: inputSelection.role === "voter" ? "block" : "none",
-                }}
+                required
               ></Input>
               <Input
-                id="city"
-                name="city"
-                data-testid="city"
-                width={200}
+                id="middleName"
+                name="middleName"
+                data-testid="middleName"
                 onChange={handleInput}
-                value={inputValue["city"]}
-                placeholder="City"
+                value={inputValue["middleName"]}
+                placeholder="Middle Name"
                 variant="filled"
                 mb={3}
                 background="gray.200"
-                style={{
-                  display: inputSelection.role === "voter" ? "block" : "none",
-                }}
               ></Input>
-              <Select
-                id="state"
-                name="state"
-                data-testid="state"
-                width={24}
-                borderWidth={2}
-                onChange={handleSelection}
+              <Input
+                id="lastName"
+                name="lastName"
+                data-testid="lastName"
+                onChange={handleInput}
+                value={inputValue["lastName"]}
+                placeholder="Last Name"
+                variant="filled"
+                mb={3}
+                background="gray.200"
+              ></Input>
+              <Stack direction="row">
+                <Input
+                  id="street"
+                  name="street"
+                  data-testid="street"
+                  width={500}
+                  onChange={handleInput}
+                  value={inputValue["street"]}
+                  placeholder="Street"
+                  variant="filled"
+                  mb={3}
+                  background="gray.200"
+                  style={{
+                    display: inputSelection.role === "voter" ? "block" : "none",
+                  }}
+                ></Input>
+                <Input
+                  id="city"
+                  name="city"
+                  data-testid="city"
+                  width={200}
+                  onChange={handleInput}
+                  value={inputValue["city"]}
+                  placeholder="City"
+                  variant="filled"
+                  mb={3}
+                  background="gray.200"
+                  style={{
+                    display: inputSelection.role === "voter" ? "block" : "none",
+                  }}
+                ></Input>
+                <Select
+                  id="state"
+                  name="state"
+                  data-testid="state"
+                  width={24}
+                  borderWidth={2}
+                  onChange={handleSelection}
+                  style={{
+                    display: inputSelection.role === "voter" ? "block" : "none",
+                  }}
+                >
+                  {stateOptions}
+                </Select>
+                <Input
+                  id="zip"
+                  name="zip"
+                  data-testid="zip"
+                  width={100}
+                  onChange={handleInput}
+                  value={inputValue["zip"]}
+                  placeholder="Zip Code"
+                  variant="filled"
+                  mb={3}
+                  background="gray.200"
+                  style={{
+                    display: inputSelection.role === "voter" ? "block" : "none",
+                  }}
+                ></Input>
+              </Stack>
+              {!inputValue.zip.match("^[0-9]{0,5}$") &&
+                inputValue.zip.length > 0 && (
+                  <Text data-testid="invalidZip" color="red" mb={3}>
+                    *Please enter correct zip code format (0-9)*
+                  </Text>
+                )}
+              <Wrap
+                align="baseline"
+                spacing="20px"
                 style={{
                   display: inputSelection.role === "voter" ? "block" : "none",
                 }}
               >
-                {stateOptions}
-              </Select>
-              <Input
-                id="zip"
-                name="zip"
-                data-testid="zip"
-                width={100}
-                onChange={handleInput}
-                value={inputValue["zip"]}
-                placeholder="Zip Code"
-                variant="filled"
-                mb={3}
-                background="gray.200"
-                style={{
-                  display: inputSelection.role === "voter" ? "block" : "none",
-                }}
-              ></Input>
-            </Stack>
-            {!inputValue.zip.match("^[0-9]{0,5}$") &&
-              inputValue.zip.length > 0 && (
-                <Text data-testid="invalidZip" color="red" mb={3}>
-                  *Please enter correct zip code format (0-9)*
-                </Text>
-              )}
-            <Wrap
-              align="baseline"
-              spacing="20px"
-              style={{
-                display: inputSelection.role === "voter" ? "block" : "none",
-              }}
-            >
-              <FormLabel>Date of Birth: </FormLabel>
-              <Input
-                id="dob"
-                name="dob"
-                data-testid="dob"
-                placeholder="Date of Birth"
-                type="date"
-                width="auto"
-                variant="outline"
-                border="2px"
-                onChange={handleInput}
-                value={inputValue["dob"]}
-                max={new Date().toISOString().split("T")[0]}
-              ></Input>
-            </Wrap>
-          </FormControl>
-          <Stack justify="left">
-            <FormControl isRequired>
-              <FormLabel>Username and Password:</FormLabel>
-              <Stack direction="row">
+                <FormLabel>Date of Birth: </FormLabel>
                 <Input
-                  id="email"
-                  name="email"
-                  data-testid="email"
-                  width={500}
+                  id="dob"
+                  name="dob"
+                  data-testid="dob"
+                  placeholder="Date of Birth"
+                  type="date"
+                  width="auto"
+                  variant="outline"
+                  border="2px"
                   onChange={handleInput}
-                  value={inputValue["email"]}
-                  placeholder="Email"
-                  variant="filled"
-                  mb={3}
-                  background="gray.200"
+                  value={inputValue["dob"]}
+                  max={new Date().toISOString().split("T")[0]}
                 ></Input>
-                {!inputValue.email.match(
-                  "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
-                ) &&
-                  inputValue.email.length > 0 && (
-                    <Text
-                      data-testid="invalidEmail"
-                      color="red"
-                      mb={3}
-                      ml={50}
-                      mt={3}
-                    >
-                      *Please use correct email format*
-                    </Text>
-                  )}
-              </Stack>
-              <Stack direction="row" justify="left">
-                <Stack direction="column" justify="center">
+              </Wrap>
+            </FormControl>
+            <Stack justify="left">
+              <FormControl isRequired>
+                <FormLabel>Username and Password:</FormLabel>
+                <Stack direction="row">
                   <Input
-                    id="password"
-                    name="password"
-                    data-testid="password"
+                    id="email"
+                    name="email"
+                    data-testid="email"
                     width={500}
                     onChange={handleInput}
-                    value={inputValue["password"]}
-                    placeholder="Password"
+                    value={inputValue["email"]}
+                    placeholder="Email"
                     variant="filled"
                     mb={3}
                     background="gray.200"
-                    type="password"
                   ></Input>
-                  <Input
-                    id="passwordRetype"
-                    name="passwordRetype"
-                    data-testid="passwordRetype"
-                    width={500}
-                    onChange={handleRetypePassword}
-                    placeholder="Confirm password"
-                    variant="filled"
-                    mb={3}
-                    background="gray.200"
-                    type="password"
-                  ></Input>
-                  {inputRetype !== inputValue.password &&
-                    inputRetype.length > 0 && (
-                      <Text data-testid="invalidRetype" color="red" mb={3}>
-                        *Your password does not match up*
+                  {!inputValue.email.match(
+                    "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
+                  ) &&
+                    inputValue.email.length > 0 && (
+                      <Text
+                        data-testid="invalidEmail"
+                        color="red"
+                        mb={3}
+                        ml={50}
+                        mt={3}
+                      >
+                        *Please use correct email format*
                       </Text>
                     )}
                 </Stack>
-                <Stack direction="column" justify="left" ml={70}>
-                  {requirements}
+                <Stack direction="row" justify="left">
+                  <Stack direction="column" justify="center">
+                    <Input
+                      id="password"
+                      name="password"
+                      data-testid="password"
+                      width={500}
+                      onChange={handleInput}
+                      value={inputValue["password"]}
+                      placeholder="Password"
+                      variant="filled"
+                      mb={3}
+                      background="gray.200"
+                      type="password"
+                    ></Input>
+                    <Input
+                      id="passwordRetype"
+                      name="passwordRetype"
+                      data-testid="passwordRetype"
+                      width={500}
+                      onChange={handleRetypePassword}
+                      placeholder="Confirm password"
+                      variant="filled"
+                      mb={3}
+                      background="gray.200"
+                      type="password"
+                    ></Input>
+                    {inputRetype !== inputValue.password &&
+                      inputRetype.length > 0 && (
+                        <Text data-testid="invalidRetype" color="red" mb={3}>
+                          *Your password does not match up*
+                        </Text>
+                      )}
+                  </Stack>
+                  <Stack direction="column" justify="left" ml={70}>
+                    {requirements}
+                  </Stack>
                 </Stack>
-              </Stack>
-            </FormControl>
-            <FormControl
-              isRequired
-              style={{
-                display: inputSelection.role === "voter" ? "block" : "none",
-              }}
+              </FormControl>
+              <FormControl
+                isRequired
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
+              >
+                <FormLabel>Additional Verifications:</FormLabel>
+                <Stack direction="row">
+                  <Input
+                    id="passport"
+                    name="passport"
+                    data-testid="passport"
+                    width={412}
+                    onChange={handleInput}
+                    value={inputValue["passport"]}
+                    placeholder="Passport ID"
+                    variant="filled"
+                    mb={3}
+                    background="gray.200"
+                  ></Input>
+                  <Input
+                    id="driverID"
+                    name="driverID"
+                    data-testid="driverID"
+                    width={412}
+                    onChange={handleInput}
+                    value={inputValue["driverID"]}
+                    placeholder="Driver License ID"
+                    variant="filled"
+                    mb={6}
+                    background="gray.200"
+                  ></Input>
+                </Stack>
+              </FormControl>
+              <FormControl
+                isRequired
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
+              >
+                <FormLabel>Security Questions:</FormLabel>
+                <Stack direction="column">
+                  <Select
+                    id="questionIndex"
+                    name="questionIndex"
+                    data-testid="question"
+                    borderWidth={2}
+                    onChange={handleSelection}
+                    defaultValue="0"
+                    value={inputSelection["questionIndex"]}
+                  >
+                    {questionOptions}
+                  </Select>
+                  <Input
+                    id="securityAnswer"
+                    name="securityAnswer"
+                    data-testid="securityAnswer"
+                    onChange={handleInput}
+                    value={inputValue["securityAnswer"]}
+                    placeholder="Answer"
+                    variant="filled"
+                    background="gray.200"
+                  ></Input>
+                  {decision && (
+                    <Text data-testid="unfilledFields" color="red" mb={3}>
+                      *Please fill out all required fields*
+                    </Text>
+                  )}
+                </Stack>
+              </FormControl>
+            </Stack>
+          </Wrap>
+          <Wrap spacing="20px" mt={6}>
+            <Button
+              data-testid="signupButton"
+              colorScheme="teal"
+              onClick={handleSignup}
             >
-              <FormLabel>Additional Verifications:</FormLabel>
-              <Stack direction="row">
-                <Input
-                  id="passport"
-                  name="passport"
-                  data-testid="passport"
-                  width={412}
-                  onChange={handleInput}
-                  value={inputValue["passport"]}
-                  placeholder="Passport ID"
-                  variant="filled"
-                  mb={3}
-                  background="gray.200"
-                ></Input>
-                <Input
-                  id="driverID"
-                  name="driverID"
-                  data-testid="driverID"
-                  width={412}
-                  onChange={handleInput}
-                  value={inputValue["driverID"]}
-                  placeholder="Driver License ID"
-                  variant="filled"
-                  mb={6}
-                  background="gray.200"
-                ></Input>
-              </Stack>
-            </FormControl>
-            <FormControl
-              isRequired
-              style={{
-                display: inputSelection.role === "voter" ? "block" : "none",
-              }}
+              Sign Up
+            </Button>
+            <Button
+              data-testid="cancelButton"
+              colorScheme="teal"
+              variant="outline"
+              onClick={handleCancel}
             >
-              <FormLabel>Security Questions:</FormLabel>
-              <Stack direction="column">
-                <Select
-                  id="questionIndex"
-                  name="questionIndex"
-                  data-testid="question"
-                  borderWidth={2}
-                  onChange={handleSelection}
-                  defaultValue="0"
-                  value={inputSelection["questionIndex"]}
-                >
-                  {questionOptions}
-                </Select>
-                <Input
-                  id="securityAnswer"
-                  name="securityAnswer"
-                  data-testid="securityAnswer"
-                  onChange={handleInput}
-                  value={inputValue["securityAnswer"]}
-                  placeholder="Answer"
-                  variant="filled"
-                  background="gray.200"
-                ></Input>
-                {decision && (
-                  <Text data-testid="unfilledFields" color="red" mb={3}>
-                    *Please fill out all required fields*
-                  </Text>
-                )}
-              </Stack>
-            </FormControl>
-          </Stack>
-        </Wrap>
-        <Wrap spacing="20px" mt={6}>
-          <Button
-            data-testid="signupButton"
-            colorScheme="teal"
-            onClick={handleSignup}
-          >
-            Sign Up
-          </Button>
-          <Button
-            data-testid="cancelButton"
-            colorScheme="teal"
-            variant="outline"
-            onClick={handleCancel}
-          >
-            Cancel
-          </Button>
-        </Wrap>
-        <Text fontSize="xs" mt={6}>
-          Voting System
-        </Text>
+              Cancel
+            </Button>
+          </Wrap>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
+        </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 }

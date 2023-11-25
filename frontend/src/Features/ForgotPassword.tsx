@@ -15,6 +15,7 @@ import {
   AlertDialogBody,
   useDisclosure,
 } from "@chakra-ui/react";
+import NavBar from "./NavBar";
 
 export default function ForgotPanel() {
   //Alert box
@@ -159,125 +160,134 @@ export default function ForgotPanel() {
 
   //DOM
   return (
-    <Flex height="100vh" alignItems="center" justifyContent="center">
-      <Flex
-        width="100vh"
-        direction="column"
-        background="gray.100"
-        p={12}
-        rounded={6}
-      >
-        <Heading mb={6}>Change your password</Heading>
-        <Stack direction="column">
-          <Text>Let's get into your account!</Text>
-          <Text mb={3}>
-            First, provide us your registered email so that we can send you a
-            link to change your password.
-          </Text>
-          <Input
-            name="email"
-            data-testid="email"
-            onChange={handleInput}
-            value={inputEmail}
-            placeholder="Email"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-            disabled={isValidAnswer ? true : false}
-          ></Input>
-          {!inputEmail.match(
-            "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
-          ) &&
-            inputEmail.length > 0 && (
-              <Text data-testid="invalidEmail" color="red" mb={3}>
-                *Please use correct email format*
+    <div>
+      <NavBar
+        title={"Help"}
+        isLoggedIn="false"
+        isBlank="true"
+        userName={""}
+        role="voter"
+      ></NavBar>
+      <Flex height="100vh" alignItems="center" justifyContent="center">
+        <Flex
+          width="100vh"
+          direction="column"
+          background="gray.100"
+          p={12}
+          rounded={6}
+        >
+          <Heading mb={6}>Change your password</Heading>
+          <Stack direction="column">
+            <Text>Let's get into your account!</Text>
+            <Text mb={3}>
+              First, provide us your registered email so that we can send you a
+              link to change your password.
+            </Text>
+            <Input
+              name="email"
+              data-testid="email"
+              onChange={handleInput}
+              value={inputEmail}
+              placeholder="Email"
+              variant="filled"
+              mb={3}
+              background="gray.200"
+              disabled={isValidAnswer ? true : false}
+            ></Input>
+            {!inputEmail.match(
+              "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
+            ) &&
+              inputEmail.length > 0 && (
+                <Text data-testid="invalidEmail" color="red" mb={3}>
+                  *Please use correct email format*
+                </Text>
+              )}
+            {isInvalidCredential && (
+              <Text data-testid="invalidInput" color="red" mb={3}>
+                *Invalid Credential*
               </Text>
             )}
-          {isInvalidCredential && (
-            <Text data-testid="invalidInput" color="red" mb={3}>
-              *Invalid Credential*
-            </Text>
-          )}
-        </Stack>
-        <Stack
-          direction="column"
-          style={{
-            display: isSecurityPopUp ? "block" : "none",
-          }}
-        >
-          <Text mb={3}>Please answer the security question.</Text>
-          <Select borderWidth={3}>
-            <option value="0">{questionListIndexing()}</option>
-          </Select>
-          <Input
-            name="securityAnswer"
-            data-testid="securityAnswer"
-            onChange={handleAnswer}
-            value={inputAnswer}
-            placeholder="Answer"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-            disabled={isValidAnswer ? true : false}
-          ></Input>
-          {isInvalidPopUp && (
-            <Text data-testid="invalidInput" color="red" mb={3}>
-              *Invalid Credential*
-            </Text>
-          )}
-        </Stack>
-        <Wrap spacing="20px" mt={3}>
-          <Button
-            data-testid="sendButton"
-            colorScheme="teal"
-            onClick={isSecurityPopUp ? handleVerifyAnswer : handleSend}
-            style={{
-              display: isValidAnswer ? "none" : "block",
-            }}
-          >
-            {isSecurityPopUp ? "Answer" : "Verify"}
-          </Button>
-          <Button
-            data-testid="cancelButton"
-            colorScheme="teal"
-            variant="outline"
-            onClick={handleCancel}
-            style={{
-              display: isValidAnswer ? "none" : "block",
-            }}
-          >
-            Cancel
-          </Button>
+          </Stack>
           <Stack
             direction="column"
             style={{
-              display: isValidAnswer ? "block" : "none",
+              display: isSecurityPopUp ? "block" : "none",
             }}
           >
-            <Text mb={3}>
-              <b>Verification completed</b>. Please click the button to receive
-              an email with a link
-            </Text>
-            <AlertAfterCompletion></AlertAfterCompletion>
+            <Text mb={3}>Please answer the security question.</Text>
+            <Select borderWidth={3}>
+              <option value="0">{questionListIndexing()}</option>
+            </Select>
+            <Input
+              name="securityAnswer"
+              data-testid="securityAnswer"
+              onChange={handleAnswer}
+              value={inputAnswer}
+              placeholder="Answer"
+              variant="filled"
+              mb={3}
+              background="gray.200"
+              disabled={isValidAnswer ? true : false}
+            ></Input>
+            {isInvalidPopUp && (
+              <Text data-testid="invalidInput" color="red" mb={3}>
+                *Invalid Credential*
+              </Text>
+            )}
+          </Stack>
+          <Wrap spacing="20px" mt={3}>
             <Button
-              data-testid="sendLinkButton"
+              data-testid="sendButton"
               colorScheme="teal"
-              onClick={() => {
-                handleSendLink();
-                onOpen();
+              onClick={isSecurityPopUp ? handleVerifyAnswer : handleSend}
+              style={{
+                display: isValidAnswer ? "none" : "block",
               }}
             >
-              Send the link
+              {isSecurityPopUp ? "Answer" : "Verify"}
             </Button>
-          </Stack>
-        </Wrap>
-        <Wrap justify="center">
-          <Text fontSize="xs" mt={6}>
-            Voting System
-          </Text>
-        </Wrap>
+            <Button
+              data-testid="cancelButton"
+              colorScheme="teal"
+              variant="outline"
+              onClick={handleCancel}
+              style={{
+                display: isValidAnswer ? "none" : "block",
+              }}
+            >
+              Cancel
+            </Button>
+            <Stack
+              direction="column"
+              style={{
+                display: isValidAnswer ? "block" : "none",
+              }}
+            >
+              <Text mb={3}>
+                <b>Verification completed</b>. Please click the button to
+                receive an email with a link
+              </Text>
+              <AlertAfterCompletion></AlertAfterCompletion>
+              <Button
+                data-testid="sendLinkButton"
+                colorScheme="teal"
+                onClick={() => {
+                  handleSendLink();
+                  onOpen();
+                }}
+              >
+                Send the link
+              </Button>
+            </Stack>
+          </Wrap>
+          <Wrap justify="center">
+            <Text fontSize="xs" mt={6}>
+              Voting System
+            </Text>
+          </Wrap>
+        </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 
   //Helper function to create an alert box

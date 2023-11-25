@@ -89,11 +89,9 @@ export default function ElectionPanel() {
   const [currentElection, setCurrentElection] = React.useState<any>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [currentDay, setCurrentDay] = React.useState("");
-  const [currentTime, setCurrentTime] = React.useState("");
   useEffect(() => {
     var electionLists: any[] = [];
     var today = new Date().toISOString();
-    var time = new Date().toTimeString();
 
     fetch("http://localhost:5000/election")
       .then((response) => response.json())
@@ -105,6 +103,12 @@ export default function ElectionPanel() {
           handlePointer([], -1);
         } else {
           electionLists = DecomposeJSONObject(data);
+          if (electionLists[0].length === 0) {
+            setNoMatchActivePopUp(true);
+          }
+          if (electionLists[1].length === 0) {
+            setNoMatchInactivePopUp(true);
+          }
           setCopyElectionList(data);
           setActiveElectionList(electionLists[0]);
           setInactiveElectionList(electionLists[1]);
@@ -113,7 +117,6 @@ export default function ElectionPanel() {
       });
 
     setCurrentDay(today);
-    setCurrentTime(time);
   }, []);
 
   //Selection listener
@@ -287,6 +290,12 @@ export default function ElectionPanel() {
           setCopyElectionList([]);
         } else {
           var electionLists = DecomposeJSONObject(data);
+          electionLists[0].length === 0
+            ? setNoMatchActivePopUp(true)
+            : setNoMatchActivePopUp(false);
+          electionLists[1].length === 0
+            ? setNoMatchInactivePopUp(true)
+            : setNoMatchInactivePopUp(false);
           setActiveElectionList(electionLists[0]);
           setInactiveElectionList(electionLists[1]);
           setCopyElectionList(data);
@@ -373,7 +382,13 @@ export default function ElectionPanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"Elections"} isLoggedIn="true" userName={user}></NavBar>
+      <NavBar
+        title={"Elections"}
+        isLoggedIn="true"
+        isBlank="false"
+        userName={user}
+        role="admin"
+      ></NavBar>
       <ListNavigationBar indexClick="0"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
@@ -499,7 +514,7 @@ export default function ElectionPanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Election {election.title}
+                    {election.title}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -711,7 +726,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader>Add new district</ModalHeader>
+        <ModalHeader>Add new election</ModalHeader>
         <ModalBody>
           {isPopUp && (
             <Text data-testid="unfilledFields" color="red" mb={3}>
@@ -736,6 +751,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
               data-testid="electionID"
               onChange={handleInput}
               value={inputValue.electionID}
+              placeholder="Initials/City-Year"
               variant="filled"
               background="gray.200"
             ></Input>
@@ -940,12 +956,29 @@ export function CreateEditModalBox(props: ModalEditProps) {
 function DecomposeJSONObject(jsonList: any[] = []) {
   var activeList: any[] = [];
   var inactiveList: any[] = [];
+  var today = new Date().toISOString().split("T")[0];
 
   Object.values(jsonList).forEach((election) => {
-    if (election.status === "active") {
+    if (election.status === "active" && election.date >= today) {
       activeList.push(election);
-    } else if (election.status === "inactive") {
+    } else if (election.status === "inactive" || election.date < today) {
       inactiveList.push(election);
+
+      //Update the backend with the expired election
+      if (election.date < today) {
+        fetch("http://localhost:5000/election", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "content-type": "application/json; charset=UTF-8",
+          },
+          mode: "cors",
+          body: JSON.stringify({
+            electionID: election.electionID,
+            status: "inactive",
+          }),
+        });
+      }
     } else {
       return;
     }

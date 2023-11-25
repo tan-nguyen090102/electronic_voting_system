@@ -275,7 +275,13 @@ export default function DistrictPanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"Districts"} isLoggedIn="true" userName={user}></NavBar>
+      <NavBar
+        title={"Districts"}
+        isLoggedIn="true"
+        isBlank="false"
+        userName={user}
+        role="admin"
+      ></NavBar>
       <ListNavigationBar indexClick="2"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
@@ -553,6 +559,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
               data-testid="districtID"
               onChange={handleInput}
               value={inputValue.districtID}
+              placeholder="Initials-Type-Number"
               variant="filled"
               background="gray.200"
             ></Input>

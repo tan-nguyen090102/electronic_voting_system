@@ -241,7 +241,13 @@ export default function PrecinctPanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"Precincts"} isLoggedIn="true" userName={user}></NavBar>
+      <NavBar
+        title={"Precincts"}
+        isLoggedIn="true"
+        isBlank="false"
+        userName={user}
+        role="admin"
+      ></NavBar>
       <ListNavigationBar indexClick="3"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex

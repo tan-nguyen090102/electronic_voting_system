@@ -101,7 +101,9 @@ export default function ProfileRequestPanel() {
       <NavBar
         title={"User Profile Request"}
         isLoggedIn="true"
+        isBlank="false"
         userName={user}
+        role="admin"
       ></NavBar>
       <ListNavigationBar indexClick="6"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">

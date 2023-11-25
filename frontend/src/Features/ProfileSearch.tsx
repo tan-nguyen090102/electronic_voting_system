@@ -97,7 +97,9 @@ export default function SearchPanel() {
       <NavBar
         title={"User Profile Search"}
         isLoggedIn="true"
+        isBlank="false"
         userName={user}
+        role="admin"
       ></NavBar>
       <ListNavigationBar indexClick="5"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
