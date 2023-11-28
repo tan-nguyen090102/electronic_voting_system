@@ -638,7 +638,7 @@ export function CreateAlertBox(props: AlertProps) {
   );
 }
 
-//Modal box for adding district
+//Modal box for adding election
 export function CreateAddModalBox(props: ModalAddProps) {
   //Toast
   const addToast = useToast();
@@ -819,7 +819,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
   );
 }
 
-//Modal box for edit district
+//Modal box for edit election
 export function CreateEditModalBox(props: ModalEditProps) {
   //Toast
   const addToast = useToast();
