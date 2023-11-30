@@ -1,12 +1,13 @@
-from flask import Flask, request, jsonify
-from flask_bcrypt import Bcrypt
 from pathlib import Path
 
-from flask_cors import CORS, cross_origin
 from database.database_functions import create_db_connection
-from routers.voters import voters_bp
-from routers.auth import auth_bp
 from dependencies import db
+from flask import Flask
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS, cross_origin
+from routers.auth import auth_bp
+from routers.precincts import precinct_bp
+from routers.voters import voters_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     try:
         app.register_blueprint(voters_bp, url_prefix="/voters")
         app.register_blueprint(auth_bp)
+        app.register_blueprint(precinct_bp)
         app.run()
     finally:
         db.close()

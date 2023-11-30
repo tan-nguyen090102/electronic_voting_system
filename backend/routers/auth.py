@@ -1,9 +1,8 @@
-from flask import Blueprint, request, jsonify
+from dependencies import db
+from flask import Blueprint, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_cors import cross_origin
-from dependencies import db
 from services.auth import voter_login
-
 
 auth_bp = Blueprint("auth_bp", __name__)
 bcrypt = Bcrypt()

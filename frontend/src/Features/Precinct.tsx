@@ -85,7 +85,8 @@ export default function PrecinctPanel() {
     fetch("http://localhost:5000/precinct")
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        console.log(data);
+        if (data === "False") {
           setPrecinctList([]);
           setCopyPrecinctList([]);
           handlePointer([], -1);
@@ -149,19 +150,11 @@ export default function PrecinctPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        precinctID: precinct.precinctID,
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setPrecinctList([]);
-          setCopyPrecinctList([]);
-        } else {
-          setPrecinctList(data);
-          setCopyPrecinctList(data);
-        }
-      });
+    });
+    handleRefreshList();
+
     //Adding toast
     addToast({
       title: "Precinct Deleted!",
@@ -431,16 +424,24 @@ export function CreateAddModalBox(props: ModalProps) {
 
   //Sets of initial values
   const initialValues = {
-    precinctID: "",
     head: "",
     address: "",
     geographyID: "",
+    districtID: "",
     covers: "",
   };
 
   //Backend fetch the list of available zip
   const [recievedZipList, setReceiveZipList] = React.useState<Array<any>>([]);
   const [listOnScreen, setListOnScreen] = React.useState<Array<any>>([]);
+  const [receivedDistrictList, setReceiveDistrictList] = React.useState<
+    Array<any>
+  >([]);
+  const [districtListOnScreen, setDistrictListOnScreen] = React.useState<
+    Array<any>
+  >([]);
+
+  /*
   useEffect(() => {
     fetch("http://localhost:5000/precinct/add")
       .then((response) => response.json())
@@ -448,11 +449,27 @@ export function CreateAddModalBox(props: ModalProps) {
         setReceiveZipList(data);
         setListOnScreen(data);
       });
+  }, []);*/
+
+  useEffect(() => {
+    fetch("http://localhost:5000/precinct/add")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data === "False") {
+          setReceiveDistrictList([]);
+          setDistrictListOnScreen([]);
+        } else {
+          setReceiveDistrictList(data);
+          setDistrictListOnScreen(data);
+        }
+      });
   }, []);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
   const [listJSX, setListJSX] = React.useState<JSX.Element>();
+  const [listDistrictJSX, setListDistrictJSX] = React.useState<JSX.Element>();
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
@@ -460,9 +477,14 @@ export function CreateAddModalBox(props: ModalProps) {
       [name]: value,
     });
 
+    if (name === "districtID") {
+      CreateDistrictListOnScreen(value, districtListOnScreen);
+    }
+
+    /*
     if (name === "covers") {
       CreateListOnScreen(value, listOnScreen);
-    }
+    }*/
   };
 
   //Add button listener
@@ -472,11 +494,11 @@ export function CreateAddModalBox(props: ModalProps) {
 
     //Check if all the field is filled
     if (
-      inputValue.precinctID &&
       inputValue.head &&
       inputValue.address &&
       inputValue.geographyID &&
-      listZipHasBeenTagged.length !== 0
+      inputValue.districtID
+      //listZipHasBeenTagged.length !== 0
     ) {
       isFilled = true;
     }
@@ -492,11 +514,11 @@ export function CreateAddModalBox(props: ModalProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          precinctID: inputValue.precinctID,
           head: inputValue.head,
           address: inputValue.address,
           geographyID: inputValue.geographyID,
-          covers: StrinifyZip(listZipHasBeenTagged),
+          districtID: inputValue.districtID,
+          //covers: StrinifyZip(listZipHasBeenTagged),
         }),
       });
 
@@ -507,7 +529,7 @@ export function CreateAddModalBox(props: ModalProps) {
       //Adding toast
       addToast({
         title: "Precinct Added!",
-        description: `The precinct station ${inputValue.precinctID} is ready to be deployed.`,
+        description: `The precinct station is ready to be deployed.`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -517,6 +539,18 @@ export function CreateAddModalBox(props: ModalProps) {
     }
   };
 
+  //Show the value on input field after click on item
+  const handlePointer = (field: string, value: string) => {
+    setInputValue({
+      ...inputValue,
+      [field]: value,
+    });
+
+    CreateDistrictListOnScreen("", []);
+    setDistrictListOnScreen(receivedDistrictList);
+  };
+
+  /*
   //Tag open button listeners
   const [listZipHasBeenTagged, setListZipBeenTagged] = React.useState<
     Array<any>
@@ -569,7 +603,7 @@ export function CreateAddModalBox(props: ModalProps) {
     tagJSX.pop();
 
     CreateListOnScreen(inputValue.covers, filtered);
-  };
+  };*/
 
   //Box DOM
   return (
@@ -588,17 +622,6 @@ export function CreateAddModalBox(props: ModalProps) {
               *Please fill out all required fields*
             </Text>
           )}
-          <FormControl>
-            <FormLabel>ID:</FormLabel>
-            <Input
-              name="precinctID"
-              data-testid="precinctIDInput"
-              onChange={handleInput}
-              value={inputValue.precinctID}
-              variant="filled"
-              background="gray.200"
-            ></Input>
-          </FormControl>
           <FormControl>
             <FormLabel>Head manager:</FormLabel>
             <Input
@@ -633,6 +656,20 @@ export function CreateAddModalBox(props: ModalProps) {
             ></Input>
           </FormControl>
           <FormControl>
+            <FormLabel>District ID:</FormLabel>
+            <Input
+              name="districtID"
+              data-testid="districtID"
+              onChange={handleInput}
+              value={inputValue.districtID}
+              variant="filled"
+              background="gray.200"
+            ></Input>
+          </FormControl>
+          {listDistrictJSX}
+
+          {/*
+          <FormControl>
             <FormLabel>Zip covers:</FormLabel>
             <Wrap spacing="10px">{tagJSX}</Wrap>
             <Input
@@ -645,7 +682,7 @@ export function CreateAddModalBox(props: ModalProps) {
               mt={listZipHasBeenTagged.length === 0 ? 0 : 3}
             ></Input>
           </FormControl>
-          {listJSX}
+          {listJSX}*/}
           <ModalFooter>
             <Button
               data-testid="addAddButton"
@@ -670,6 +707,41 @@ export function CreateAddModalBox(props: ModalProps) {
   );
 
   //Helper functions to create the tags and lists of zipcodes
+  function CreateDistrictListOnScreen(currentInput: string, list: any[]) {
+    setDistrictListOnScreen(list);
+    setListDistrictJSX(CreateListOfDistrict(currentInput, list));
+  }
+
+  function CreateListOfDistrict(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheDistrict(listToShown, character)}</Wrap>;
+  }
+  function ListTheDistrict(listofDistrict: any[], filterChar: string) {
+    var districtList: any[] = [];
+    if (filterChar !== "" && Array.isArray(listofDistrict)) {
+      districtList = listofDistrict.map((district, index) => {
+        if (district[0].includes(filterChar)) {
+          return (
+            <Button
+              key={district[0]}
+              onClick={() => {
+                handlePointer("districtID", district[0]);
+              }}
+            >
+              {district[0]}
+            </Button>
+          );
+        } else {
+          return <div key={index}></div>;
+        }
+      });
+    } else {
+      districtList = [];
+    }
+
+    return districtList;
+  }
+
+  /*
   function CreateListOnScreen(currentInput: string, list: any[]) {
     setListZipBeenTagged(listZipHasBeenTagged);
     setTagJSX(tagJSX);
@@ -714,5 +786,5 @@ export function CreateAddModalBox(props: ModalProps) {
     });
 
     return zipList;
-  }
+  }*/
 }

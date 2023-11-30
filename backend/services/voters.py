@@ -1,5 +1,6 @@
-from database.database_functions import execute_stored_proc
 import random
+
+from database.database_functions import execute_stored_proc
 
 
 def create_voter(db, bcrypt, voter):
