@@ -6,6 +6,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS, cross_origin
 from routers.auth import auth_bp
+from routers.managers import managers_bp
 from routers.precincts import precinct_bp
 from routers.voters import voters_bp
 
@@ -25,6 +26,7 @@ def hello_world():
 if __name__ == "__main__":
     try:
         app.register_blueprint(voters_bp, url_prefix="/voters")
+        app.register_blueprint(managers_bp, url_prefix="/managers")
         app.register_blueprint(auth_bp)
         app.register_blueprint(precinct_bp)
         app.run()

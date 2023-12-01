@@ -1,7 +1,7 @@
 import json
 
 from dependencies import db
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_cors import cross_origin
 from services.districts import get_all_districts
 from services.precincts import create_precinct, delete_precinct, get_all_precincts
