@@ -112,7 +112,7 @@ export default function PrecinctPanel() {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
       const filteredPrecinct = copyPrecinctList?.map((precinct, index) => {
-        if (precinct.district.split("-")[0] === inputSelection) {
+        if (precinct[0].split("-")[0] === inputSelection) {
           return precinct;
         } else {
           return [];
@@ -150,7 +150,7 @@ export default function PrecinctPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        precinctID: precinct.precinctID,
+        precinctID: precinct[0],
       }),
     });
     handleRefreshList();
@@ -330,7 +330,7 @@ export default function PrecinctPanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Station #{precinct.precinctID}
+                    Station #{precinct[0]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -338,12 +338,11 @@ export default function PrecinctPanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Station address: {precinct.address}</ListItem>
-                    <ListItem>Head manager: {precinct.head}</ListItem>
+                    <ListItem>Station address: {precinct[1]}</ListItem>
                     <ListItem>
-                      District registered: {precinct.district}
+                      Head manager: {precinct[3] + " " + precinct[4]}
                     </ListItem>
-                    <ListItem>Geography cover: {precinct.geographyID}</ListItem>
+                    <ListItem>District registered: {precinct[2]}</ListItem>
                   </List>
                   <Button
                     data-testid="deleteButton"
@@ -388,13 +387,12 @@ export function CreateAlertBox(props: AlertProps) {
           <AlertDialogBody>
             <b>Are you sure to remove this precinct from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>Station ID: {props.precinct.precinctID}</ListItem>
-              <ListItem>Station address: {props.precinct.address}</ListItem>
-              <ListItem>Head manager: {props.precinct.head}</ListItem>
+              <ListItem>Station ID: {props.precinct[0]}</ListItem>
+              <ListItem>Station address: {props.precinct[1]}</ListItem>
               <ListItem>
-                District registered: {props.precinct.district}
+                Head manager: {props.precinct[3] + " " + props.precinct[4]}
               </ListItem>
-              <ListItem>Geography cover: {props.precinct.geographyID}</ListItem>
+              <ListItem>District registered: {props.precinct[2]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -440,6 +438,12 @@ export function CreateAddModalBox(props: ModalProps) {
   const [districtListOnScreen, setDistrictListOnScreen] = React.useState<
     Array<any>
   >([]);
+  const [receivedGeographyList, setReceiveGeographyList] = React.useState<
+    Array<any>
+  >([]);
+  const [geographyListOnScreen, setGeographyListOnScreen] = React.useState<
+    Array<any>
+  >([]);
 
   /*
   useEffect(() => {
@@ -455,13 +459,16 @@ export function CreateAddModalBox(props: ModalProps) {
     fetch("http://localhost:5000/precinct/add")
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data === "False") {
           setReceiveDistrictList([]);
           setDistrictListOnScreen([]);
+          setReceiveGeographyList([]);
+          setGeographyListOnScreen([]);
         } else {
-          setReceiveDistrictList(data);
-          setDistrictListOnScreen(data);
+          setReceiveDistrictList(data[0]);
+          setDistrictListOnScreen(data[0]);
+          setReceiveGeographyList(data[1]);
+          setGeographyListOnScreen(data[1]);
         }
       });
   }, []);
@@ -470,6 +477,7 @@ export function CreateAddModalBox(props: ModalProps) {
   const [inputValue, setInputValue] = React.useState(initialValues);
   const [listJSX, setListJSX] = React.useState<JSX.Element>();
   const [listDistrictJSX, setListDistrictJSX] = React.useState<JSX.Element>();
+  const [listGeographyJSX, setListGeographyJSX] = React.useState<JSX.Element>();
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
@@ -481,6 +489,10 @@ export function CreateAddModalBox(props: ModalProps) {
       CreateDistrictListOnScreen(value, districtListOnScreen);
     }
 
+    if (name === "geographyID") {
+      CreateGeographyListOnScreen(value, geographyListOnScreen);
+    }
+
     /*
     if (name === "covers") {
       CreateListOnScreen(value, listOnScreen);
@@ -489,6 +501,7 @@ export function CreateAddModalBox(props: ModalProps) {
 
   //Add button listener
   const [isPopUp, setPopUp] = React.useState(false);
+  const [fieldNotFoundPopUp, setFieldNotFoundPopUp] = React.useState(false);
   const handleAdd = async () => {
     let isFilled = false;
 
@@ -520,20 +533,29 @@ export function CreateAddModalBox(props: ModalProps) {
           districtID: inputValue.districtID,
           //covers: StrinifyZip(listZipHasBeenTagged),
         }),
-      });
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "true") {
+            setFieldNotFoundPopUp(false);
+            //Call from the top DOM
+            props.onClose();
+            props.handleRefreshList();
 
-      //Call from the top DOM
-      props.onClose();
-      props.handleRefreshList();
-
-      //Adding toast
-      addToast({
-        title: "Precinct Added!",
-        description: `The precinct station is ready to be deployed.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+            //Adding toast
+            addToast({
+              title: "Precinct Added!",
+              description: `The precinct station is ready to be deployed.`,
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setFieldNotFoundPopUp(true);
+            props.handleRefreshList();
+            return;
+          }
+        });
     } else {
       setPopUp(true);
     }
@@ -548,6 +570,8 @@ export function CreateAddModalBox(props: ModalProps) {
 
     CreateDistrictListOnScreen("", []);
     setDistrictListOnScreen(receivedDistrictList);
+    CreateGeographyListOnScreen("", []);
+    setGeographyListOnScreen(receivedGeographyList);
   };
 
   /*
@@ -632,6 +656,11 @@ export function CreateAddModalBox(props: ModalProps) {
               variant="filled"
               background="gray.200"
             ></Input>
+            {fieldNotFoundPopUp && (
+              <Text data-testid="unfilledFields" color="red" mb={3}>
+                *Head manager not found in our system*
+              </Text>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>Address:</FormLabel>
@@ -655,6 +684,7 @@ export function CreateAddModalBox(props: ModalProps) {
               background="gray.200"
             ></Input>
           </FormControl>
+          {listGeographyJSX}
           <FormControl>
             <FormLabel>District ID:</FormLabel>
             <Input
@@ -712,9 +742,19 @@ export function CreateAddModalBox(props: ModalProps) {
     setListDistrictJSX(CreateListOfDistrict(currentInput, list));
   }
 
+  function CreateGeographyListOnScreen(currentInput: string, list: any[]) {
+    setGeographyListOnScreen(list);
+    setListGeographyJSX(CreateListOfGeography(currentInput, list));
+  }
+
   function CreateListOfDistrict(character: string, listToShown: any[]) {
     return <Wrap mt={3}>{ListTheDistrict(listToShown, character)}</Wrap>;
   }
+
+  function CreateListOfGeography(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheGeography(listToShown, character)}</Wrap>;
+  }
+
   function ListTheDistrict(listofDistrict: any[], filterChar: string) {
     var districtList: any[] = [];
     if (filterChar !== "" && Array.isArray(listofDistrict)) {
@@ -737,8 +777,33 @@ export function CreateAddModalBox(props: ModalProps) {
     } else {
       districtList = [];
     }
-
     return districtList;
+  }
+
+  function ListTheGeography(listofGeography: any[], filterChar: string) {
+    var geographyList: any[] = [];
+    if (filterChar !== "" && Array.isArray(listofGeography)) {
+      geographyList = listofGeography.map((geography, index) => {
+        if (geography[0].includes(filterChar)) {
+          return (
+            <Button
+              key={geography[0]}
+              onClick={() => {
+                handlePointer("geographyID", geography[0]);
+              }}
+            >
+              {geography[0]}
+            </Button>
+          );
+        } else {
+          return <div key={index}></div>;
+        }
+      });
+    } else {
+      geographyList = [];
+    }
+
+    return geographyList;
   }
 
   /*

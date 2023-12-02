@@ -1,9 +1,10 @@
 import json
 
 from dependencies import db
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 from services.districts import get_all_districts
+from services.geography import get_all_geography
 from services.precincts import create_precinct, delete_precinct, get_all_precincts
 
 precinct_bp = Blueprint("precinct_bp", __name__)
@@ -34,16 +35,18 @@ def precincts(database=db):
 def precincts_add(database=db):
     if request.method == "GET":
         all_district = get_all_districts(database)
-        print(all_district)
-        return json.dumps(all_district)
+        all_geography = get_all_geography(database)
+        return json.dumps([all_district, all_geography])
 
     if request.method == "POST":
         json_object = request.json
         response = create_precinct(database, json_object)
 
         if response == 200:
-            return "Precinct created", 200
+            return jsonify("true")
         elif response == 400:
-            return "Precinct already existed!", 400
+            return jsonify("Precinct already exists")
+        elif response == 404:
+            return jsonify("Manager Not Found")
         else:
-            return "Server Error", 500
+            return jsonify("Server Error")

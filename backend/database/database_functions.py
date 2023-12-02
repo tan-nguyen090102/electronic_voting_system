@@ -1,4 +1,5 @@
 import json
+
 import pymysql
 from pymysql.constants import CLIENT
 
@@ -19,6 +20,7 @@ def create_db_connection(database_name, config_file_path):
 
 def execute_stored_proc(connection, proc_name, parameters):
     cursor = connection.cursor()
+    connection.ping()
     try:
         db_response = None
         cursor.callproc(proc_name, parameters)

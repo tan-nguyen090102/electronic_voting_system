@@ -23,6 +23,7 @@ module.exports = {
         head: "Tesla McDonald",
         address: "7867 York Avenue, New York City, NY 67622",
         geographyID: "New York City-Manhattan-NY",
+        districtID: "IA-SN-1",
         covers: "67622"
     }
 } 

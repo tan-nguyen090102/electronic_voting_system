@@ -4,6 +4,8 @@ from database.database_functions import execute_stored_proc
 def create_manager(db, bcrypt, manager):
     password_hash = bcrypt.generate_password_hash(manager["password"]).decode("utf-8")
     # Have to retreive admin infomation here.
+    all_admins = execute_stored_proc(db, "select_all_from_table", ("admins",))
+    admin = all_admins[0]
     try:
         execute_stored_proc(
             db,
@@ -14,6 +16,7 @@ def create_manager(db, bcrypt, manager):
                 manager["lastName"],
                 manager["email"],
                 password_hash,
+                admin[0],
             ),
         )
         db.commit()

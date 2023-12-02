@@ -60,22 +60,6 @@ test("Add button click", async () => {
   });
 });
 
-test("Add Precinct ID input", async () => {
-  render(
-    <BrowserRouter>
-      <PrecinctPanel />
-    </BrowserRouter>
-  );
-  const addButton = await screen.getByTestId("addButton");
-  await act(() => userEvent.click(addButton));
-  await waitFor(() => {
-    expect(screen.getByTestId("precinctIDInput")).toBeInTheDocument();
-    const field = screen.getByTestId("precinctIDInput");
-    userEvent.type(field, testObject.stationIDInput);
-    expect(field).toHaveValue(testObject.stationIDInput);
-  });
-});
-
 test("Add Head Manager input", async () => {
   render(
     <BrowserRouter>
@@ -124,7 +108,7 @@ test("Add Geography ID input", async () => {
   });
 });
 
-test("Cover Zips input", async () => {
+test("Add District ID input", async () => {
   render(
     <BrowserRouter>
       <PrecinctPanel />
@@ -133,12 +117,28 @@ test("Cover Zips input", async () => {
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("covers")).toBeInTheDocument();
-    const field = screen.getByTestId("covers");
-    userEvent.type(field, testObject.covers);
-    expect(field).toHaveValue(testObject.covers);
+    expect(screen.getByTestId("districtID")).toBeInTheDocument();
+    const field = screen.getByTestId("districtID");
+    userEvent.type(field, testObject.districtID);
+    expect(field).toHaveValue(testObject.districtID);
   });
 });
+
+// test("Cover Zips input", async () => {
+//   render(
+//     <BrowserRouter>
+//       <PrecinctPanel />
+//     </BrowserRouter>
+//   );
+//   const addButton = await screen.getByTestId("addButton");
+//   await act(() => userEvent.click(addButton));
+//   await waitFor(() => {
+//     expect(screen.getByTestId("covers")).toBeInTheDocument();
+//     const field = screen.getByTestId("covers");
+//     userEvent.type(field, testObject.covers);
+//     expect(field).toHaveValue(testObject.covers);
+//   });
+// });
 
 test("Add Add button click", async () => {
   render(
