@@ -45,8 +45,8 @@ def precincts_add(database=db):
         if response == 200:
             return jsonify("true")
         elif response == 400:
-            return jsonify("Precinct already exists")
+            return jsonify("Precinct already exists or Manager is already occupied.")
         elif response == 404:
-            return jsonify("Manager Not Found")
+            return jsonify("Manager not found in the system.")
         else:
             return jsonify("Server Error")

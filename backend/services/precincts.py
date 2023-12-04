@@ -41,17 +41,13 @@ def create_precinct(database, precinct):
     state = precinct["geographyID"].split("-")[2]
     precinct_id = state + "-" + str(random.randrange(1000, 9999))
     # Get the head manager from input
-    head_name_list = precinct["head"].split()
+    head_email = precinct["headEmail"]
     all_managers = execute_stored_proc(
         database,
         "select_all_from_table_with_where",
         (
             "managers",
-            "first_name = '"
-            + head_name_list[0]
-            + "' AND last_name = '"
-            + head_name_list[1]
-            + "'",
+            "email = '" + head_email + "'",
         ),
     )
 

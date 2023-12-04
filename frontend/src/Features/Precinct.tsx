@@ -330,7 +330,7 @@ export default function PrecinctPanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Station #{precinct[0]}
+                    Precinct #{precinct[0]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -338,7 +338,7 @@ export default function PrecinctPanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Station address: {precinct[1]}</ListItem>
+                    <ListItem>Precinct address: {precinct[1]}</ListItem>
                     <ListItem>
                       Head manager: {precinct[3] + " " + precinct[4]}
                     </ListItem>
@@ -422,7 +422,7 @@ export function CreateAddModalBox(props: ModalProps) {
 
   //Sets of initial values
   const initialValues = {
-    head: "",
+    headEmail: "",
     address: "",
     geographyID: "",
     districtID: "",
@@ -502,12 +502,13 @@ export function CreateAddModalBox(props: ModalProps) {
   //Add button listener
   const [isPopUp, setPopUp] = React.useState(false);
   const [fieldNotFoundPopUp, setFieldNotFoundPopUp] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
   const handleAdd = async () => {
     let isFilled = false;
 
     //Check if all the field is filled
     if (
-      inputValue.head &&
+      inputValue.headEmail &&
       inputValue.address &&
       inputValue.geographyID &&
       inputValue.districtID
@@ -527,7 +528,7 @@ export function CreateAddModalBox(props: ModalProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          head: inputValue.head,
+          headEmail: inputValue.headEmail,
           address: inputValue.address,
           geographyID: inputValue.geographyID,
           districtID: inputValue.districtID,
@@ -552,6 +553,7 @@ export function CreateAddModalBox(props: ModalProps) {
             });
           } else {
             setFieldNotFoundPopUp(true);
+            setErrorMessage(data);
             props.handleRefreshList();
             return;
           }
@@ -647,18 +649,18 @@ export function CreateAddModalBox(props: ModalProps) {
             </Text>
           )}
           <FormControl>
-            <FormLabel>Head manager:</FormLabel>
+            <FormLabel>Head manager email:</FormLabel>
             <Input
-              name="head"
+              name="headEmail"
               data-testid="head"
               onChange={handleInput}
-              value={inputValue.head}
+              value={inputValue.headEmail}
               variant="filled"
               background="gray.200"
             ></Input>
             {fieldNotFoundPopUp && (
               <Text data-testid="unfilledFields" color="red" mb={3}>
-                *Head manager not found in our system*
+                *{errorMessage}*
               </Text>
             )}
           </FormControl>
