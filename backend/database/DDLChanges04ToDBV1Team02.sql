@@ -280,7 +280,7 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 21:15:36
+-- Dump completed on 2023-12-03 23:37:33
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dev_db
@@ -325,6 +325,36 @@ LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
 INSERT INTO `admins` VALUES (_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `candidates`
+--
+
+DROP TABLE IF EXISTS `candidates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `candidates` (
+  `candidate_id` varchar(60) NOT NULL,
+  `first_name` varchar(60) DEFAULT NULL,
+  `last_name` varchar(60) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `geography_id` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`candidate_id`),
+  UNIQUE KEY `candidate_id_UNIQUE` (`candidate_id`),
+  KEY `geography_id` (`geography_id`),
+  CONSTRAINT `candidates_ibfk_1` FOREIGN KEY (`geography_id`) REFERENCES `geography` (`geography_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `candidates`
+--
+
+LOCK TABLES `candidates` WRITE;
+/*!40000 ALTER TABLE `candidates` DISABLE KEYS */;
+INSERT INTO `candidates` VALUES ('New York City-NY-2263','Yolo','Ruttle','1982-12-08','New York City-Queens-NY'),('New York City-NY-3964','Richard','Rachel','1982-11-26','New York City-Brooklyn-NY'),('New York City-NY-9793','David','Wilson','1968-11-13','New York City-Brooklyn-NY');
+/*!40000 ALTER TABLE `candidates` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -678,6 +708,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_candidate` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_candidate`(in input_candidate_id varchar(60), in input_first_name varchar(60), in input_last_name varchar(60), in input_dob date, in input_geography_id varchar(60))
+BEGIN
+	INSERT INTO candidates(candidate_id, first_name, last_name, dob, geography_id) values (input_candidate_id, input_first_name, input_last_name, input_dob, input_geography_id);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `create_district` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1021,4 +1070,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 21:15:36
+-- Dump completed on 2023-12-03 23:37:33

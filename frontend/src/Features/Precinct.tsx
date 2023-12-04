@@ -158,7 +158,7 @@ export default function PrecinctPanel() {
     //Adding toast
     addToast({
       title: "Precinct Deleted!",
-      description: `The precinct station ${precinct.precinctID} is deleted.`,
+      description: `The precinct station ${precinct[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,

@@ -60,7 +60,7 @@ test("Add button click", async () => {
   });
 });
 
-test("Add Name input", async () => {
+test("Add First name input", async () => {
   render(
     <BrowserRouter>
       <CandidatePanel />
@@ -69,10 +69,26 @@ test("Add Name input", async () => {
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("name")).toBeInTheDocument();
-    const field = screen.getByTestId("name");
-    userEvent.type(field, testObject.name);
-    expect(field).toHaveValue(testObject.name);
+    expect(screen.getByTestId("firstName")).toBeInTheDocument();
+    const field = screen.getByTestId("firstName");
+    userEvent.type(field, testObject.firstName);
+    expect(field).toHaveValue(testObject.firstName);
+  });
+});
+
+test("Add Last name input", async () => {
+  render(
+    <BrowserRouter>
+      <CandidatePanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("lastName")).toBeInTheDocument();
+    const field = screen.getByTestId("lastName");
+    userEvent.type(field, testObject.lastName);
+    expect(field).toHaveValue(testObject.lastName);
   });
 });
 

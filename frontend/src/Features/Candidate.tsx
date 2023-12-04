@@ -82,7 +82,7 @@ export default function CandidatePanel() {
     fetch("http://localhost:5000/candidate")
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        if (data === "False") {
           setCandidateList([]);
           setCopyCandiadteList([]);
           handlePointer([], -1);
@@ -108,7 +108,7 @@ export default function CandidatePanel() {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
       const filteredCandidate = copyCandidateList?.map((candidate, index) => {
-        if (candidate.geographyID.split("-")[2] === inputSelection) {
+        if (candidate[4].split("-")[2] === inputSelection) {
           return candidate;
         } else {
           return [];
@@ -146,23 +146,15 @@ export default function CandidatePanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        candidateID: candidate[0],
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setCandidateList([]);
-          setCopyCandiadteList([]);
-        } else {
-          setCandidateList(data);
-          setCopyCandiadteList(data);
-        }
-      });
+    });
+    handleRefreshList();
+
     //Adding toast
     addToast({
       title: "Candidate Deleted!",
-      description: `The candidate ${candidate.runnerID} is deleted.`,
+      description: `The candidate ${candidate[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
@@ -334,7 +326,7 @@ export default function CandidatePanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Runner #{candidate.runnerID}
+                    Candidate #{candidate[0]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -342,11 +334,11 @@ export default function CandidatePanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Name: {candidate.name}</ListItem>
-                    <ListItem>Date of birth: {candidate.dob}</ListItem>
                     <ListItem>
-                      Geography cover: {candidate.geographyID}
+                      Name: {candidate[1] + " " + candidate[2]}
                     </ListItem>
+                    <ListItem>Date of birth: {candidate[3]}</ListItem>
+                    <ListItem>Geography Base: {candidate[4]}</ListItem>
                   </List>
                   <Button
                     data-testid="deleteButton"
@@ -391,12 +383,12 @@ export function CreateAlertBox(props: AlertProps) {
           <AlertDialogBody>
             <b>Are you sure to remove this candidate from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>Runner ID: {props.candidate.runnerID}</ListItem>
-              <ListItem>Name: {props.candidate.name}</ListItem>
-              <ListItem>Date of Birth: {props.candidate.dob}</ListItem>
+              <ListItem>Candidate ID: {props.candidate[0]}</ListItem>
               <ListItem>
-                Geography cover: {props.candidate.geographyID}
+                Name: {props.candidate[1] + " " + props.candidate[2]}
               </ListItem>
+              <ListItem>Date of Birth: {props.candidate[3]}</ListItem>
+              <ListItem>Geography Base: {props.candidate[4]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -426,19 +418,45 @@ export function CreateAddModalBox(props: ModalProps) {
 
   //Sets of initial values
   const initialValues = {
-    name: "",
+    firstName: "",
+    lastName: "",
     dob: "",
     geographyID: "",
   };
 
+  const [receivedGeographyList, setReceiveGeographyList] = React.useState<
+    Array<any>
+  >([]);
+  const [geographyListOnScreen, setGeographyListOnScreen] = React.useState<
+    Array<any>
+  >([]);
+  useEffect(() => {
+    fetch("http://localhost:5000/candidate/add")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === "False") {
+          setReceiveGeographyList([]);
+          setGeographyListOnScreen([]);
+        } else {
+          setReceiveGeographyList(data);
+          setGeographyListOnScreen(data);
+        }
+      });
+  }, []);
+
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
+  const [listGeographyJSX, setListGeographyJSX] = React.useState<JSX.Element>();
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
       ...inputValue,
       [name]: value,
     });
+
+    if (name === "geographyID") {
+      CreateGeographyListOnScreen(value, geographyListOnScreen);
+    }
   };
 
   //Add button listener
@@ -447,7 +465,12 @@ export function CreateAddModalBox(props: ModalProps) {
     let isFilled = false;
 
     //Check if all the field is filled
-    if (inputValue.name && inputValue.dob && inputValue.geographyID) {
+    if (
+      inputValue.firstName &&
+      inputValue.lastName &&
+      inputValue.dob &&
+      inputValue.geographyID
+    ) {
       isFilled = true;
     }
 
@@ -462,7 +485,8 @@ export function CreateAddModalBox(props: ModalProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          name: inputValue.name,
+          firstName: inputValue.firstName,
+          lastName: inputValue.lastName,
           dob: inputValue.dob,
           geographyID: inputValue.geographyID,
         }),
@@ -475,7 +499,9 @@ export function CreateAddModalBox(props: ModalProps) {
       //Adding toast
       addToast({
         title: "Candidate Added!",
-        description: `The candidate ${inputValue.name} is ready to serve.`,
+        description: `The candidate ${
+          inputValue.firstName + " " + inputValue.lastName
+        } is ready to serve.`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -483,6 +509,17 @@ export function CreateAddModalBox(props: ModalProps) {
     } else {
       setPopUp(true);
     }
+  };
+
+  //Show the value on input field after click on item
+  const handlePointer = (field: string, value: string) => {
+    setInputValue({
+      ...inputValue,
+      [field]: value,
+    });
+
+    CreateGeographyListOnScreen("", []);
+    setGeographyListOnScreen(receivedGeographyList);
   };
 
   //Box DOM
@@ -503,12 +540,23 @@ export function CreateAddModalBox(props: ModalProps) {
             </Text>
           )}
           <FormControl>
-            <FormLabel>Full name:</FormLabel>
+            <FormLabel>First name:</FormLabel>
             <Input
-              name="name"
-              data-testid="name"
+              name="firstName"
+              data-testid="firstName"
               onChange={handleInput}
-              value={inputValue.name}
+              value={inputValue.firstName}
+              variant="filled"
+              background="gray.200"
+            ></Input>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Last name:</FormLabel>
+            <Input
+              name="lastName"
+              data-testid="lastName"
+              onChange={handleInput}
+              value={inputValue.lastName}
               variant="filled"
               background="gray.200"
             ></Input>
@@ -525,6 +573,7 @@ export function CreateAddModalBox(props: ModalProps) {
               background="gray.200"
             ></Input>
           </FormControl>
+          {listGeographyJSX}
           <Wrap align="baseline" spacing="20px" mt={3}>
             <FormLabel>Date of Birth: </FormLabel>
             <Input
@@ -562,4 +611,39 @@ export function CreateAddModalBox(props: ModalProps) {
       </ModalContent>
     </Modal>
   );
+
+  function CreateGeographyListOnScreen(currentInput: string, list: any[]) {
+    setGeographyListOnScreen(list);
+    setListGeographyJSX(CreateListOfGeography(currentInput, list));
+  }
+
+  function CreateListOfGeography(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheGeography(listToShown, character)}</Wrap>;
+  }
+
+  function ListTheGeography(listofGeography: any[], filterChar: string) {
+    var geographyList: any[] = [];
+    if (filterChar !== "" && Array.isArray(listofGeography)) {
+      geographyList = listofGeography.map((geography, index) => {
+        if (geography[0].includes(filterChar)) {
+          return (
+            <Button
+              key={geography[0]}
+              onClick={() => {
+                handlePointer("geographyID", geography[0]);
+              }}
+            >
+              {geography[0]}
+            </Button>
+          );
+        } else {
+          return <div key={index}></div>;
+        }
+      });
+    } else {
+      geographyList = [];
+    }
+
+    return geographyList;
+  }
 }
