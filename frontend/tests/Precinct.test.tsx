@@ -60,7 +60,7 @@ test("Add button click", async () => {
   });
 });
 
-test("Add Head Manager input", async () => {
+test("Add Head email input", async () => {
   render(
     <BrowserRouter>
       <PrecinctPanel />
@@ -69,10 +69,10 @@ test("Add Head Manager input", async () => {
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("head")).toBeInTheDocument();
-    const field = screen.getByTestId("head");
-    userEvent.type(field, testObject.head);
-    expect(field).toHaveValue(testObject.head);
+    expect(screen.getByTestId("headEmail")).toBeInTheDocument();
+    const field = screen.getByTestId("headEmail");
+    userEvent.type(field, testObject.headEmail);
+    expect(field).toHaveValue(testObject.headEmail);
   });
 });
 

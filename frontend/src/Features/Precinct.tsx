@@ -652,7 +652,7 @@ export function CreateAddModalBox(props: ModalProps) {
             <FormLabel>Head manager email:</FormLabel>
             <Input
               name="headEmail"
-              data-testid="head"
+              data-testid="headEmail"
               onChange={handleInput}
               value={inputValue.headEmail}
               variant="filled"

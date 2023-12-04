@@ -20,7 +20,7 @@ module.exports = {
         name: "David Naval Cotton",
         stationID: "52317-6757",
         stationIDInput: "LA-42",
-        head: "Tesla McDonald",
+        headEmail: "mcdonald.tesla@gmail.com",
         address: "7867 York Avenue, New York City, NY 67622",
         geographyID: "New York City-Manhattan-NY",
         districtID: "IA-SN-1",
