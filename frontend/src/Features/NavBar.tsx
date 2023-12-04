@@ -90,6 +90,7 @@ export function ListNavigationBar(props: ListNavProps) {
   const CANDIDATE_INDEX = "3";
   const SEARCH_INDEX = "4";
   const REQUEST_INDEX = "5";
+  const MANAGER_INDEX = "6";
 
   //Receive data from other page.
   const { state } = useLocation();
@@ -117,6 +118,8 @@ export function ListNavigationBar(props: ListNavProps) {
       case SEARCH_INDEX:
         navigate("/search", { state: { user: user } });
         break;
+      case MANAGER_INDEX:
+        navigate("/manager-list", { state: { user: user } });
     }
   };
 
@@ -183,6 +186,16 @@ export function ListNavigationBar(props: ListNavProps) {
           isDisabled={props.indexClick === REQUEST_INDEX ? true : false}
         >
           USER REQUESTS
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(MANAGER_INDEX)}
+          isDisabled={props.indexClick === MANAGER_INDEX ? true : false}
+        >
+          MANAGERS
         </Button>
       </Stack>
     </div>

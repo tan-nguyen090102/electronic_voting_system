@@ -59,8 +59,6 @@ export default function SignUpPanel() {
       ...inputSelection,
       [name]: value,
     });
-
-    console.log(initialValues.dob);
   };
 
   //Cancel button listener
@@ -75,64 +73,111 @@ export default function SignUpPanel() {
     let isFilled = false;
     let isMatch = false;
 
-    //Check if all the field is filled
-    if (
-      inputValue.firstName &&
-      inputValue.middleName &&
-      inputValue.lastName &&
-      inputValue.street &&
-      inputValue.dob &&
-      inputValue.city &&
-      inputValue.zip &&
-      inputSelection.state &&
-      inputValue.email &&
-      inputValue.password &&
-      inputValue.passport &&
-      inputValue.driverID &&
-      inputValue.securityAnswer
-    ) {
-      isFilled = true;
-    }
+    //Voter signup
+    if (inputSelection.role === "voter") {
+      //Check if all the field is filled
+      if (
+        inputValue.firstName &&
+        inputValue.middleName &&
+        inputValue.lastName &&
+        inputValue.street &&
+        inputValue.dob &&
+        inputValue.city &&
+        inputValue.zip &&
+        inputSelection.state &&
+        inputValue.email &&
+        inputValue.password &&
+        inputValue.passport &&
+        inputValue.driverID &&
+        inputValue.securityAnswer
+      ) {
+        isFilled = true;
+      }
 
-    //Check if the password met all requirements
-    if (
-      inputValue.password.match("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}")
-    ) {
-      isMatch = true;
-    }
+      //Check if the password met all requirements
+      if (
+        inputValue.password.match("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}")
+      ) {
+        isMatch = true;
+      }
 
-    //Final decision
-    if (inputRetype === inputValue.password && isFilled && isMatch) {
-      //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
-      setDecision(false);
-      await fetch(`http://localhost:5000/${inputSelection.role}s/`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "content-type": "application/json; charset=UTF-8",
-        },
-        mode: "cors",
-        body: JSON.stringify({
-          firstName: inputValue.firstName,
-          middleName: inputValue.middleName,
-          lastName: inputValue.lastName,
-          dob: inputValue.dob,
-          street: inputValue.street,
-          city: inputValue.city,
-          state: inputSelection.state,
-          zip: inputValue.zip,
-          email: inputValue.email,
-          password: inputValue.password,
-          passport: inputValue.passport,
-          driverID: inputValue.driverID,
-          questionIndex: inputSelection.questionIndex,
-          securityAnswer: inputValue.securityAnswer,
-          approvalStatus: "pending",
-        }),
-      }).catch((error) => console.log(error));
-      navigate("/login");
+      //Final decision
+      if (inputRetype === inputValue.password && isFilled && isMatch) {
+        //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
+        setDecision(false);
+        await fetch(`http://localhost:5000/${inputSelection.role}s/`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "content-type": "application/json; charset=UTF-8",
+          },
+          mode: "cors",
+          body: JSON.stringify({
+            firstName: inputValue.firstName,
+            middleName: inputValue.middleName,
+            lastName: inputValue.lastName,
+            dob: inputValue.dob,
+            street: inputValue.street,
+            city: inputValue.city,
+            state: inputSelection.state,
+            zip: inputValue.zip,
+            email: inputValue.email,
+            password: inputValue.password,
+            passport: inputValue.passport,
+            driverID: inputValue.driverID,
+            questionIndex: inputSelection.questionIndex,
+            securityAnswer: inputValue.securityAnswer,
+            approvalStatus: "pending",
+          }),
+        }).catch((error) => console.log(error));
+        navigate("/login");
+      } else {
+        setDecision(true);
+      }
+      //Manager signup
     } else {
-      setDecision(true);
+      //Check if all the field is filled
+      if (
+        inputValue.firstName &&
+        inputValue.middleName &&
+        inputValue.lastName &&
+        inputValue.email &&
+        inputValue.password
+      ) {
+        isFilled = true;
+      }
+
+      //Check if the password met all requirements
+      if (
+        inputValue.password.match("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}")
+      ) {
+        isMatch = true;
+      }
+
+      //Final decision
+      if (inputRetype === inputValue.password && isFilled && isMatch) {
+        //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
+        setDecision(false);
+        await fetch(`http://localhost:5000/${inputSelection.role}s/`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "content-type": "application/json; charset=UTF-8",
+          },
+          mode: "cors",
+          body: JSON.stringify({
+            firstName: inputValue.firstName,
+            middleName: inputValue.middleName,
+            lastName: inputValue.lastName,
+            email: inputValue.email,
+            password: inputValue.password,
+            approvalStatus: "pending",
+          }),
+        }).catch((error) => console.log(error));
+        navigate("/login");
+      } else {
+        setDecision(true);
+      }
     }
   };
 
@@ -256,8 +301,11 @@ export default function SignUpPanel() {
         p={10}
         rounded={6}
       >
-        <Stack direction="row">
-          <Heading mb={6}>Sign up for Voting</Heading>
+        <Stack direction="column">
+          <Heading mb={3}>
+            Sign up{" "}
+            {inputSelection.role === "voter" ? "for Voting" : "as a Manager"}
+          </Heading>
           <Select
             id="role"
             name="role"
@@ -271,7 +319,9 @@ export default function SignUpPanel() {
         </Stack>
         <Wrap>
           <FormControl isRequired>
-            <FormLabel>Name and Address: </FormLabel>
+            <FormLabel>
+              Name {inputSelection.role === "voter" ? "and Address" : ""}
+            </FormLabel>
             <Input
               id="firstName"
               name="firstName"
@@ -318,6 +368,9 @@ export default function SignUpPanel() {
                 variant="filled"
                 mb={3}
                 background="gray.200"
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
               ></Input>
               <Input
                 id="city"
@@ -330,6 +383,9 @@ export default function SignUpPanel() {
                 variant="filled"
                 mb={3}
                 background="gray.200"
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
               ></Input>
               <Select
                 id="state"
@@ -338,6 +394,9 @@ export default function SignUpPanel() {
                 width={24}
                 borderWidth={2}
                 onChange={handleSelection}
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
               >
                 {stateOptions}
               </Select>
@@ -352,6 +411,9 @@ export default function SignUpPanel() {
                 variant="filled"
                 mb={3}
                 background="gray.200"
+                style={{
+                  display: inputSelection.role === "voter" ? "block" : "none",
+                }}
               ></Input>
             </Stack>
             {!inputValue.zip.match("^[0-9]{0,5}$") &&
@@ -360,7 +422,13 @@ export default function SignUpPanel() {
                   *Please enter correct zip code format (0-9)*
                 </Text>
               )}
-            <Wrap align="baseline" spacing="20px">
+            <Wrap
+              align="baseline"
+              spacing="20px"
+              style={{
+                display: inputSelection.role === "voter" ? "block" : "none",
+              }}
+            >
               <FormLabel>Date of Birth: </FormLabel>
               <Input
                 id="dob"
@@ -447,7 +515,12 @@ export default function SignUpPanel() {
                 </Stack>
               </Stack>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl
+              isRequired
+              style={{
+                display: inputSelection.role === "voter" ? "block" : "none",
+              }}
+            >
               <FormLabel>Additional Verifications:</FormLabel>
               <Stack direction="row">
                 <Input
@@ -476,7 +549,12 @@ export default function SignUpPanel() {
                 ></Input>
               </Stack>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl
+              isRequired
+              style={{
+                display: inputSelection.role === "voter" ? "block" : "none",
+              }}
+            >
               <FormLabel>Security Questions:</FormLabel>
               <Stack direction="column">
                 <Select
@@ -498,7 +576,6 @@ export default function SignUpPanel() {
                   value={inputValue["securityAnswer"]}
                   placeholder="Answer"
                   variant="filled"
-                  mb={6}
                   background="gray.200"
                 ></Input>
                 {decision && (
@@ -510,7 +587,7 @@ export default function SignUpPanel() {
             </FormControl>
           </Stack>
         </Wrap>
-        <Wrap spacing="20px">
+        <Wrap spacing="20px" mt={6}>
           <Button
             data-testid="signupButton"
             colorScheme="teal"
