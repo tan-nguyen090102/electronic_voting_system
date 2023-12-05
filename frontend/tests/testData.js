@@ -24,6 +24,10 @@ module.exports = {
         address: "7867 York Avenue, New York City, NY 67622",
         geographyID: "New York City-Manhattan-NY",
         districtID: "IA-SN-1",
-        covers: "67622"
+        covers: "67622",
+        title: "Iowa Senate Seat 9",
+        type: "IA-SENATE",
+        term: "2024-2028",
+        districtID: "IA-9"
     }
 } 

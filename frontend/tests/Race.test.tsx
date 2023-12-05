@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import PrecinctPanel from "../src/Features/Precinct";
+import RacePanel from "../src/Features/Race";
 import { testObject } from "./testData.js";
 import React from "react";
 
@@ -24,7 +24,7 @@ global.fetch = jest.fn(() =>
 test("State select", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   await act(() => {
@@ -37,7 +37,7 @@ test("State select", async () => {
 test("Filter button click", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const filterButton = await screen.getByTestId("filterButton");
@@ -50,7 +50,7 @@ test("Filter button click", async () => {
 test("Add button click", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
@@ -60,58 +60,58 @@ test("Add button click", async () => {
   });
 });
 
-test("Add Head email input", async () => {
+test("Add Title input", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("headEmail")).toBeInTheDocument();
-    const field = screen.getByTestId("headEmail");
-    userEvent.type(field, testObject.headEmail);
-    expect(field).toHaveValue(testObject.headEmail);
+    expect(screen.getByTestId("title")).toBeInTheDocument();
+    const field = screen.getByTestId("title");
+    userEvent.type(field, testObject.title);
+    expect(field).toHaveValue(testObject.title);
   });
 });
 
-test("Add Address input", async () => {
+test("Add Type of Race input", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("address")).toBeInTheDocument();
-    const field = screen.getByTestId("address");
-    userEvent.type(field, testObject.address);
-    expect(field).toHaveValue(testObject.address);
+    expect(screen.getByTestId("type")).toBeInTheDocument();
+    const field = screen.getByTestId("type");
+    userEvent.type(field, testObject.type);
+    expect(field).toHaveValue(testObject.type);
   });
 });
 
-test("Add Geography ID input", async () => {
+test("Add Term of Service input", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
   await act(() => userEvent.click(addButton));
   await waitFor(() => {
-    expect(screen.getByTestId("geographyID")).toBeInTheDocument();
-    const field = screen.getByTestId("geographyID");
-    userEvent.type(field, testObject.geographyID);
-    expect(field).toHaveValue(testObject.geographyID);
+    expect(screen.getByTestId("term")).toBeInTheDocument();
+    const field = screen.getByTestId("term");
+    userEvent.type(field, testObject.term);
+    expect(field).toHaveValue(testObject.term);
   });
 });
 
 test("Add District ID input", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
@@ -124,26 +124,10 @@ test("Add District ID input", async () => {
   });
 });
 
-// test("Cover Zips input", async () => {
-//   render(
-//     <BrowserRouter>
-//       <PrecinctPanel />
-//     </BrowserRouter>
-//   );
-//   const addButton = await screen.getByTestId("addButton");
-//   await act(() => userEvent.click(addButton));
-//   await waitFor(() => {
-//     expect(screen.getByTestId("covers")).toBeInTheDocument();
-//     const field = screen.getByTestId("covers");
-//     userEvent.type(field, testObject.covers);
-//     expect(field).toHaveValue(testObject.covers);
-//   });
-// });
-
 test("Add Add button click", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");
@@ -161,7 +145,7 @@ test("Add Add button click", async () => {
 test("Add Cancel button click", async () => {
   render(
     <BrowserRouter>
-      <PrecinctPanel />
+      <RacePanel />
     </BrowserRouter>
   );
   const addButton = await screen.getByTestId("addButton");

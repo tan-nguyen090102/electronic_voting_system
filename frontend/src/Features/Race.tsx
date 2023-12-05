@@ -39,18 +39,17 @@ interface AlertProps {
   isOpen: any;
   onClose: any;
   handleDelete: any;
-  candidate: any;
+  race: any;
   index: number;
 }
 
 interface ModalProps {
-  isLaunched: boolean;
   isOpen: any;
   onClose: any;
   handleRefreshList: any;
 }
 
-export default function CandidatePanel() {
+export default function RacePanel() {
   //Adding box
   const modalBox = useDisclosure();
   const alertBox = useDisclosure();
@@ -59,11 +58,11 @@ export default function CandidatePanel() {
   const addToast = useToast();
 
   //Limit of element shown on lists
-  const MAX_CANDIDATE_SHOWN = 100;
+  const MAX_RACE_SHOWN = 20;
 
   //Change web title
   useEffect(() => {
-    document.title = "Candidate - Voting System Administrator";
+    document.title = "Electoral Races - Voting System Administrator";
   }, []);
 
   //Receive data from other page.
@@ -71,25 +70,21 @@ export default function CandidatePanel() {
   const { user } = state || { user: "" };
 
   //Retrieve the list of all user to the page
-  const [receivedCandidateList, setCandidateList] = React.useState<Array<any>>(
-    []
-  );
-  const [copyCandidateList, setCopyCandiadteList] = React.useState<Array<any>>(
-    []
-  );
-  const [currentCandidate, setCurrentCandidate] = React.useState<any>([]);
+  const [receivedRaceList, setRaceList] = React.useState<Array<any>>([]);
+  const [copyRacelist, setCopyRaceList] = React.useState<Array<any>>([]);
+  const [currentRace, setCurrentRace] = React.useState<any>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   useEffect(() => {
-    fetch("http://localhost:5000/candidate")
+    fetch("http://localhost:5000/race")
       .then((response) => response.json())
       .then((data) => {
-        if (data === "False") {
-          setCandidateList([]);
-          setCopyCandiadteList([]);
+        if (data.length === 0) {
+          setRaceList([]);
+          setCopyRaceList([]);
           handlePointer([], -1);
         } else {
-          setCandidateList(data);
-          setCopyCandiadteList(data);
+          setRaceList(data);
+          setCopyRaceList(data);
           handlePointer(data[0], 0);
         }
       });
@@ -108,15 +103,15 @@ export default function CandidatePanel() {
   const handleFilter = () => {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
-      const filteredCandidate = copyCandidateList?.map((candidate, index) => {
-        if (candidate[4].split("-")[2] === inputSelection) {
-          return candidate;
+      const filteredRace = copyRacelist?.map((race, index) => {
+        if (race.district.split("-")[0] === inputSelection) {
+          return race;
         } else {
           return [];
         }
       });
-      for (let i = 0; i < filteredCandidate.length; i++) {
-        if (filteredCandidate[i].length !== 0) {
+      for (let i = 0; i < filteredRace.length; i++) {
+        if (filteredRace[i].length !== 0) {
           setNoMatchPopUp(false);
           break;
         } else {
@@ -124,22 +119,25 @@ export default function CandidatePanel() {
         }
       }
 
-      setCandidateList(filteredCandidate);
+      setRaceList(filteredRace);
     } else {
-      setCandidateList(copyCandidateList);
+      setRaceList(copyRacelist);
       setNoMatchPopUp(false);
     }
   };
 
   //Pointer to current Accordion item
-  const handlePointer = (candidate: any, index: number) => {
-    setCurrentCandidate(candidate);
+  const handlePointer = (race: any, index: number) => {
+    setCurrentRace(race);
     setCurrentIndex(index);
   };
 
+  //Add candidate button listener
+  const handleAddCandidate = async () => {};
+
   //Delete button listener
-  const handleDelete = async (candidate: any, index: number) => {
-    await fetch("http://localhost:5000/candidate", {
+  const handleDelete = async (race: any, index: number) => {
+    await fetch("http://localhost:5000/race", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -147,15 +145,23 @@ export default function CandidatePanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        candidateID: candidate[0],
+        index: index,
       }),
-    });
-    handleRefreshList();
-
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length === 0) {
+          setRaceList([]);
+          setCopyRaceList([]);
+        } else {
+          setRaceList(data);
+          setCopyRaceList(data);
+        }
+      });
     //Adding toast
     addToast({
-      title: "Candidate Deleted!",
-      description: `The candidate ${candidate[0]} is deleted.`,
+      title: "Electoral Race Deleted!",
+      description: `The electoral race ${race.raceID} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
@@ -164,15 +170,15 @@ export default function CandidatePanel() {
 
   //Refresh from adding box listener
   const handleRefreshList = () => {
-    fetch("http://localhost:5000/candidate")
+    fetch("http://localhost:5000/race")
       .then((response) => response.json())
       .then((data) => {
         if (data.length === 0) {
-          setCandidateList([]);
-          setCopyCandiadteList([]);
+          setRaceList([]);
+          setCopyRaceList([]);
         } else {
-          setCandidateList(data);
-          setCopyCandiadteList(data);
+          setRaceList(data);
+          setCopyRaceList(data);
         }
       });
   };
@@ -237,8 +243,12 @@ export default function CandidatePanel() {
   //DOM
   return (
     <div>
-      <NavBar title={"Candidates"} isLoggedIn="true" userName={user}></NavBar>
-      <ListNavigationBar indexClick="4"></ListNavigationBar>
+      <NavBar
+        title={"Electoral Races"}
+        isLoggedIn="true"
+        userName={user}
+      ></NavBar>
+      <ListNavigationBar indexClick="1"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
@@ -252,7 +262,7 @@ export default function CandidatePanel() {
             <Stack direction="column">
               <Stack direction="row">
                 <Text fontSize="md" mt={0}>
-                  Current registered candidates: {receivedCandidateList?.length}
+                  Current registered races: {receivedRaceList?.length}
                 </Text>
               </Stack>
               <Stack direction="row" mb={3} align="baseline">
@@ -280,18 +290,17 @@ export default function CandidatePanel() {
             </Stack>
           </Wrap>
           <Accordion allowMultiple>
-            {CreateAccordionItem(receivedCandidateList)}
+            {CreateAccordionItem(receivedRaceList)}
           </Accordion>
           {isNoMatchPopUp && (
             <Text data-testid="invalidInput" mb={3}>
-              There is no candidate that matched the filtered state.
+              There is no race that matched the filtered state.
             </Text>
           )}
           <CreateAddModalBox
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             handleRefreshList={handleRefreshList}
-            isLaunched={modalBox.isOpen}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
@@ -309,10 +318,10 @@ export default function CandidatePanel() {
 
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
-    const candidateDetails =
+    const raceDetails =
       Array.isArray(jsonList) &&
-      jsonList.slice(0, MAX_CANDIDATE_SHOWN).map((candidate, index) => {
-        if (candidate.length === 0) {
+      jsonList.slice(0, MAX_RACE_SHOWN).map((race, index) => {
+        if (race.length === 0) {
           return <div key={index}></div>;
         } else {
           return (
@@ -324,11 +333,11 @@ export default function CandidatePanel() {
               <h2>
                 <AccordionButton
                   onClick={() => {
-                    handlePointer(candidate, index);
+                    handlePointer(race, index);
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Candidate #{candidate[0]}
+                    Race #{race.raceID}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -336,12 +345,22 @@ export default function CandidatePanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
+                    <ListItem>Title: {race.title}</ListItem>
+                    <ListItem>Type: {race.type}</ListItem>
+                    <ListItem>Term of Services: {race.term}</ListItem>
                     <ListItem>
-                      Name: {candidate[1] + " " + candidate[2]}
+                      Number of Candidates: {race.numberCandidates}
                     </ListItem>
-                    <ListItem>Date of birth: {candidate[3]}</ListItem>
-                    <ListItem>Geography Base: {candidate[4]}</ListItem>
+                    <ListItem>District: {race.district}</ListItem>
+                    <ListItem>Election: {race.election}</ListItem>
                   </List>
+                  <Button
+                    data-testid="addCandidateButton"
+                    colorScheme="teal"
+                    onClick={handleAddCandidate}
+                  >
+                    Add Candidate
+                  </Button>
                   <Button
                     data-testid="deleteButton"
                     bg="red.400"
@@ -355,7 +374,7 @@ export default function CandidatePanel() {
                     isOpen={alertBox.isOpen}
                     onClose={alertBox.onClose}
                     handleDelete={handleDelete}
-                    candidate={currentCandidate}
+                    race={currentRace}
                     index={currentIndex}
                   ></CreateAlertBox>
                 </Stack>
@@ -364,7 +383,7 @@ export default function CandidatePanel() {
           );
         }
       });
-    return candidateDetails;
+    return raceDetails;
   }
 }
 
@@ -380,24 +399,25 @@ export function CreateAlertBox(props: AlertProps) {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete Candidate
+            Delete Electoral Race
           </AlertDialogHeader>
           <AlertDialogBody>
-            <b>Are you sure to remove this candidate from the system?</b>
+            <b>Are you sure to remove this electoral race from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>Candidate ID: {props.candidate[0]}</ListItem>
+              <ListItem>Title: {props.race.title}</ListItem>
+              <ListItem>Type: {props.race.type}</ListItem>
               <ListItem>
-                Name: {props.candidate[1] + " " + props.candidate[2]}
+                Number of Candidates: {props.race.numberCandidates}
               </ListItem>
-              <ListItem>Date of Birth: {props.candidate[3]}</ListItem>
-              <ListItem>Geography Base: {props.candidate[4]}</ListItem>
+              <ListItem>District: {props.race.district}</ListItem>
+              <ListItem>Election: {props.race.election}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button
               colorScheme="red"
               onClick={() => {
-                props.handleDelete(props.candidate, props.index);
+                props.handleDelete(props.race, props.index);
                 props.onClose();
               }}
             >
@@ -413,42 +433,48 @@ export function CreateAlertBox(props: AlertProps) {
   );
 }
 
-//Modal box for adding candidate
+//Modal box for adding precinct
 export function CreateAddModalBox(props: ModalProps) {
   //Toast
   const addToast = useToast();
 
   //Sets of initial values
   const initialValues = {
-    firstName: "",
-    lastName: "",
-    dob: "",
-    geographyID: "",
+    title: "",
+    type: "",
+    numberCandidates: "",
+    term: "",
+    districtID: "",
   };
 
-  const [receivedGeographyList, setReceiveGeographyList] = React.useState<
+  //Backend fetch the list of available zip
+  const [recievedDistrictList, setReceiveDistrictList] = React.useState<
     Array<any>
   >([]);
-  const [geographyListOnScreen, setGeographyListOnScreen] = React.useState<
+  const [recievedTypeJSON, setReceiveTypeJSON] = React.useState();
+  const [typeListOnScreen, setTypeListOnScreen] = React.useState();
+  const [districtListOnScreen, setDistrictListOnScreen] = React.useState<
     Array<any>
   >([]);
-  if (props.isLaunched) {
-    fetch("http://localhost:5000/candidate/add")
+  useEffect(() => {
+    fetch("http://localhost:5000/race/add")
       .then((response) => response.json())
       .then((data) => {
-        if (data === "False") {
-          setReceiveGeographyList([]);
-          setGeographyListOnScreen([]);
-        } else {
-          setReceiveGeographyList(data);
-          setGeographyListOnScreen(data);
+        var typeList: any;
+        if (Array.isArray(data)) {
+          typeList = data.pop();
         }
+        setReceiveTypeJSON(typeList);
+        setTypeListOnScreen(typeList);
+        setReceiveDistrictList(data);
+        setDistrictListOnScreen(data);
       });
-  }
+  }, []);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
-  const [listGeographyJSX, setListGeographyJSX] = React.useState<JSX.Element>();
+  const [listDistrictJSX, setListDistrictJSX] = React.useState<JSX.Element>();
+  const [listTypeJSX, setListTypeJSX] = React.useState<JSX.Element>();
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
@@ -456,8 +482,12 @@ export function CreateAddModalBox(props: ModalProps) {
       [name]: value,
     });
 
-    if (name === "geographyID") {
-      CreateGeographyListOnScreen(value, geographyListOnScreen);
+    if (name === "districtID") {
+      CreateDistrictListOnScreen(value, districtListOnScreen);
+    }
+
+    if (name === "type") {
+      CreateTypeListOnScreen(value, typeListOnScreen);
     }
   };
 
@@ -468,10 +498,10 @@ export function CreateAddModalBox(props: ModalProps) {
 
     //Check if all the field is filled
     if (
-      inputValue.firstName &&
-      inputValue.lastName &&
-      inputValue.dob &&
-      inputValue.geographyID
+      inputValue.title &&
+      inputValue.type &&
+      inputValue.term &&
+      inputValue.districtID
     ) {
       isFilled = true;
     }
@@ -479,7 +509,7 @@ export function CreateAddModalBox(props: ModalProps) {
     if (isFilled) {
       //Fetch the backend to send the data
       setPopUp(false);
-      await fetch(`http://localhost:5000/candidate/add`, {
+      await fetch(`http://localhost:5000/race/add`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -487,10 +517,11 @@ export function CreateAddModalBox(props: ModalProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          firstName: inputValue.firstName,
-          lastName: inputValue.lastName,
-          dob: inputValue.dob,
-          geographyID: inputValue.geographyID,
+          title: inputValue.title,
+          type: inputValue.type,
+          numberCandidates: "0",
+          term: inputValue.term,
+          districtID: inputValue.districtID,
         }),
       });
 
@@ -500,10 +531,8 @@ export function CreateAddModalBox(props: ModalProps) {
 
       //Adding toast
       addToast({
-        title: "Candidate Added!",
-        description: `The candidate ${
-          inputValue.firstName + " " + inputValue.lastName
-        } is ready to serve.`,
+        title: "Electoral Race Added!",
+        description: `The electoral race ${inputValue.title} is ready to be deployed.`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -520,8 +549,10 @@ export function CreateAddModalBox(props: ModalProps) {
       [field]: value,
     });
 
-    CreateGeographyListOnScreen("", []);
-    setGeographyListOnScreen(receivedGeographyList);
+    CreateDistrictListOnScreen("", []);
+    CreateTypeListOnScreen("", {});
+    setDistrictListOnScreen(recievedDistrictList);
+    setTypeListOnScreen(recievedTypeJSON);
   };
 
   //Box DOM
@@ -534,7 +565,7 @@ export function CreateAddModalBox(props: ModalProps) {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader>Add new candidate</ModalHeader>
+        <ModalHeader>Add new electoral race</ModalHeader>
         <ModalBody>
           {isPopUp && (
             <Text data-testid="unfilledFields" color="red" mb={3}>
@@ -542,55 +573,51 @@ export function CreateAddModalBox(props: ModalProps) {
             </Text>
           )}
           <FormControl>
-            <FormLabel>First name:</FormLabel>
+            <FormLabel>Title:</FormLabel>
             <Input
-              name="firstName"
-              data-testid="firstName"
+              name="title"
+              data-testid="title"
               onChange={handleInput}
-              value={inputValue.firstName}
+              value={inputValue.title}
               variant="filled"
               background="gray.200"
             ></Input>
           </FormControl>
           <FormControl>
-            <FormLabel>Last name:</FormLabel>
+            <FormLabel>Type of Race:</FormLabel>
             <Input
-              name="lastName"
-              data-testid="lastName"
+              name="type"
+              data-testid="type"
               onChange={handleInput}
-              value={inputValue.lastName}
+              value={inputValue.type}
+              variant="filled"
+              background="gray.200"
+            ></Input>
+          </FormControl>
+          {listTypeJSX}
+          <FormControl>
+            <FormLabel>Term of Services:</FormLabel>
+            <Input
+              name="term"
+              data-testid="term"
+              onChange={handleInput}
+              value={inputValue.term}
               variant="filled"
               background="gray.200"
             ></Input>
           </FormControl>
           <FormControl>
-            <FormLabel>Geography ID:</FormLabel>
+            <FormLabel>District Representing:</FormLabel>
             <Input
-              name="geographyID"
-              data-testid="geographyID"
+              name="districtID"
+              data-testid="districtID"
               onChange={handleInput}
-              value={inputValue.geographyID}
-              placeholder="City-County-State"
+              value={inputValue.districtID}
               variant="filled"
               background="gray.200"
             ></Input>
           </FormControl>
-          {listGeographyJSX}
-          <Wrap align="baseline" spacing="20px" mt={3}>
-            <FormLabel>Date of Birth: </FormLabel>
-            <Input
-              name="dob"
-              data-testid="dob"
-              placeholder="Date of Birth"
-              type="date"
-              width="auto"
-              variant="outline"
-              border="2px"
-              onChange={handleInput}
-              value={inputValue.dob}
-              max={new Date().toISOString().split("T")[0]}
-            ></Input>
-          </Wrap>
+          {listDistrictJSX}
           <ModalFooter>
             <Button
               data-testid="addAddButton"
@@ -614,28 +641,38 @@ export function CreateAddModalBox(props: ModalProps) {
     </Modal>
   );
 
-  function CreateGeographyListOnScreen(currentInput: string, list: any[]) {
-    setGeographyListOnScreen(list);
-    setListGeographyJSX(CreateListOfGeography(currentInput, list));
+  //Helper functions to create the list of body types and districts
+  function CreateDistrictListOnScreen(currentInput: string, list: any[]) {
+    setDistrictListOnScreen(list);
+    setListDistrictJSX(CreateListOfDistrict(currentInput, list));
   }
 
-  function CreateListOfGeography(character: string, listToShown: any[]) {
-    return <Wrap mt={3}>{ListTheGeography(listToShown, character)}</Wrap>;
+  function CreateTypeListOnScreen(currentInput: string, json: any) {
+    setTypeListOnScreen(json);
+    setListTypeJSX(CreateListOfType(currentInput, json));
   }
 
-  function ListTheGeography(listofGeography: any[], filterChar: string) {
-    var geographyList: any[] = [];
-    if (filterChar !== "" && Array.isArray(listofGeography)) {
-      geographyList = listofGeography.map((geography, index) => {
-        if (geography[0].includes(filterChar)) {
+  function CreateListOfDistrict(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheDistrict(listToShown, character)}</Wrap>;
+  }
+
+  function CreateListOfType(character: string, jsonToShown: any) {
+    return <Wrap mt={3}>{ListTheType(jsonToShown, character)}</Wrap>;
+  }
+
+  function ListTheDistrict(listofDistrict: any[], filterChar: string) {
+    var districtList: any[] = [];
+    if (filterChar !== "" && Array.isArray(listofDistrict)) {
+      districtList = listofDistrict.map((district, index) => {
+        if (district.districtID.includes(filterChar)) {
           return (
             <Button
-              key={geography[0]}
+              key={district.districtID}
               onClick={() => {
-                handlePointer("geographyID", geography[0]);
+                handlePointer("districtID", district.districtID);
               }}
             >
-              {geography[0]}
+              {district.districtID}
             </Button>
           );
         } else {
@@ -643,9 +680,35 @@ export function CreateAddModalBox(props: ModalProps) {
         }
       });
     } else {
-      geographyList = [];
+      districtList = [];
     }
 
-    return geographyList;
+    return districtList;
+  }
+
+  function ListTheType(typeJSON: any, filterChar: string) {
+    var typeList: any[] = [];
+    if (filterChar !== "") {
+      Object.keys(typeJSON || {}).forEach(function (key) {
+        if (key.includes(filterChar)) {
+          typeList.push(
+            <Button
+              key={key}
+              onClick={() => {
+                handlePointer("type", key);
+              }}
+            >
+              {key}
+            </Button>
+          );
+        } else {
+          return <div key={key}></div>;
+        }
+      });
+    } else {
+      typeList = [];
+    }
+
+    return typeList;
   }
 }

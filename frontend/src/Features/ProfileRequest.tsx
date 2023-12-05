@@ -103,7 +103,7 @@ export default function ProfileRequestPanel() {
         isLoggedIn="true"
         userName={user}
       ></NavBar>
-      <ListNavigationBar indexClick="5"></ListNavigationBar>
+      <ListNavigationBar indexClick="6"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"

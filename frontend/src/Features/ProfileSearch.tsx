@@ -99,7 +99,7 @@ export default function SearchPanel() {
         isLoggedIn="true"
         userName={user}
       ></NavBar>
-      <ListNavigationBar indexClick="4"></ListNavigationBar>
+      <ListNavigationBar indexClick="5"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"

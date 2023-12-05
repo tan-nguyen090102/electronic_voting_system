@@ -242,7 +242,7 @@ export default function PrecinctPanel() {
   return (
     <div>
       <NavBar title={"Precincts"} isLoggedIn="true" userName={user}></NavBar>
-      <ListNavigationBar indexClick="2"></ListNavigationBar>
+      <ListNavigationBar indexClick="3"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
