@@ -306,6 +306,9 @@ export default function PrecinctPanel() {
           >
             Add
           </Button>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>

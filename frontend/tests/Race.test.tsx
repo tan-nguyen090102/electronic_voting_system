@@ -124,6 +124,22 @@ test("Add District ID input", async () => {
   });
 });
 
+test("Add Election ID input", async () => {
+  render(
+    <BrowserRouter>
+      <RacePanel />
+    </BrowserRouter>
+  );
+  const addButton = await screen.getByTestId("addButton");
+  await act(() => userEvent.click(addButton));
+  await waitFor(() => {
+    expect(screen.getByTestId("electionID")).toBeInTheDocument();
+    const field = screen.getByTestId("electionID");
+    userEvent.type(field, testObject.electionID);
+    expect(field).toHaveValue(testObject.electionID);
+  });
+});
+
 test("Add Add button click", async () => {
   render(
     <BrowserRouter>

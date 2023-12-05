@@ -58,7 +58,7 @@ export default function RacePanel() {
   const addToast = useToast();
 
   //Limit of element shown on lists
-  const MAX_RACE_SHOWN = 20;
+  const MAX_RACE_SHOWN = 50;
 
   //Change web title
   useEffect(() => {
@@ -103,8 +103,8 @@ export default function RacePanel() {
   const handleFilter = () => {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
-      const filteredRace = copyRacelist?.map((race, index) => {
-        if (race.district.split("-")[0] === inputSelection) {
+      const filteredRace = copyRacelist?.map((race) => {
+        if (race.districtID.split("-")[0] === inputSelection) {
           return race;
         } else {
           return [];
@@ -311,6 +311,9 @@ export default function RacePanel() {
           >
             Add
           </Button>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>
@@ -351,8 +354,8 @@ export default function RacePanel() {
                     <ListItem>
                       Number of Candidates: {race.numberCandidates}
                     </ListItem>
-                    <ListItem>District: {race.district}</ListItem>
-                    <ListItem>Election: {race.election}</ListItem>
+                    <ListItem>District: {race.districtID}</ListItem>
+                    <ListItem>Election: {race.electionID}</ListItem>
                   </List>
                   <Button
                     data-testid="addCandidateButton"
@@ -409,8 +412,8 @@ export function CreateAlertBox(props: AlertProps) {
               <ListItem>
                 Number of Candidates: {props.race.numberCandidates}
               </ListItem>
-              <ListItem>District: {props.race.district}</ListItem>
-              <ListItem>Election: {props.race.election}</ListItem>
+              <ListItem>District: {props.race.districtID}</ListItem>
+              <ListItem>Election: {props.race.electionID}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -445,15 +448,22 @@ export function CreateAddModalBox(props: ModalProps) {
     numberCandidates: "",
     term: "",
     districtID: "",
+    electionID: "",
   };
 
   //Backend fetch the list of available zip
-  const [recievedDistrictList, setReceiveDistrictList] = React.useState<
+  const [receivedDistrictList, setReceiveDistrictList] = React.useState<
     Array<any>
   >([]);
-  const [recievedTypeJSON, setReceiveTypeJSON] = React.useState();
+  const [receivedElectionList, setReceiveElectionList] = React.useState<
+    Array<any>
+  >([]);
+  const [receivedTypeJSON, setReceiveTypeJSON] = React.useState();
   const [typeListOnScreen, setTypeListOnScreen] = React.useState();
   const [districtListOnScreen, setDistrictListOnScreen] = React.useState<
+    Array<any>
+  >([]);
+  const [electionListOnScreen, setElectionListOnScreen] = React.useState<
     Array<any>
   >([]);
   useEffect(() => {
@@ -461,13 +471,19 @@ export function CreateAddModalBox(props: ModalProps) {
       .then((response) => response.json())
       .then((data) => {
         var typeList: any;
+        var electionList: any;
+        var districtList: any;
         if (Array.isArray(data)) {
           typeList = data.pop();
+          electionList = data.pop();
+          districtList = data.pop();
         }
         setReceiveTypeJSON(typeList);
         setTypeListOnScreen(typeList);
-        setReceiveDistrictList(data);
-        setDistrictListOnScreen(data);
+        setReceiveElectionList(electionList);
+        setElectionListOnScreen(electionList);
+        setReceiveDistrictList(districtList);
+        setDistrictListOnScreen(districtList);
       });
   }, []);
 
@@ -475,6 +491,7 @@ export function CreateAddModalBox(props: ModalProps) {
   const [inputValue, setInputValue] = React.useState(initialValues);
   const [listDistrictJSX, setListDistrictJSX] = React.useState<JSX.Element>();
   const [listTypeJSX, setListTypeJSX] = React.useState<JSX.Element>();
+  const [listElectionJSX, setListElectionJSX] = React.useState<JSX.Element>();
   const handleInput = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setInputValue({
@@ -489,6 +506,10 @@ export function CreateAddModalBox(props: ModalProps) {
     if (name === "type") {
       CreateTypeListOnScreen(value, typeListOnScreen);
     }
+
+    if (name === "electionID") {
+      CreateElectionListOnScreen(value, electionListOnScreen);
+    }
   };
 
   //Add button listener
@@ -501,7 +522,8 @@ export function CreateAddModalBox(props: ModalProps) {
       inputValue.title &&
       inputValue.type &&
       inputValue.term &&
-      inputValue.districtID
+      inputValue.districtID &&
+      inputValue.electionID
     ) {
       isFilled = true;
     }
@@ -522,6 +544,7 @@ export function CreateAddModalBox(props: ModalProps) {
           numberCandidates: "0",
           term: inputValue.term,
           districtID: inputValue.districtID,
+          electionID: inputValue.electionID,
         }),
       });
 
@@ -551,8 +574,10 @@ export function CreateAddModalBox(props: ModalProps) {
 
     CreateDistrictListOnScreen("", []);
     CreateTypeListOnScreen("", {});
-    setDistrictListOnScreen(recievedDistrictList);
-    setTypeListOnScreen(recievedTypeJSON);
+    CreateElectionListOnScreen("", []);
+    setDistrictListOnScreen(receivedDistrictList);
+    setTypeListOnScreen(receivedTypeJSON);
+    setElectionListOnScreen(receivedElectionList);
   };
 
   //Box DOM
@@ -618,6 +643,18 @@ export function CreateAddModalBox(props: ModalProps) {
             ></Input>
           </FormControl>
           {listDistrictJSX}
+          <FormControl>
+            <FormLabel>Election:</FormLabel>
+            <Input
+              name="electionID"
+              data-testid="electionID"
+              onChange={handleInput}
+              value={inputValue.electionID}
+              variant="filled"
+              background="gray.200"
+            ></Input>
+          </FormControl>
+          {listElectionJSX}
           <ModalFooter>
             <Button
               data-testid="addAddButton"
@@ -647,6 +684,11 @@ export function CreateAddModalBox(props: ModalProps) {
     setListDistrictJSX(CreateListOfDistrict(currentInput, list));
   }
 
+  function CreateElectionListOnScreen(currentInput: string, list: any[]) {
+    setElectionListOnScreen(list);
+    setListElectionJSX(CreateListOfElection(currentInput, list));
+  }
+
   function CreateTypeListOnScreen(currentInput: string, json: any) {
     setTypeListOnScreen(json);
     setListTypeJSX(CreateListOfType(currentInput, json));
@@ -654,6 +696,10 @@ export function CreateAddModalBox(props: ModalProps) {
 
   function CreateListOfDistrict(character: string, listToShown: any[]) {
     return <Wrap mt={3}>{ListTheDistrict(listToShown, character)}</Wrap>;
+  }
+
+  function CreateListOfElection(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheElection(listToShown, character)}</Wrap>;
   }
 
   function CreateListOfType(character: string, jsonToShown: any) {
@@ -684,6 +730,32 @@ export function CreateAddModalBox(props: ModalProps) {
     }
 
     return districtList;
+  }
+
+  function ListTheElection(listofElection: any[], filterChar: string) {
+    var electionList: any[] = [];
+    if (filterChar !== "" && Array.isArray(listofElection)) {
+      electionList = listofElection.map((election, index) => {
+        if (election.electionID.includes(filterChar)) {
+          return (
+            <Button
+              key={election.electionID}
+              onClick={() => {
+                handlePointer("electionID", election.electionID);
+              }}
+            >
+              {election.electionID}
+            </Button>
+          );
+        } else {
+          return <div key={index}></div>;
+        }
+      });
+    } else {
+      electionList = [];
+    }
+
+    return electionList;
   }
 
   function ListTheType(typeJSON: any, filterChar: string) {

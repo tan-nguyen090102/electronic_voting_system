@@ -164,6 +164,9 @@ export default function ProfileRequestPanel() {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>
@@ -213,7 +216,7 @@ export default function ProfileRequestPanel() {
                 </List>
                 <Button
                   data-testid="approveButton"
-                  bg="teal.400"
+                  colorScheme="teal"
                   isDisabled={
                     user.approvalStatus === "denied" ||
                     user.approvalStatus === "approved"
