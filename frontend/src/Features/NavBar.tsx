@@ -91,6 +91,7 @@ export function ListNavigationBar(props: ListNavProps) {
   const CANDIDATE_INDEX = "4";
   const SEARCH_INDEX = "5";
   const REQUEST_INDEX = "6";
+  const MANAGER_INDEX = "7";
 
   //Receive data from other page.
   const { state } = useLocation();
