@@ -47,6 +47,7 @@ interface AlertProps {
 }
 
 interface ModalProps {
+  isLaunched: boolean;
   isOpen: any;
   onClose: any;
   handleRefreshList: any;
@@ -294,6 +295,7 @@ export default function PrecinctPanel() {
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             handleRefreshList={handleRefreshList}
+            isLaunched={modalBox.isOpen}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
@@ -455,7 +457,7 @@ export function CreateAddModalBox(props: ModalProps) {
       });
   }, []);*/
 
-  useEffect(() => {
+  if (props.isLaunched) {
     fetch("http://localhost:5000/precinct/add")
       .then((response) => response.json())
       .then((data) => {
@@ -471,7 +473,7 @@ export function CreateAddModalBox(props: ModalProps) {
           setGeographyListOnScreen(data[1]);
         }
       });
-  }, []);
+  }
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);

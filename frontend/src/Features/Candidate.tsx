@@ -44,6 +44,7 @@ interface AlertProps {
 }
 
 interface ModalProps {
+  isLaunched: boolean;
   isOpen: any;
   onClose: any;
   handleRefreshList: any;
@@ -290,6 +291,7 @@ export default function CandidatePanel() {
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             handleRefreshList={handleRefreshList}
+            isLaunched={modalBox.isOpen}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
@@ -430,7 +432,7 @@ export function CreateAddModalBox(props: ModalProps) {
   const [geographyListOnScreen, setGeographyListOnScreen] = React.useState<
     Array<any>
   >([]);
-  useEffect(() => {
+  if (props.isLaunched) {
     fetch("http://localhost:5000/candidate/add")
       .then((response) => response.json())
       .then((data) => {
@@ -442,7 +444,7 @@ export function CreateAddModalBox(props: ModalProps) {
           setGeographyListOnScreen(data);
         }
       });
-  }, []);
+  }
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
