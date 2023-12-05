@@ -283,7 +283,7 @@ export default function PrecinctPanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
+          <Accordion allowToggle>
             {CreateAccordionItem(receivedPrecinctList)}
           </Accordion>
           {isNoMatchPopUp && (
@@ -460,23 +460,25 @@ export function CreateAddModalBox(props: ModalProps) {
       });
   }, []);*/
 
-  if (props.isLaunched) {
-    fetch("http://localhost:5000/precinct/add")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False") {
-          setReceiveDistrictList([]);
-          setDistrictListOnScreen([]);
-          setReceiveGeographyList([]);
-          setGeographyListOnScreen([]);
-        } else {
-          setReceiveDistrictList(data[0]);
-          setDistrictListOnScreen(data[0]);
-          setReceiveGeographyList(data[1]);
-          setGeographyListOnScreen(data[1]);
-        }
-      });
-  }
+  useEffect(() => {
+    if (props.isLaunched) {
+      fetch("http://localhost:5000/precinct/add")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "False") {
+            setReceiveDistrictList([]);
+            setDistrictListOnScreen([]);
+            setReceiveGeographyList([]);
+            setGeographyListOnScreen([]);
+          } else {
+            setReceiveDistrictList(data[0]);
+            setDistrictListOnScreen(data[0]);
+            setReceiveGeographyList(data[1]);
+            setGeographyListOnScreen(data[1]);
+          }
+        });
+    }
+  }, [props.isOpen]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);

@@ -44,6 +44,7 @@ interface AlertProps {
 }
 
 interface ModalProps {
+  isLaunched: any;
   isOpen: any;
   onClose: any;
   handleRefreshList: any;
@@ -78,7 +79,7 @@ export default function RacePanel() {
     fetch("http://localhost:5000/race")
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        if (data === "False") {
           setRaceList([]);
           setCopyRaceList([]);
           handlePointer([], -1);
@@ -104,7 +105,7 @@ export default function RacePanel() {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
       const filteredRace = copyRacelist?.map((race) => {
-        if (race.districtID.split("-")[0] === inputSelection) {
+        if (race[5].split("-")[0] === inputSelection) {
           return race;
         } else {
           return [];
@@ -145,23 +146,15 @@ export default function RacePanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        raceID: race[0],
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setRaceList([]);
-          setCopyRaceList([]);
-        } else {
-          setRaceList(data);
-          setCopyRaceList(data);
-        }
-      });
+    });
+    handleRefreshList();
+
     //Adding toast
     addToast({
       title: "Electoral Race Deleted!",
-      description: `The electoral race ${race.raceID} is deleted.`,
+      description: `The electoral race ${race[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
@@ -289,7 +282,7 @@ export default function RacePanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
+          <Accordion allowToggle>
             {CreateAccordionItem(receivedRaceList)}
           </Accordion>
           {isNoMatchPopUp && (
@@ -301,6 +294,7 @@ export default function RacePanel() {
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             handleRefreshList={handleRefreshList}
+            isLaunched={modalBox.isOpen}
           ></CreateAddModalBox>
           <Button
             data-testid="addButton"
@@ -340,7 +334,7 @@ export default function RacePanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    Race #{race.raceID}
+                    Race #{race[0]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -348,14 +342,12 @@ export default function RacePanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Title: {race.title}</ListItem>
-                    <ListItem>Type: {race.type}</ListItem>
-                    <ListItem>Term of Services: {race.term}</ListItem>
-                    <ListItem>
-                      Number of Candidates: {race.numberCandidates}
-                    </ListItem>
-                    <ListItem>District: {race.districtID}</ListItem>
-                    <ListItem>Election: {race.electionID}</ListItem>
+                    <ListItem>Title: {race[2]}</ListItem>
+                    <ListItem>Type: {race[1]}</ListItem>
+                    <ListItem>Term of Services: {race[3]}</ListItem>
+                    <ListItem>Number of Candidates: {race[4]}</ListItem>
+                    <ListItem>District: {race[5]}</ListItem>
+                    <ListItem>Election: {race[6]}</ListItem>
                   </List>
                   <Button
                     data-testid="addCandidateButton"
@@ -407,13 +399,12 @@ export function CreateAlertBox(props: AlertProps) {
           <AlertDialogBody>
             <b>Are you sure to remove this electoral race from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>Title: {props.race.title}</ListItem>
-              <ListItem>Type: {props.race.type}</ListItem>
-              <ListItem>
-                Number of Candidates: {props.race.numberCandidates}
-              </ListItem>
-              <ListItem>District: {props.race.districtID}</ListItem>
-              <ListItem>Election: {props.race.electionID}</ListItem>
+              <ListItem>Race ID: {props.race[0]}</ListItem>
+              <ListItem>Title: {props.race[2]}</ListItem>
+              <ListItem>Type: {props.race[1]}</ListItem>
+              <ListItem>Number of Candidates: {props.race[3]}</ListItem>
+              <ListItem>District: {props.race[4]}</ListItem>
+              <ListItem>Election: {props.race[5]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -458,34 +449,39 @@ export function CreateAddModalBox(props: ModalProps) {
   const [receivedElectionList, setReceiveElectionList] = React.useState<
     Array<any>
   >([]);
-  const [receivedTypeJSON, setReceiveTypeJSON] = React.useState();
-  const [typeListOnScreen, setTypeListOnScreen] = React.useState();
+  const [receivedTypeList, setReceiveTypeList] = React.useState<Array<any>>([]);
+  const [typeListOnScreen, setTypeListOnScreen] = React.useState<Array<any>>(
+    []
+  );
   const [districtListOnScreen, setDistrictListOnScreen] = React.useState<
     Array<any>
   >([]);
   const [electionListOnScreen, setElectionListOnScreen] = React.useState<
     Array<any>
   >([]);
+
   useEffect(() => {
-    fetch("http://localhost:5000/race/add")
-      .then((response) => response.json())
-      .then((data) => {
-        var typeList: any;
-        var electionList: any;
-        var districtList: any;
-        if (Array.isArray(data)) {
-          typeList = data.pop();
-          electionList = data.pop();
-          districtList = data.pop();
-        }
-        setReceiveTypeJSON(typeList);
-        setTypeListOnScreen(typeList);
-        setReceiveElectionList(electionList);
-        setElectionListOnScreen(electionList);
-        setReceiveDistrictList(districtList);
-        setDistrictListOnScreen(districtList);
-      });
-  }, []);
+    if (props.isLaunched) {
+      fetch("http://localhost:5000/race/add")
+        .then((response) => response.json())
+        .then((data) => {
+          var typeList: any;
+          var electionList: any;
+          var districtList: any;
+          if (Array.isArray(data)) {
+            typeList = data.pop();
+            electionList = data.pop();
+            districtList = data.pop();
+          }
+          setReceiveTypeList(typeList);
+          setTypeListOnScreen(typeList);
+          setReceiveElectionList(electionList);
+          setElectionListOnScreen(electionList);
+          setReceiveDistrictList(districtList);
+          setDistrictListOnScreen(districtList);
+        });
+    }
+  }, [props.isOpen]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
@@ -541,7 +537,7 @@ export function CreateAddModalBox(props: ModalProps) {
         body: JSON.stringify({
           title: inputValue.title,
           type: inputValue.type,
-          numberCandidates: "0",
+          numberCandidates: 0,
           term: inputValue.term,
           districtID: inputValue.districtID,
           electionID: inputValue.electionID,
@@ -573,10 +569,10 @@ export function CreateAddModalBox(props: ModalProps) {
     });
 
     CreateDistrictListOnScreen("", []);
-    CreateTypeListOnScreen("", {});
+    CreateTypeListOnScreen("", []);
     CreateElectionListOnScreen("", []);
     setDistrictListOnScreen(receivedDistrictList);
-    setTypeListOnScreen(receivedTypeJSON);
+    setTypeListOnScreen(receivedTypeList);
     setElectionListOnScreen(receivedElectionList);
   };
 
@@ -689,9 +685,9 @@ export function CreateAddModalBox(props: ModalProps) {
     setListElectionJSX(CreateListOfElection(currentInput, list));
   }
 
-  function CreateTypeListOnScreen(currentInput: string, json: any) {
-    setTypeListOnScreen(json);
-    setListTypeJSX(CreateListOfType(currentInput, json));
+  function CreateTypeListOnScreen(currentInput: string, list: any[]) {
+    setTypeListOnScreen(list);
+    setListTypeJSX(CreateListOfType(currentInput, list));
   }
 
   function CreateListOfDistrict(character: string, listToShown: any[]) {
@@ -702,23 +698,23 @@ export function CreateAddModalBox(props: ModalProps) {
     return <Wrap mt={3}>{ListTheElection(listToShown, character)}</Wrap>;
   }
 
-  function CreateListOfType(character: string, jsonToShown: any) {
-    return <Wrap mt={3}>{ListTheType(jsonToShown, character)}</Wrap>;
+  function CreateListOfType(character: string, listToShown: any[]) {
+    return <Wrap mt={3}>{ListTheType(listToShown, character)}</Wrap>;
   }
 
   function ListTheDistrict(listofDistrict: any[], filterChar: string) {
     var districtList: any[] = [];
     if (filterChar !== "" && Array.isArray(listofDistrict)) {
       districtList = listofDistrict.map((district, index) => {
-        if (district.districtID.includes(filterChar)) {
+        if (district[0].includes(filterChar)) {
           return (
             <Button
-              key={district.districtID}
+              key={district[0]}
               onClick={() => {
-                handlePointer("districtID", district.districtID);
+                handlePointer("districtID", district[0]);
               }}
             >
-              {district.districtID}
+              {district[0]}
             </Button>
           );
         } else {
@@ -736,15 +732,15 @@ export function CreateAddModalBox(props: ModalProps) {
     var electionList: any[] = [];
     if (filterChar !== "" && Array.isArray(listofElection)) {
       electionList = listofElection.map((election, index) => {
-        if (election.electionID.includes(filterChar)) {
+        if (election[0].includes(filterChar)) {
           return (
             <Button
-              key={election.electionID}
+              key={election[0]}
               onClick={() => {
-                handlePointer("electionID", election.electionID);
+                handlePointer("electionID", election[0]);
               }}
             >
-              {election.electionID}
+              {election[0]}
             </Button>
           );
         } else {
@@ -758,23 +754,23 @@ export function CreateAddModalBox(props: ModalProps) {
     return electionList;
   }
 
-  function ListTheType(typeJSON: any, filterChar: string) {
+  function ListTheType(listofType: any[], filterChar: string) {
     var typeList: any[] = [];
-    if (filterChar !== "") {
-      Object.keys(typeJSON || {}).forEach(function (key) {
-        if (key.includes(filterChar)) {
-          typeList.push(
+    if (filterChar !== "" && Array.isArray(listofType)) {
+      typeList = listofType.map((type, index) => {
+        if (type[0].includes(filterChar)) {
+          return (
             <Button
-              key={key}
+              key={type[0]}
               onClick={() => {
-                handlePointer("type", key);
+                handlePointer("type", type[0]);
               }}
             >
-              {key}
+              {type[0]}
             </Button>
           );
         } else {
-          return <div key={key}></div>;
+          return <div key={index}></div>;
         }
       });
     } else {

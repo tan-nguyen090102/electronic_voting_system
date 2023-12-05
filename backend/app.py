@@ -9,6 +9,7 @@ from routers.auth import auth_bp
 from routers.candidates import candidate_bp
 from routers.managers import managers_bp
 from routers.precincts import precinct_bp
+from routers.races import race_bp
 from routers.voters import voters_bp
 
 app = Flask(__name__)
@@ -31,6 +32,7 @@ if __name__ == "__main__":
         app.register_blueprint(auth_bp)
         app.register_blueprint(precinct_bp)
         app.register_blueprint(candidate_bp)
+        app.register_blueprint(race_bp)
         app.run()
     finally:
         db.close()
