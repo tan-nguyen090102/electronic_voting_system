@@ -91,7 +91,7 @@ export default function DistrictPanel() {
     fetch("http://localhost:5000/district")
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        if (data === "False") {
           setDistrictList([]);
           setCopyDistrictList([]);
           handlePointer([], -1);
@@ -117,7 +117,7 @@ export default function DistrictPanel() {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
       const filteredDistrict = copyDistrictList?.map((district) => {
-        if (district.districtID.split("-")[0] === inputSelection) {
+        if (district[0].split("-")[0] === inputSelection) {
           return district;
         } else {
           return [];
@@ -147,10 +147,16 @@ export default function DistrictPanel() {
 
   //Edit button listener
   const handleEditDistrict = async (
-    index: number,
+    district: any,
     title: string,
     officialID: string
   ) => {
+    if (title === "") {
+      title = district[1];
+    }
+    if (officialID === "") {
+      officialID = district[2];
+    }
     await fetch("http://localhost:5000/district/edit", {
       method: "POST",
       headers: {
@@ -159,21 +165,13 @@ export default function DistrictPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        districtID: district[0],
         title: title,
-        officialID: officialID,
+        officialName: officialID,
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setDistrictList([]);
-          setCopyDistrictList([]);
-        } else {
-          setDistrictList(data);
-          setCopyDistrictList(data);
-        }
-      });
+    });
+
+    handleRefreshList();
   };
 
   //Delete button listener
@@ -186,23 +184,15 @@ export default function DistrictPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        districtID: district[0],
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setDistrictList([]);
-          setCopyDistrictList([]);
-        } else {
-          setDistrictList(data);
-          setCopyDistrictList(data);
-        }
-      });
+    });
+    handleRefreshList();
+
     //Adding toast
     addToast({
       title: "District Deleted!",
-      description: `The district ${district.districtID} is deleted.`,
+      description: `The district ${district[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
@@ -228,6 +218,7 @@ export default function DistrictPanel() {
   const stateOptions = (
     <>
       <option value="ALL">All</option>
+      <option value="US">US</option>
       <option value="AL">AL</option>
       <option value="AK">AK</option>
       <option value="AZ">AZ</option>
@@ -326,7 +317,7 @@ export default function DistrictPanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
+          <Accordion allowToggle>
             {CreateAccordionItem(receivedDistrictList)}
           </Accordion>
           {isNoMatchPopUp && (
@@ -377,7 +368,7 @@ export default function DistrictPanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    District #{district.districtID}
+                    District #{district[0]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -385,10 +376,8 @@ export default function DistrictPanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Title: {district.title}</ListItem>
-                    <ListItem>
-                      Current head official: {district.officialID}
-                    </ListItem>
+                    <ListItem>Title: {district[1]}</ListItem>
+                    <ListItem>Current head official: {district[2]}</ListItem>
                   </List>
                   <CreateEditModalBox
                     isOpen={modalEditBox.isOpen}
@@ -449,11 +438,9 @@ export function CreateAlertBox(props: AlertProps) {
           <AlertDialogBody>
             <b>Are you sure to remove this district from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>District ID: {props.district.districtID}</ListItem>
-              <ListItem>Title: {props.district.title}</ListItem>
-              <ListItem>
-                Current head official: {props.district.officialID}
-              </ListItem>
+              <ListItem>District ID: {props.district[0]}</ListItem>
+              <ListItem>Title: {props.district[1]}</ListItem>
+              <ListItem>Current head official: {props.district[2]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -521,7 +508,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
         body: JSON.stringify({
           districtID: inputValue.districtID,
           title: inputValue.title,
-          officialID: inputValue.officialID,
+          officialName: inputValue.officialID,
         }),
       });
 
@@ -642,7 +629,7 @@ export function CreateEditModalBox(props: ModalEditProps) {
   const handleConfirm = async () => {
     //Call from the top DOM
     props.handleEditDistrict(
-      props.index,
+      props.district,
       inputValue.title,
       inputValue.officialID
     );
@@ -651,7 +638,7 @@ export function CreateEditModalBox(props: ModalEditProps) {
     //Adding toast
     addToast({
       title: "District Edited!",
-      description: `The district ${props.district.districtID} is ready to deployed.`,
+      description: `The district ${props.district[0]} is ready to deployed.`,
       status: "success",
       duration: 3000,
       isClosable: true,
