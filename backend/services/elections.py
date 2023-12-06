@@ -18,3 +18,103 @@ def get_all_elections(database):
         return list_all_elections
     else:
         return "False"
+
+
+def delete_election(database, election_id):
+    try:
+        execute_stored_proc(
+            database,
+            "delete_from_table",
+            (
+                "elections",
+                "election_id = '" + election_id + "'",
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def create_election(database, election):
+    try:
+        execute_stored_proc(
+            database,
+            "create_election",
+            (
+                election["electionID"],
+                election["title"],
+                election["startTime"],
+                election["endTime"],
+                election["status"],
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def update_election(database, election):
+    try:
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "title = '" + election["title"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "start_time = '" + election["startTime"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "end_time = '" + election["endTime"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "status = '" + election["status"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def update_status_election(database, election):
+    try:
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "status = '" + election["status"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400

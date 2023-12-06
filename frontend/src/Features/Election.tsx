@@ -96,7 +96,7 @@ export default function ElectionPanel() {
     fetch("http://localhost:5000/election")
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        if (data === "False") {
           setActiveElectionList([]);
           setInactiveElectionList([]);
           setCopyElectionList([]);
@@ -136,10 +136,9 @@ export default function ElectionPanel() {
       //Filter the state by selection
       const filteredActiveElection = copyElectionList?.map((election) => {
         if (
-          (election.electionID.split("-")[1] === inputSelection ||
-            (election.electionID.split("-")[0] === "US" &&
-              inputSelection === "US")) &&
-          election.status === "active"
+          (election[0].split("-")[1] === inputSelection ||
+            (election[0].split("-")[0] === "US" && inputSelection === "US")) &&
+          election[4] === "active"
         ) {
           return election;
         } else {
@@ -149,10 +148,9 @@ export default function ElectionPanel() {
 
       const filteredInactiveElection = copyElectionList?.map((election) => {
         if (
-          (election.electionID.split("-")[1] === inputSelection ||
-            (election.electionID.split("-")[0] === "US" &&
-              inputSelection === "US")) &&
-          election.status === "inactive"
+          (election[0].split("-")[1] === inputSelection ||
+            (election[0].split("-")[0] === "US" && inputSelection === "US")) &&
+          election[4] === "inactive"
         ) {
           return election;
         } else {
@@ -196,12 +194,21 @@ export default function ElectionPanel() {
 
   //Edit button listener
   const handleEditElection = async (
-    electionID: string = "",
-    title: string = "",
-    date: string = "",
-    startTime: string = "",
-    endTime: string = ""
+    electionID: any,
+    title: string,
+    startTime: string,
+    endTime: string
   ) => {
+    if (title === "") {
+      title = electionID[1];
+    }
+    if (startTime === "") {
+      startTime = electionID[2];
+    }
+    if (endTime === "") {
+      endTime = electionID[3];
+    }
+
     await fetch("http://localhost:5000/election/edit", {
       method: "POST",
       headers: {
@@ -212,24 +219,11 @@ export default function ElectionPanel() {
       body: JSON.stringify({
         electionID: electionID,
         title: title,
-        date: date,
         startTime: startTime,
         endTime: endTime,
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setActiveElectionList([]);
-          setInactiveElectionList([]);
-          setCopyElectionList([]);
-        } else {
-          var electionLists = DecomposeJSONObject(data);
-          setActiveElectionList(electionLists[0]);
-          setInactiveElectionList(electionLists[1]);
-          setCopyElectionList(data);
-        }
-      });
+    });
+    handleRefreshList();
   };
 
   //Delete button listener
@@ -242,26 +236,15 @@ export default function ElectionPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        index: index,
+        electionID: election[0],
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length === 0) {
-          setActiveElectionList([]);
-          setInactiveElectionList([]);
-          setCopyElectionList([]);
-        } else {
-          var electionLists = DecomposeJSONObject(data);
-          setActiveElectionList(electionLists[0]);
-          setInactiveElectionList(electionLists[1]);
-          setCopyElectionList(data);
-        }
-      });
+    });
+    handleRefreshList();
+
     //Adding toast
     addToast({
       title: "Election Deleted!",
-      description: `The election ${election.electionID} is deleted.`,
+      description: `The election ${election[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
@@ -270,6 +253,7 @@ export default function ElectionPanel() {
 
   //Activate button listener
   const handleActivate = async (election: any) => {
+    console.log(election);
     await fetch("http://localhost:5000/election", {
       method: "POST",
       headers: {
@@ -278,13 +262,13 @@ export default function ElectionPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        electionID: election.electionID,
+        electionID: election[0],
         status: "active",
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.length === 0) {
+        if (data === "False") {
           setActiveElectionList([]);
           setInactiveElectionList([]);
           setCopyElectionList([]);
@@ -514,7 +498,7 @@ export default function ElectionPanel() {
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    {election.title}
+                    {election[1]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -522,12 +506,9 @@ export default function ElectionPanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>ID: {election.electionID}</ListItem>
-                    <ListItem>Date of election: {election.date}</ListItem>
-                    <ListItem>
-                      Start polling time: {election.startTime}
-                    </ListItem>
-                    <ListItem>End polling time: {election.endTime}</ListItem>
+                    <ListItem>ID: {election[0]}</ListItem>
+                    <ListItem>Start polling time: {election[2]}</ListItem>
+                    <ListItem>End polling time: {election[3]}</ListItem>
                   </List>
                   <CreateEditModalBox
                     isOpen={modalEditBox.isOpen}
@@ -539,8 +520,8 @@ export default function ElectionPanel() {
                     data-testid="activateButton"
                     colorScheme="green"
                     isDisabled={
-                      election.status === "active" ||
-                      new Date(election.date).toISOString() <= currentDay
+                      election[4] === "active" ||
+                      new Date(election[3]).toISOString() <= currentDay
                         ? true
                         : false
                     }
@@ -554,8 +535,8 @@ export default function ElectionPanel() {
                     data-testid="editButton"
                     colorScheme="teal"
                     isDisabled={
-                      election.status === "active" ||
-                      new Date(election.date).toISOString() <= currentDay
+                      election[4] === "active" ||
+                      new Date(election[3]).toISOString() <= currentDay
                         ? true
                         : false
                     }
@@ -568,7 +549,7 @@ export default function ElectionPanel() {
                   <Button
                     data-testid="deleteButton"
                     bg="red.400"
-                    isDisabled={election.status === "active" ? true : false}
+                    isDisabled={election[4] === "active" ? true : false}
                     onClick={() => {
                       alertBox.onOpen();
                     }}
@@ -609,13 +590,10 @@ export function CreateAlertBox(props: AlertProps) {
           <AlertDialogBody>
             <b>Are you sure to remove this election from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>Title: {props.election.title}</ListItem>
-              <ListItem>Election ID: {props.election.electionID}</ListItem>
-              <ListItem>Date of election: {props.election.date}</ListItem>
-              <ListItem>
-                Start polling time: {props.election.startTime}
-              </ListItem>
-              <ListItem>End polling time: {props.election.endTime}</ListItem>
+              <ListItem>Title: {props.election[1]}</ListItem>
+              <ListItem>Election ID: {props.election[0]}</ListItem>
+              <ListItem>Start polling time: {props.election[2]}</ListItem>
+              <ListItem>End polling time: {props.election[3]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -647,7 +625,6 @@ export function CreateAddModalBox(props: ModalAddProps) {
   const initialValues = {
     electionID: "",
     title: "",
-    date: "",
     startTime: "",
     endTime: "",
     status: "",
@@ -672,7 +649,6 @@ export function CreateAddModalBox(props: ModalAddProps) {
     if (
       inputValue.electionID &&
       inputValue.title &&
-      inputValue.date &&
       inputValue.startTime &&
       inputValue.endTime
     ) {
@@ -692,7 +668,6 @@ export function CreateAddModalBox(props: ModalAddProps) {
         body: JSON.stringify({
           electionID: inputValue.electionID,
           title: inputValue.title,
-          date: inputValue.date,
           startTime: inputValue.startTime,
           endTime: inputValue.endTime,
           status: "inactive",
@@ -756,25 +731,12 @@ export function CreateAddModalBox(props: ModalAddProps) {
               background="gray.200"
             ></Input>
           </FormControl>
-          <Stack direction="row" align="baseline" spacing="33px" mt={3}>
-            <FormLabel>Date of Election: </FormLabel>
-            <Input
-              name="date"
-              data-testid="date"
-              type="date"
-              width="auto"
-              variant="outline"
-              border="2px"
-              onChange={handleInput}
-              value={inputValue.date}
-            ></Input>
-          </Stack>
           <Stack direction="row" align="baseline" spacing="20px" mt={3}>
-            <FormLabel>Start Polling Time: </FormLabel>
+            <FormLabel>Start Time: </FormLabel>
             <Input
               name="startTime"
               data-testid="startTime"
-              type="time"
+              type="datetime-local"
               width="auto"
               variant="outline"
               border="2px"
@@ -783,11 +745,11 @@ export function CreateAddModalBox(props: ModalAddProps) {
             ></Input>
           </Stack>
           <Stack direction="row" align="baseline" spacing="27px" mt={3}>
-            <FormLabel>End Polling Time: </FormLabel>
+            <FormLabel>End Time: </FormLabel>
             <Input
               name="endTime"
               data-testid="endTime"
-              type="time"
+              type="datetime-local"
               width="auto"
               variant="outline"
               border="2px"
@@ -846,9 +808,8 @@ export function CreateEditModalBox(props: ModalEditProps) {
   const handleConfirm = async () => {
     //Call from the top DOM
     props.handleEditElection(
-      props.election.electionID,
+      props.election,
       inputValue.title,
-      inputValue.date,
       inputValue.startTime,
       inputValue.endTime
     );
@@ -857,7 +818,7 @@ export function CreateEditModalBox(props: ModalEditProps) {
     //Adding toast
     addToast({
       title: "Election Edited!",
-      description: `The election ${props.election.title} is ready to deployed.`,
+      description: `The election ${props.election[1]} is ready to deployed.`,
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -890,25 +851,12 @@ export function CreateEditModalBox(props: ModalEditProps) {
               background="gray.200"
             ></Input>
           </FormControl>
-          <Stack direction="row" align="baseline" spacing="33px" mt={3}>
-            <FormLabel>Date of Election: </FormLabel>
-            <Input
-              name="date"
-              data-testid="date"
-              type="date"
-              width="auto"
-              variant="outline"
-              border="2px"
-              onChange={handleInput}
-              value={inputValue.date}
-            ></Input>
-          </Stack>
           <Stack direction="row" align="baseline" spacing="20px" mt={3}>
             <FormLabel>Start Polling Time: </FormLabel>
             <Input
               name="startTime"
               data-testid="startTime"
-              type="time"
+              type="datetime-local"
               width="auto"
               variant="outline"
               border="2px"
@@ -921,7 +869,7 @@ export function CreateEditModalBox(props: ModalEditProps) {
             <Input
               name="endTime"
               data-testid="endTime"
-              type="time"
+              type="datetime-local"
               width="auto"
               variant="outline"
               border="2px"
@@ -956,16 +904,17 @@ export function CreateEditModalBox(props: ModalEditProps) {
 function DecomposeJSONObject(jsonList: any[] = []) {
   var activeList: any[] = [];
   var inactiveList: any[] = [];
-  var today = new Date().toISOString().split("T")[0];
+  var list_today = new Date().toISOString().split("T");
+  var today = list_today[0] + " " + list_today[1].split(".")[0];
 
   Object.values(jsonList).forEach((election) => {
-    if (election.status === "active" && election.date >= today) {
+    if (election[4] === "active" && election[3] < today) {
       activeList.push(election);
-    } else if (election.status === "inactive" || election.date < today) {
+    } else if (election[4] === "inactive" || election[3] > today) {
       inactiveList.push(election);
 
       //Update the backend with the expired election
-      if (election.date < today) {
+      if (election[3] < today) {
         fetch("http://localhost:5000/election", {
           method: "POST",
           headers: {
@@ -974,7 +923,10 @@ function DecomposeJSONObject(jsonList: any[] = []) {
           },
           mode: "cors",
           body: JSON.stringify({
-            electionID: election.electionID,
+            electionID: election[0],
+            title: election[1],
+            startTime: election[2],
+            endTime: election[3],
             status: "inactive",
           }),
         });
@@ -983,6 +935,9 @@ function DecomposeJSONObject(jsonList: any[] = []) {
       return;
     }
   });
+
+  console.log(activeList);
+  console.log(inactiveList);
 
   return [activeList, inactiveList];
 }
