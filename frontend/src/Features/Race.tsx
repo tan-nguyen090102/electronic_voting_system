@@ -43,16 +43,26 @@ interface AlertProps {
   index: number;
 }
 
-interface ModalProps {
+interface AddModalProps {
   isLaunched: any;
   isOpen: any;
   onClose: any;
   handleRefreshList: any;
 }
 
+interface AddCandidateProps {
+  isLaunched: any;
+  isOpen: any;
+  onClose: any;
+  race: any;
+  index: string;
+  handleRefreshList: any;
+}
+
 export default function RacePanel() {
   //Adding box
-  const modalBox = useDisclosure();
+  const addModalBox = useDisclosure();
+  const addCandidateBox = useDisclosure();
   const alertBox = useDisclosure();
 
   //Toast
@@ -133,9 +143,6 @@ export default function RacePanel() {
     setCurrentIndex(index);
   };
 
-  //Add candidate button listener
-  const handleAddCandidate = async () => {};
-
   //Delete button listener
   const handleDelete = async (race: any, index: number) => {
     await fetch("http://localhost:5000/race", {
@@ -180,6 +187,7 @@ export default function RacePanel() {
   const stateOptions = (
     <>
       <option value="ALL">All</option>
+      <option value="US">US</option>
       <option value="AL">AL</option>
       <option value="AK">AK</option>
       <option value="AZ">AZ</option>
@@ -291,16 +299,24 @@ export default function RacePanel() {
             </Text>
           )}
           <CreateAddModalBox
-            isOpen={modalBox.isOpen}
-            onClose={modalBox.onClose}
+            isOpen={addModalBox.isOpen}
+            onClose={addModalBox.onClose}
             handleRefreshList={handleRefreshList}
-            isLaunched={modalBox.isOpen}
+            isLaunched={addModalBox.isOpen}
           ></CreateAddModalBox>
+          <CreateAddCandidateBox
+            isOpen={addCandidateBox.isOpen}
+            onClose={addCandidateBox.onClose}
+            isLaunched={addCandidateBox.isOpen}
+            race={currentRace}
+            index={currentIndex.toString()}
+            handleRefreshList={handleRefreshList}
+          ></CreateAddCandidateBox>
           <Button
             data-testid="addButton"
             colorScheme="teal"
             mt={3}
-            onClick={modalBox.onOpen}
+            onClick={addModalBox.onOpen}
             alignSelf="left"
           >
             Add
@@ -323,6 +339,7 @@ export default function RacePanel() {
         } else {
           return (
             <AccordionItem
+              id={index.toString()}
               data-testid="accordion"
               width="container.md"
               key={index}
@@ -352,9 +369,9 @@ export default function RacePanel() {
                   <Button
                     data-testid="addCandidateButton"
                     colorScheme="teal"
-                    onClick={handleAddCandidate}
+                    onClick={addCandidateBox.onOpen}
                   >
-                    Add Candidate
+                    View/Add Candidate
                   </Button>
                   <Button
                     data-testid="deleteButton"
@@ -427,8 +444,276 @@ export function CreateAlertBox(props: AlertProps) {
   );
 }
 
-//Modal box for adding precinct
-export function CreateAddModalBox(props: ModalProps) {
+//Modal box for adding candidate
+export function CreateAddCandidateBox(props: AddCandidateProps) {
+  //Toast
+  const addToast = useToast();
+
+  const [receivedListCandidate, setListOfCandidate] = React.useState<
+    Array<any>
+  >([]);
+  const [isNoCandidate, setNoCandidate] = React.useState(false);
+  useEffect(() => {
+    if (props.isLaunched) {
+      fetch("http://localhost:5000/race/view_candidate", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          raceID: props.race[0],
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data === "False") {
+            setListOfCandidate([]);
+            setNoCandidate(true);
+          } else {
+            setListOfCandidate(data);
+            setNoCandidate(false);
+          }
+        });
+    }
+  }, [props.isLaunched, props.race]);
+
+  const initialValues = {
+    candidateID: "",
+  };
+
+  //Input listeners
+  const [inputValue, setInputValue] = React.useState(initialValues);
+  const [isAddPopUp, setAddPopUp] = React.useState(false);
+  const handleInput = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+
+    if (name === "candidateID") {
+      if (value === "") {
+        setAddPopUp(false);
+      } else {
+        setAddPopUp(true);
+      }
+    } else {
+      setAddPopUp(false);
+    }
+  };
+
+  //Add button listener
+  const [isNotFoundPopUp, setNotFoundPopUp] = React.useState(false);
+  const handleAdd = async () => {
+    let isFilled = false;
+
+    //Check if all the field is filled
+    if (inputValue.candidateID) {
+      isFilled = true;
+    }
+
+    if (isFilled) {
+      //Fetch the backend to send the data
+      await fetch(`http://localhost:5000/race/add_candidate`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          candidateID: inputValue.candidateID,
+          raceID: props.race[0],
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "true") {
+            setNotFoundPopUp(false);
+            setNoCandidate(false);
+            setAddPopUp(false);
+            handleRefreshList();
+            setInputValue({ candidateID: "" });
+
+            //Adding toast
+            addToast({
+              title: "Candidate Added!",
+              description: `The candidate ${inputValue.candidateID} is ready for this race.`,
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+            });
+          } else {
+            setNotFoundPopUp(true);
+            handleRefreshList();
+            return;
+          }
+        });
+    }
+  };
+
+  //Delete button listeners
+  const handleDelete = async (candidate: any, index: number) => {
+    await fetch(`http://localhost:5000/race/delete_candidate`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        officialID: candidate[0],
+        raceID: candidate[3],
+      }),
+    });
+    handleRefreshList();
+
+    //Adding toast
+    addToast({
+      title: "Electoral race official Deleted!",
+      description: `The electoral official ${
+        candidate[1] + " " + candidate[2]
+      } is deleted.`,
+      status: "warning",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const handleRefreshList = () => {
+    fetch("http://localhost:5000/race/view_candidate", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        raceID: props.race[0],
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === "False") {
+          setListOfCandidate([]);
+          setNoCandidate(true);
+          props.handleRefreshList();
+        } else {
+          setListOfCandidate(data);
+          setNoCandidate(false);
+          props.handleRefreshList();
+        }
+      });
+  };
+
+  return (
+    <Modal
+      id={props.index}
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      closeOnOverlayClick={false}
+      motionPreset="slideInBottom"
+    >
+      <ModalOverlay></ModalOverlay>
+      <ModalContent>
+        <ModalHeader>
+          <Stack direction="column">
+            <b>List of candidate for the race:</b>
+            <b>{props.race[0]}</b>
+          </Stack>
+        </ModalHeader>
+        <ModalBody alignContent="left">
+          <List marginRight="auto" mt={3}></List>
+          <Stack direction="column" align="left">
+            <List>{ListCandidates(receivedListCandidate as any[])}</List>
+            {isNoCandidate && (
+              <Text data-testid="unfilledFields" mb={3}>
+                There is no candidate that registers to run this electoral race.
+              </Text>
+            )}
+            <Stack direction="row" align="baseline">
+              <b>Add:</b>
+              <Input
+                name="candidateID"
+                data-testid="candidateID"
+                onChange={handleInput}
+                value={inputValue.candidateID}
+                variant="filled"
+                background="gray.200"
+              ></Input>
+            </Stack>
+            {isNotFoundPopUp && (
+              <Text data-testid="unfilledFields" color="red" mb={3}>
+                *There is no candidate with this ID in the system*
+              </Text>
+            )}
+          </Stack>
+          <ModalFooter>
+            <Stack direction="row">
+              <Button
+                data-testid="addAddButton"
+                colorScheme="teal"
+                onClick={handleAdd}
+                style={{ display: isAddPopUp ? "block" : "none" }}
+              >
+                Add
+              </Button>
+              <Button
+                data-testid="cancelButton"
+                colorScheme="teal"
+                variant="outline"
+                onClick={() => {
+                  props.onClose();
+                  setNotFoundPopUp(false);
+                }}
+                ml={3}
+              >
+                {isAddPopUp ? "Cancel" : "Close"}
+              </Button>
+            </Stack>
+          </ModalFooter>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+
+  //Helper function to show the list of candidate
+  function ListCandidates(listofCandidate: any[]) {
+    var candidateList: any[] = [];
+    candidateList = listofCandidate.map((candidate, index) => {
+      return (
+        <ListItem key={index}>
+          <Box border="1px" borderRadius="10px" alignItems="baseline">
+            <Stack
+              direction="row"
+              alignItems="baseline"
+              justifyContent="space-between"
+            >
+              <Text ml={3}>{candidate[1] + " " + candidate[2]}</Text>
+              <Button
+                flexDirection="row"
+                bg="red.400"
+                onClick={() => {
+                  handleDelete(candidate, index);
+                }}
+              >
+                Delete
+              </Button>
+            </Stack>
+          </Box>
+        </ListItem>
+      );
+    });
+
+    return candidateList;
+  }
+}
+
+//Modal box for adding race
+export function CreateAddModalBox(props: AddModalProps) {
   //Toast
   const addToast = useToast();
 
@@ -481,7 +766,7 @@ export function CreateAddModalBox(props: ModalProps) {
           setDistrictListOnScreen(districtList);
         });
     }
-  }, [props.isOpen]);
+  }, [props.isLaunched]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);
