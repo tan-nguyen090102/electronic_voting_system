@@ -194,19 +194,39 @@ export default function ElectionPanel() {
 
   //Edit button listener
   const handleEditElection = async (
-    electionID: any,
+    election: any,
     title: string,
     startTime: string,
     endTime: string
   ) => {
     if (title === "") {
-      title = electionID[1];
+      title = election[1];
     }
     if (startTime === "") {
-      startTime = electionID[2];
+      startTime =
+        election[2].split("-")[2].split(" ")[0] +
+        "-" +
+        election[2].split("-")[0] +
+        "-" +
+        election[2].split("-")[1] +
+        " " +
+        election[2].split(" ")[1];
+    } else {
+      var listStartTime = startTime.split("T");
+      startTime = listStartTime[0] + " " + listStartTime[1] + ":00";
     }
     if (endTime === "") {
-      endTime = electionID[3];
+      endTime =
+        election[3].split("-")[2].split(" ")[0] +
+        "-" +
+        election[3].split("-")[0] +
+        "-" +
+        election[3].split("-")[1] +
+        " " +
+        election[3].split(" ")[1];
+    } else {
+      var listEndTime = endTime.split("T");
+      endTime = listEndTime[0] + " " + listEndTime[1] + ":00";
     }
 
     await fetch("http://localhost:5000/election/edit", {
@@ -217,10 +237,11 @@ export default function ElectionPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        electionID: electionID,
+        electionID: election[0],
         title: title,
         startTime: startTime,
         endTime: endTime,
+        status: election[4],
       }),
     });
     handleRefreshList();
@@ -253,7 +274,6 @@ export default function ElectionPanel() {
 
   //Activate button listener
   const handleActivate = async (election: any) => {
-    console.log(election);
     await fetch("http://localhost:5000/election", {
       method: "POST",
       headers: {
@@ -265,26 +285,9 @@ export default function ElectionPanel() {
         electionID: election[0],
         status: "active",
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False") {
-          setActiveElectionList([]);
-          setInactiveElectionList([]);
-          setCopyElectionList([]);
-        } else {
-          var electionLists = DecomposeJSONObject(data);
-          electionLists[0].length === 0
-            ? setNoMatchActivePopUp(true)
-            : setNoMatchActivePopUp(false);
-          electionLists[1].length === 0
-            ? setNoMatchInactivePopUp(true)
-            : setNoMatchInactivePopUp(false);
-          setActiveElectionList(electionLists[0]);
-          setInactiveElectionList(electionLists[1]);
-          setCopyElectionList(data);
-        }
-      });
+    });
+
+    handleRefreshList();
   };
 
   //Refresh from adding box listener
@@ -296,8 +299,16 @@ export default function ElectionPanel() {
           setActiveElectionList([]);
           setInactiveElectionList([]);
           setCopyElectionList([]);
+          setNoMatchActivePopUp(true);
+          setNoMatchInactivePopUp(true);
         } else {
           var electionLists = DecomposeJSONObject(data);
+          electionLists[0].length === 0
+            ? setNoMatchActivePopUp(true)
+            : setNoMatchActivePopUp(false);
+          electionLists[1].length === 0
+            ? setNoMatchInactivePopUp(true)
+            : setNoMatchInactivePopUp(false);
           setActiveElectionList(electionLists[0]);
           setInactiveElectionList(electionLists[1]);
           setCopyElectionList(data);
@@ -904,17 +915,17 @@ export function CreateEditModalBox(props: ModalEditProps) {
 function DecomposeJSONObject(jsonList: any[] = []) {
   var activeList: any[] = [];
   var inactiveList: any[] = [];
-  var list_today = new Date().toISOString().split("T");
-  var today = list_today[0] + " " + list_today[1].split(".")[0];
+  var today = new Date();
 
   Object.values(jsonList).forEach((election) => {
-    if (election[4] === "active" && election[3] < today) {
+    var endTime = new Date(election[3]);
+    if (election[4] === "active" && endTime >= today) {
       activeList.push(election);
-    } else if (election[4] === "inactive" || election[3] > today) {
+    } else if (election[4] === "inactive" || endTime < today) {
       inactiveList.push(election);
 
       //Update the backend with the expired election
-      if (election[3] < today) {
+      if (endTime < today) {
         fetch("http://localhost:5000/election", {
           method: "POST",
           headers: {
@@ -935,9 +946,6 @@ function DecomposeJSONObject(jsonList: any[] = []) {
       return;
     }
   });
-
-  console.log(activeList);
-  console.log(inactiveList);
 
   return [activeList, inactiveList];
 }

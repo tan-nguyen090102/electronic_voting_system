@@ -12,8 +12,8 @@ def get_all_elections(database):
     if all_elections is not None:
         for election in all_elections:
             election = list(election)
-            election[2] = election[2].strftime("%m/%d/%Y %H:%M:%S")
-            election[3] = election[3].strftime("%m/%d/%Y %H:%M:%S")
+            election[2] = election[2].strftime("%m-%d-%Y %H:%M:%S")
+            election[3] = election[3].strftime("%m-%d-%Y %H:%M:%S")
             list_all_elections.append(election)
         return list_all_elections
     else:
@@ -58,14 +58,17 @@ def create_election(database, election):
 
 
 def update_election(database, election):
+    print(election["startTime"])
+    print(election["endTime"])
+
     try:
         execute_stored_proc(
             database,
             "update_table",
             (
                 "elections",
-                "title = '" + election["title"] + "'",
-                "election_id = '" + election["electionID"] + "'",
+                f'title = "{election["title"]}"',
+                f'election_id = "{election["electionID"]}"',
             ),
         )
         execute_stored_proc(
@@ -73,8 +76,8 @@ def update_election(database, election):
             "update_table",
             (
                 "elections",
-                "start_time = '" + election["startTime"] + "'",
-                "election_id = '" + election["electionID"] + "'",
+                f'start_time = "{datetime.datetime.strptime(election["startTime"], "%Y-%m-%d %H:%M:%S")}"',
+                f'election_id = "{election["electionID"]}"',
             ),
         )
         execute_stored_proc(
@@ -82,8 +85,8 @@ def update_election(database, election):
             "update_table",
             (
                 "elections",
-                "end_time = '" + election["endTime"] + "'",
-                "election_id = '" + election["electionID"] + "'",
+                f'end_time = "{datetime.datetime.strptime(election["endTime"], "%Y-%m-%d %H:%M:%S")}"',
+                f'election_id = "{election["electionID"]}"',
             ),
         )
         execute_stored_proc(
@@ -91,8 +94,8 @@ def update_election(database, election):
             "update_table",
             (
                 "elections",
-                "status = '" + election["status"] + "'",
-                "election_id = '" + election["electionID"] + "'",
+                f'status = "{election["status"]}"',
+                f'election_id = "{election["electionID"]}"',
             ),
         )
         database.commit()
