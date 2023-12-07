@@ -6,13 +6,18 @@ import {
   HStack,
   Image,
   Stack,
+  Wrap,
+  Text,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface TopNavProps {
   title: string;
   isLoggedIn: string;
+  isBlank: string;
   userName: string;
+  role: string;
 }
 
 interface ListNavProps {
@@ -22,6 +27,16 @@ interface ListNavProps {
 //Top Navigation Bar
 export default function NavBar(props: TopNavProps) {
   const isLoggedIn = props.isLoggedIn;
+  const isBlank = props.isBlank;
+
+  //Get today and time
+  const [currentDay, setCurrentDay] = React.useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentDay(new Date()), 1000);
+    return function cleanup() {
+      clearInterval(timer);
+    };
+  }, []);
 
   //Login/out button listener
   const navigate = useNavigate();
@@ -36,7 +51,9 @@ export default function NavBar(props: TopNavProps) {
 
   //User profile listener
   const handleUserProfile = () => {
-    navigate("/user_profile");
+    navigate("/user_profile", {
+      state: { user: props.userName, role: props.role },
+    });
   };
 
   //DOM
@@ -53,12 +70,23 @@ export default function NavBar(props: TopNavProps) {
       align={"center"}
     >
       <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
-        <Image
-          boxSize="50px"
-          objectFit="cover"
-          src="https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3415254/election-day-clipart-md.png"
-          alt="Voting Icon"
-        />
+        <Link
+          to={
+            props.role === "voter"
+              ? "/"
+              : props.role === "admin"
+              ? "/election"
+              : ""
+          }
+          state={{ user: props.userName, isLoggedIn: isLoggedIn }}
+        >
+          <Image
+            boxSize="50px"
+            objectFit="cover"
+            src="https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3415254/election-day-clipart-md.png"
+            alt="Voting Icon"
+          />
+        </Link>
         <HStack spacing="24px">
           <Spacer />
           <Heading>{props.title}</Heading>
@@ -67,13 +95,21 @@ export default function NavBar(props: TopNavProps) {
 
       <Flex flex={{ base: 1 }} justify={{ base: "center", md: "end" }}>
         <HStack spacing="24px">
+          <Wrap>
+            <Text fontSize="md">Today is {currentDay.toLocaleString()}</Text>
+          </Wrap>
           <Button
             colorScheme="teal"
             onClick={isLoggedIn === "true" ? handleUserProfile : handleSignup}
+            style={{ display: isBlank === "true" ? "none" : "block" }}
           >
             {isLoggedIn === "true" ? props.userName : "Sign up"}
           </Button>
-          <Button colorScheme="teal" onClick={handleLogin}>
+          <Button
+            colorScheme="teal"
+            onClick={handleLogin}
+            style={{ display: isBlank === "true" ? "none" : "block" }}
+          >
             {isLoggedIn === "true" ? "Log out" : "Log in"}
           </Button>
         </HStack>

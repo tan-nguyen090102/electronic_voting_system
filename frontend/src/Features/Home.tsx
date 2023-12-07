@@ -22,7 +22,13 @@ export default function HomePage() {
 
   return (
     <>
-      <NavBar title={"My Vote"} isLoggedIn={isLoggedIn} userName={user} />
+      <NavBar
+        title={isLoggedIn === "true" ? "Welcome, " + user : "My Vote"}
+        isLoggedIn={isLoggedIn}
+        isBlank="false"
+        userName={user}
+        role="voter"
+      />
       <Stack direction="column">
         <Spacer />
         <Box

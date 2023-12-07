@@ -39,7 +39,7 @@ interface AlertProps {
   isOpen: any;
   onClose: any;
   handleDelete: any;
-  district: any;
+  election: any;
   index: number;
 }
 
@@ -52,12 +52,11 @@ interface ModalAddProps {
 interface ModalEditProps {
   isOpen: any;
   onClose: any;
-  district: any;
-  index: number;
-  handleEditDistrict: any;
+  election: any;
+  handleEditElection: any;
 }
 
-export default function DistrictPanel() {
+export default function ElectionPanel() {
   //Adding box
   const modalAddBox = useDisclosure();
   const modalEditBox = useDisclosure();
@@ -67,40 +66,57 @@ export default function DistrictPanel() {
   const addToast = useToast();
 
   //Limit of element shown on lists
-  const MAX_DISTRICT_SHOWN = 100;
+  const MAX_ELECTION_SHOWN = 20;
 
   //Change web title
   useEffect(() => {
-    document.title = "Districts - Voting System Administrator";
+    document.title = "Elections - Voting System Administrator";
   }, []);
 
   //Receive data from other page.
   const { state } = useLocation();
   const { user } = state || { user: "" };
 
-  //Retrieve the list of all user to the page
-  const [receivedDistrictList, setDistrictList] = React.useState<Array<any>>(
+  //Retrieve the list of all elections to the page
+  const [receivedActiveElectionList, setActiveElectionList] = React.useState<
+    Array<any>
+  >([]);
+  const [receivedInactiveElectionList, setInactiveElectionList] =
+    React.useState<Array<any>>([]);
+  const [copyElectionList, setCopyElectionList] = React.useState<Array<any>>(
     []
   );
-  const [copyDistrictList, setCopyDistrictList] = React.useState<Array<any>>(
-    []
-  );
-  const [currentDisctrict, setCurrentDistrict] = React.useState<any>([]);
+  const [currentElection, setCurrentElection] = React.useState<any>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
+  const [currentDay, setCurrentDay] = React.useState("");
   useEffect(() => {
-    fetch("http://localhost:5000/district")
+    var electionLists: any[] = [];
+    var today = new Date().toISOString();
+
+    fetch("http://localhost:5000/election")
       .then((response) => response.json())
       .then((data) => {
         if (data === "False") {
-          setDistrictList([]);
-          setCopyDistrictList([]);
+          setActiveElectionList([]);
+          setInactiveElectionList([]);
+          setCopyElectionList([]);
           handlePointer([], -1);
         } else {
-          setDistrictList(data);
-          setCopyDistrictList(data);
+          electionLists = DecomposeJSONObject(data);
+          if (electionLists[0].length === 0) {
+            setNoMatchActivePopUp(true);
+          }
+          if (electionLists[1].length === 0) {
+            setNoMatchInactivePopUp(true);
+          }
+          setCopyElectionList(data);
+          setActiveElectionList(electionLists[0]);
+          setInactiveElectionList(electionLists[1]);
           handlePointer(data[0], 0);
         }
       });
+
+    setCurrentDay(today);
   }, []);
 
   //Selection listener
@@ -112,52 +128,108 @@ export default function DistrictPanel() {
   };
 
   //Filter button listener
-  const [isNoMatchPopUp, setNoMatchPopUp] = React.useState(false);
+  const [isNoMatchActivePopUp, setNoMatchActivePopUp] = React.useState(false);
+  const [isNoMatchInactivePopUp, setNoMatchInactivePopUp] =
+    React.useState(false);
   const handleFilter = () => {
     if (inputSelection !== "ALL") {
       //Filter the state by selection
-      const filteredDistrict = copyDistrictList?.map((district) => {
-        if (district[0].split("-")[0] === inputSelection) {
-          return district;
+      const filteredActiveElection = copyElectionList?.map((election) => {
+        if (
+          (election[0].split("-")[1] === inputSelection ||
+            (election[0].split("-")[0] === "US" && inputSelection === "US")) &&
+          election[4] === "active"
+        ) {
+          return election;
         } else {
           return [];
         }
       });
-      for (let i = 0; i < filteredDistrict.length; i++) {
-        if (filteredDistrict[i].length !== 0) {
-          setNoMatchPopUp(false);
+
+      const filteredInactiveElection = copyElectionList?.map((election) => {
+        if (
+          (election[0].split("-")[1] === inputSelection ||
+            (election[0].split("-")[0] === "US" && inputSelection === "US")) &&
+          election[4] === "inactive"
+        ) {
+          return election;
+        } else {
+          return [];
+        }
+      });
+
+      for (let i = 0; i < filteredActiveElection.length; i++) {
+        if (filteredActiveElection[i].length !== 0) {
+          setNoMatchActivePopUp(false);
           break;
         } else {
-          setNoMatchPopUp(true);
+          setNoMatchActivePopUp(true);
         }
       }
 
-      setDistrictList(filteredDistrict);
+      for (let i = 0; i < filteredInactiveElection.length; i++) {
+        if (filteredInactiveElection[i].length !== 0) {
+          setNoMatchInactivePopUp(false);
+          break;
+        } else {
+          setNoMatchInactivePopUp(true);
+        }
+      }
+
+      setActiveElectionList(filteredActiveElection);
+      setInactiveElectionList(filteredInactiveElection);
     } else {
-      setDistrictList(copyDistrictList);
-      setNoMatchPopUp(false);
+      setActiveElectionList(DecomposeJSONObject(copyElectionList)[0]);
+      setInactiveElectionList(DecomposeJSONObject(copyElectionList)[1]);
+      setNoMatchActivePopUp(false);
+      setNoMatchInactivePopUp(false);
     }
   };
 
   //Pointer to current Accordion item
-  const handlePointer = (district: any, index: number) => {
-    setCurrentDistrict(district);
+  const handlePointer = (election: any, index: number) => {
+    setCurrentElection(election);
     setCurrentIndex(index);
   };
 
   //Edit button listener
-  const handleEditDistrict = async (
-    district: any,
+  const handleEditElection = async (
+    election: any,
     title: string,
-    officialID: string
+    startTime: string,
+    endTime: string
   ) => {
     if (title === "") {
-      title = district[1];
+      title = election[1];
     }
-    if (officialID === "") {
-      officialID = district[2];
+    if (startTime === "") {
+      startTime =
+        election[2].split("-")[2].split(" ")[0] +
+        "-" +
+        election[2].split("-")[0] +
+        "-" +
+        election[2].split("-")[1] +
+        " " +
+        election[2].split(" ")[1];
+    } else {
+      var listStartTime = startTime.split("T");
+      startTime = listStartTime[0] + " " + listStartTime[1] + ":00";
     }
-    await fetch("http://localhost:5000/district/edit", {
+    if (endTime === "") {
+      endTime =
+        election[3].split("-")[2].split(" ")[0] +
+        "-" +
+        election[3].split("-")[0] +
+        "-" +
+        election[3].split("-")[1] +
+        " " +
+        election[3].split(" ")[1];
+    } else {
+      var listEndTime = endTime.split("T");
+      endTime = listEndTime[0] + " " + listEndTime[1] + ":00";
+    }
+
+    await fetch("http://localhost:5000/election/edit", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -165,18 +237,19 @@ export default function DistrictPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        districtID: district[0],
+        electionID: election[0],
         title: title,
-        officialName: officialID,
+        startTime: startTime,
+        endTime: endTime,
+        status: election[4],
       }),
     });
-
     handleRefreshList();
   };
 
   //Delete button listener
-  const handleDelete = async (district: any, index: number) => {
-    await fetch("http://localhost:5000/district", {
+  const handleDelete = async (election: any, index: number) => {
+    await fetch("http://localhost:5000/election/delete", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -184,32 +257,61 @@ export default function DistrictPanel() {
       },
       mode: "cors",
       body: JSON.stringify({
-        districtID: district[0],
+        electionID: election[0],
       }),
     });
     handleRefreshList();
 
     //Adding toast
     addToast({
-      title: "District Deleted!",
-      description: `The district ${district[0]} is deleted.`,
+      title: "Election Deleted!",
+      description: `The election ${election[0]} is deleted.`,
       status: "warning",
       duration: 3000,
       isClosable: true,
     });
   };
 
+  //Activate button listener
+  const handleActivate = async (election: any) => {
+    await fetch("http://localhost:5000/election", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        electionID: election[0],
+        status: "active",
+      }),
+    });
+
+    handleRefreshList();
+  };
+
   //Refresh from adding box listener
   const handleRefreshList = () => {
-    fetch("http://localhost:5000/district")
+    fetch("http://localhost:5000/election")
       .then((response) => response.json())
       .then((data) => {
         if (data.length === 0) {
-          setDistrictList([]);
-          setCopyDistrictList([]);
+          setActiveElectionList([]);
+          setInactiveElectionList([]);
+          setCopyElectionList([]);
+          setNoMatchActivePopUp(true);
+          setNoMatchInactivePopUp(true);
         } else {
-          setDistrictList(data);
-          setCopyDistrictList(data);
+          var electionLists = DecomposeJSONObject(data);
+          electionLists[0].length === 0
+            ? setNoMatchActivePopUp(true)
+            : setNoMatchActivePopUp(false);
+          electionLists[1].length === 0
+            ? setNoMatchInactivePopUp(true)
+            : setNoMatchInactivePopUp(false);
+          setActiveElectionList(electionLists[0]);
+          setInactiveElectionList(electionLists[1]);
+          setCopyElectionList(data);
         }
       });
   };
@@ -276,13 +378,13 @@ export default function DistrictPanel() {
   return (
     <div>
       <NavBar
-        title={"Districts"}
+        title={"Elections"}
         isLoggedIn="true"
         isBlank="false"
         userName={user}
         role="admin"
       ></NavBar>
-      <ListNavigationBar indexClick="2"></ListNavigationBar>
+      <ListNavigationBar indexClick="0"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
@@ -294,11 +396,9 @@ export default function DistrictPanel() {
         >
           <Wrap justify="center">
             <Stack direction="column">
-              <Stack direction="row">
-                <Text fontSize="md" mt={0}>
-                  Current registered districts: {receivedDistrictList?.length}
-                </Text>
-              </Stack>
+              <Text fontSize="md" mt={0}>
+                Current active elections: {receivedActiveElectionList?.length}
+              </Text>
               <Stack direction="row" mb={3} align="baseline">
                 <Text fontSize="md" mt={0} mb={3}>
                   Filter by state:
@@ -323,14 +423,49 @@ export default function DistrictPanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowToggle>
-            {CreateAccordionItem(receivedDistrictList)}
+          <Accordion allowMultiple>
+            <AccordionItem className="activeAccordion" width="container.md">
+              <h2>
+                <AccordionButton data-testid="activeButton" border="2px">
+                  <Box as="span" flex="1" textAlign="left" textStyle="bold">
+                    <b>ACTIVE ELECTION</b>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4} width="100%">
+                <Accordion allowToggle>
+                  {CreateAccordionItem(receivedActiveElectionList as any[])}
+                </Accordion>
+                {isNoMatchActivePopUp && (
+                  <Text data-testid="invalidInput" mb={3}>
+                    There is no election that matched the filtered state.
+                  </Text>
+                )}
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem width="container.md" className="inactiveAccordion">
+              <h2>
+                <AccordionButton data-testid="inactiveButton" border="2px">
+                  <Box as="span" flex="1" textAlign="left" textStyle="bold">
+                    <b>INACTIVE ELECTION</b>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4} width="100%">
+                <Accordion allowToggle>
+                  {CreateAccordionItem(receivedInactiveElectionList as any[])}
+                </Accordion>
+                {isNoMatchInactivePopUp && (
+                  <Text data-testid="invalidInput" mb={3}>
+                    There is no election that matched the filtered state.
+                  </Text>
+                )}
+              </AccordionPanel>
+            </AccordionItem>
           </Accordion>
-          {isNoMatchPopUp && (
-            <Text data-testid="invalidInput" mb={3}>
-              There is no district that matched the filtered state.
-            </Text>
-          )}
+
           <CreateAddModalBox
             isOpen={modalAddBox.isOpen}
             onClose={modalAddBox.onClose}
@@ -355,10 +490,10 @@ export default function DistrictPanel() {
 
   //Helper function to create each accordion box
   function CreateAccordionItem(jsonList: any[]) {
-    const districtDetails =
+    const electionDetails =
       Array.isArray(jsonList) &&
-      jsonList.slice(0, MAX_DISTRICT_SHOWN).map((district, index) => {
-        if (district.length === 0) {
+      jsonList.slice(0, MAX_ELECTION_SHOWN).map((election, index) => {
+        if (election.length === 0) {
           return <div key={index}></div>;
         } else {
           return (
@@ -370,11 +505,11 @@ export default function DistrictPanel() {
               <h2>
                 <AccordionButton
                   onClick={() => {
-                    handlePointer(district, index);
+                    handlePointer(election, index);
                   }}
                 >
                   <Box as="span" flex="1" textAlign="left">
-                    District #{district[0]}
+                    {election[1]}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -382,19 +517,40 @@ export default function DistrictPanel() {
               <AccordionPanel pb={4} width="100%">
                 <Stack direction="row" justifyContent="flex-end">
                   <List marginRight="auto">
-                    <ListItem>Title: {district[1]}</ListItem>
-                    <ListItem>Current head official: {district[2]}</ListItem>
+                    <ListItem>ID: {election[0]}</ListItem>
+                    <ListItem>Start polling time: {election[2]}</ListItem>
+                    <ListItem>End polling time: {election[3]}</ListItem>
                   </List>
                   <CreateEditModalBox
                     isOpen={modalEditBox.isOpen}
                     onClose={modalEditBox.onClose}
-                    handleEditDistrict={handleEditDistrict}
-                    district={currentDisctrict}
-                    index={currentIndex}
+                    handleEditElection={handleEditElection}
+                    election={currentElection}
                   ></CreateEditModalBox>
+                  <Button
+                    data-testid="activateButton"
+                    colorScheme="green"
+                    isDisabled={
+                      election[4] === "active" ||
+                      new Date(election[3]).toISOString() <= currentDay
+                        ? true
+                        : false
+                    }
+                    onClick={() => {
+                      handleActivate(election);
+                    }}
+                  >
+                    Activate
+                  </Button>
                   <Button
                     data-testid="editButton"
                     colorScheme="teal"
+                    isDisabled={
+                      election[4] === "active" ||
+                      new Date(election[3]).toISOString() <= currentDay
+                        ? true
+                        : false
+                    }
                     onClick={() => {
                       modalEditBox.onOpen();
                     }}
@@ -404,6 +560,7 @@ export default function DistrictPanel() {
                   <Button
                     data-testid="deleteButton"
                     bg="red.400"
+                    isDisabled={election[4] === "active" ? true : false}
                     onClick={() => {
                       alertBox.onOpen();
                     }}
@@ -414,7 +571,7 @@ export default function DistrictPanel() {
                     isOpen={alertBox.isOpen}
                     onClose={alertBox.onClose}
                     handleDelete={handleDelete}
-                    district={currentDisctrict}
+                    election={currentElection}
                     index={currentIndex}
                   ></CreateAlertBox>
                 </Stack>
@@ -423,7 +580,7 @@ export default function DistrictPanel() {
           );
         }
       });
-    return districtDetails;
+    return electionDetails;
   }
 }
 
@@ -439,21 +596,22 @@ export function CreateAlertBox(props: AlertProps) {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete District
+            Delete Election
           </AlertDialogHeader>
           <AlertDialogBody>
-            <b>Are you sure to remove this district from the system?</b>
+            <b>Are you sure to remove this election from the system?</b>
             <List marginRight="auto" mt={3}>
-              <ListItem>District ID: {props.district[0]}</ListItem>
-              <ListItem>Title: {props.district[1]}</ListItem>
-              <ListItem>Current head official: {props.district[2]}</ListItem>
+              <ListItem>Title: {props.election[1]}</ListItem>
+              <ListItem>Election ID: {props.election[0]}</ListItem>
+              <ListItem>Start polling time: {props.election[2]}</ListItem>
+              <ListItem>End polling time: {props.election[3]}</ListItem>
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button
               colorScheme="red"
               onClick={() => {
-                props.handleDelete(props.district, props.index);
+                props.handleDelete(props.election, props.index);
                 props.onClose();
               }}
             >
@@ -469,16 +627,18 @@ export function CreateAlertBox(props: AlertProps) {
   );
 }
 
-//Modal box for adding district
+//Modal box for adding election
 export function CreateAddModalBox(props: ModalAddProps) {
   //Toast
   const addToast = useToast();
 
   //Sets of initial values
   const initialValues = {
-    districtID: "",
+    electionID: "",
     title: "",
-    officialID: "",
+    startTime: "",
+    endTime: "",
+    status: "",
   };
 
   //Input listener
@@ -497,14 +657,19 @@ export function CreateAddModalBox(props: ModalAddProps) {
     let isFilled = false;
 
     //Check if all the field is filled
-    if (inputValue.districtID && inputValue.title && inputValue.officialID) {
+    if (
+      inputValue.electionID &&
+      inputValue.title &&
+      inputValue.startTime &&
+      inputValue.endTime
+    ) {
       isFilled = true;
     }
 
     if (isFilled) {
       //Fetch the backend to send the data
       setPopUp(false);
-      await fetch(`http://localhost:5000/district/add`, {
+      await fetch(`http://localhost:5000/election/add`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -512,9 +677,11 @@ export function CreateAddModalBox(props: ModalAddProps) {
         },
         mode: "cors",
         body: JSON.stringify({
-          districtID: inputValue.districtID,
+          electionID: inputValue.electionID,
           title: inputValue.title,
-          officialName: inputValue.officialID,
+          startTime: inputValue.startTime,
+          endTime: inputValue.endTime,
+          status: "inactive",
         }),
       });
 
@@ -524,8 +691,8 @@ export function CreateAddModalBox(props: ModalAddProps) {
 
       //Adding toast
       addToast({
-        title: "District Added!",
-        description: `The district ${inputValue.districtID} is ready to deployed.`,
+        title: "Election Added!",
+        description: `The election ${inputValue.title} is ready to deployed.`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -545,25 +712,13 @@ export function CreateAddModalBox(props: ModalAddProps) {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader>Add new district</ModalHeader>
+        <ModalHeader>Add new election</ModalHeader>
         <ModalBody>
           {isPopUp && (
             <Text data-testid="unfilledFields" color="red" mb={3}>
               *Please fill out all required fields*
             </Text>
           )}
-          <FormControl>
-            <FormLabel>District ID:</FormLabel>
-            <Input
-              name="districtID"
-              data-testid="districtID"
-              onChange={handleInput}
-              value={inputValue.districtID}
-              placeholder="Initials-Type-Number"
-              variant="filled"
-              background="gray.200"
-            ></Input>
-          </FormControl>
           <FormControl>
             <FormLabel>Title:</FormLabel>
             <Input
@@ -576,17 +731,43 @@ export function CreateAddModalBox(props: ModalAddProps) {
             ></Input>
           </FormControl>
           <FormControl>
-            <FormLabel>Official ID:</FormLabel>
+            <FormLabel>Election ID:</FormLabel>
             <Input
-              name="officialID"
-              data-testid="officialID"
+              name="electionID"
+              data-testid="electionID"
               onChange={handleInput}
-              value={inputValue.officialID}
-              placeholder="If there are no officials, please type N/A"
+              value={inputValue.electionID}
+              placeholder="Initials/City-Year"
               variant="filled"
               background="gray.200"
             ></Input>
           </FormControl>
+          <Stack direction="row" align="baseline" spacing="20px" mt={3}>
+            <FormLabel>Start Time: </FormLabel>
+            <Input
+              name="startTime"
+              data-testid="startTime"
+              type="datetime-local"
+              width="auto"
+              variant="outline"
+              border="2px"
+              onChange={handleInput}
+              value={inputValue.startTime}
+            ></Input>
+          </Stack>
+          <Stack direction="row" align="baseline" spacing="27px" mt={3}>
+            <FormLabel>End Time: </FormLabel>
+            <Input
+              name="endTime"
+              data-testid="endTime"
+              type="datetime-local"
+              width="auto"
+              variant="outline"
+              border="2px"
+              onChange={handleInput}
+              value={inputValue.endTime}
+            ></Input>
+          </Stack>
           <ModalFooter>
             <Button
               data-testid="addAddButton"
@@ -611,7 +792,7 @@ export function CreateAddModalBox(props: ModalAddProps) {
   );
 }
 
-//Modal box for edit district
+//Modal box for edit election
 export function CreateEditModalBox(props: ModalEditProps) {
   //Toast
   const addToast = useToast();
@@ -619,7 +800,9 @@ export function CreateEditModalBox(props: ModalEditProps) {
   //Sets of initial values
   const initialValues = {
     title: "",
-    officialID: "",
+    date: "",
+    startTime: "",
+    endTime: "",
   };
 
   //Input listener
@@ -635,17 +818,18 @@ export function CreateEditModalBox(props: ModalEditProps) {
   //Confirm button listener
   const handleConfirm = async () => {
     //Call from the top DOM
-    props.handleEditDistrict(
-      props.district,
+    props.handleEditElection(
+      props.election,
       inputValue.title,
-      inputValue.officialID
+      inputValue.startTime,
+      inputValue.endTime
     );
     props.onClose();
 
     //Adding toast
     addToast({
-      title: "District Edited!",
-      description: `The district ${props.district[0]} is ready to deployed.`,
+      title: "Election Edited!",
+      description: `The election ${props.election[1]} is ready to deployed.`,
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -662,7 +846,7 @@ export function CreateEditModalBox(props: ModalEditProps) {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent>
-        <ModalHeader>Edit district</ModalHeader>
+        <ModalHeader>Edit election</ModalHeader>
         <ModalBody>
           <Text data-testid="unfilledFields" mb={3}>
             If there is no change on any field, please leave it as blank.
@@ -678,18 +862,32 @@ export function CreateEditModalBox(props: ModalEditProps) {
               background="gray.200"
             ></Input>
           </FormControl>
-          <FormControl>
-            <FormLabel>Official ID:</FormLabel>
+          <Stack direction="row" align="baseline" spacing="20px" mt={3}>
+            <FormLabel>Start Polling Time: </FormLabel>
             <Input
-              name="officialID"
-              data-testid="officialID"
+              name="startTime"
+              data-testid="startTime"
+              type="datetime-local"
+              width="auto"
+              variant="outline"
+              border="2px"
               onChange={handleInput}
-              value={inputValue.officialID}
-              placeholder="If there are no officials, please type N/A"
-              variant="filled"
-              background="gray.200"
+              value={inputValue.startTime}
             ></Input>
-          </FormControl>
+          </Stack>
+          <Stack direction="row" align="baseline" spacing="27px" mt={3}>
+            <FormLabel>End Polling Time: </FormLabel>
+            <Input
+              name="endTime"
+              data-testid="endTime"
+              type="datetime-local"
+              width="auto"
+              variant="outline"
+              border="2px"
+              onChange={handleInput}
+              value={inputValue.endTime}
+            ></Input>
+          </Stack>
           <ModalFooter>
             <Button
               data-testid="confirmButton"
@@ -712,4 +910,42 @@ export function CreateEditModalBox(props: ModalEditProps) {
       </ModalContent>
     </Modal>
   );
+}
+
+function DecomposeJSONObject(jsonList: any[] = []) {
+  var activeList: any[] = [];
+  var inactiveList: any[] = [];
+  var today = new Date();
+
+  Object.values(jsonList).forEach((election) => {
+    var endTime = new Date(election[3]);
+    if (election[4] === "active" && endTime >= today) {
+      activeList.push(election);
+    } else if (election[4] === "inactive" || endTime < today) {
+      inactiveList.push(election);
+
+      //Update the backend with the expired election
+      if (endTime < today) {
+        fetch("http://localhost:5000/election", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "content-type": "application/json; charset=UTF-8",
+          },
+          mode: "cors",
+          body: JSON.stringify({
+            electionID: election[0],
+            title: election[1],
+            startTime: election[2],
+            endTime: election[3],
+            status: "inactive",
+          }),
+        });
+      }
+    } else {
+      return;
+    }
+  });
+
+  return [activeList, inactiveList];
 }

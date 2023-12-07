@@ -247,7 +247,9 @@ export default function RacePanel() {
       <NavBar
         title={"Electoral Races"}
         isLoggedIn="true"
+        isBlank="false"
         userName={user}
+        role="admin"
       ></NavBar>
       <ListNavigationBar indexClick="1"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">

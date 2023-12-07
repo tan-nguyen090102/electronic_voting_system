@@ -101,7 +101,9 @@ export default function ProfileRequestPanel() {
       <NavBar
         title={"User Profile Request"}
         isLoggedIn="true"
+        isBlank="false"
         userName={user}
+        role="admin"
       ></NavBar>
       <ListNavigationBar indexClick="6"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
@@ -173,7 +175,7 @@ export default function ProfileRequestPanel() {
   );
 
   //Helper function to create each accordion box. Approved list only shown the maximum defined
-  function CreateAccordionItem(jsonList: any[], status: String) {
+  function CreateAccordionItem(jsonList: any[], status: string) {
     const userDetails = jsonList
       ?.slice(0, status === "pending" ? jsonList.length : MAX_APPROVED_SHOWN)
       .map((user, index) => {

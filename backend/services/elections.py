@@ -12,9 +12,112 @@ def get_all_elections(database):
     if all_elections is not None:
         for election in all_elections:
             election = list(election)
-            election[2] = election[2].strftime("%m/%d/%Y %H:%M:%S")
-            election[3] = election[3].strftime("%m/%d/%Y %H:%M:%S")
+            election[2] = election[2].strftime("%m-%d-%Y %H:%M:%S")
+            election[3] = election[3].strftime("%m-%d-%Y %H:%M:%S")
             list_all_elections.append(election)
         return list_all_elections
     else:
         return "False"
+
+
+def delete_election(database, election_id):
+    try:
+        execute_stored_proc(
+            database,
+            "delete_from_table",
+            (
+                "elections",
+                "election_id = '" + election_id + "'",
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def create_election(database, election):
+    try:
+        execute_stored_proc(
+            database,
+            "create_election",
+            (
+                election["electionID"],
+                election["title"],
+                election["startTime"],
+                election["endTime"],
+                election["status"],
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def update_election(database, election):
+    print(election["startTime"])
+    print(election["endTime"])
+
+    try:
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                f'title = "{election["title"]}"',
+                f'election_id = "{election["electionID"]}"',
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                f'start_time = "{datetime.datetime.strptime(election["startTime"], "%Y-%m-%d %H:%M:%S")}"',
+                f'election_id = "{election["electionID"]}"',
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                f'end_time = "{datetime.datetime.strptime(election["endTime"], "%Y-%m-%d %H:%M:%S")}"',
+                f'election_id = "{election["electionID"]}"',
+            ),
+        )
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                f'status = "{election["status"]}"',
+                f'election_id = "{election["electionID"]}"',
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def update_status_election(database, election):
+    try:
+        execute_stored_proc(
+            database,
+            "update_table",
+            (
+                "elections",
+                "status = '" + election["status"] + "'",
+                "election_id = '" + election["electionID"] + "'",
+            ),
+        )
+        database.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400

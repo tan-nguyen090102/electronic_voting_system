@@ -8,6 +8,7 @@ from flask_cors import CORS, cross_origin
 from routers.auth import auth_bp
 from routers.candidates import candidate_bp
 from routers.districts import district_bp
+from routers.elections import election_bp
 from routers.managers import managers_bp
 from routers.precincts import precinct_bp
 from routers.races import race_bp
@@ -35,6 +36,7 @@ if __name__ == "__main__":
         app.register_blueprint(candidate_bp)
         app.register_blueprint(race_bp)
         app.register_blueprint(district_bp)
+        app.register_blueprint(election_bp)
         app.run()
     finally:
         db.close()

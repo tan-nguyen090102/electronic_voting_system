@@ -11,6 +11,7 @@ import {
   Stack,
   Select,
 } from "@chakra-ui/react";
+import NavBar from "./NavBar";
 
 export default function LoginPanel() {
   //Change web title
@@ -106,86 +107,95 @@ export default function LoginPanel() {
 
   //DOM
   return (
-    <Flex height="100vh" alignItems="center" justifyContent="center">
-      <Flex direction="column" background="gray.100" p={12} rounded={6}>
-        <Stack direction="row" justify="left">
-          <Heading mb={6}>Login</Heading>
-          <Heading>as: </Heading>
-          <Select
-            name="role"
-            data-testid="role"
-            borderWidth={3}
-            onChange={handleSelection}
-            defaultValue="voter"
-          >
-            {roleOptions}
-          </Select>
-        </Stack>
-        <Stack direction="column" justify="center">
-          <Input
-            name="userID"
-            data-testid="userID"
-            onChange={handleInput}
-            value={inputValue.userID}
-            placeholder="Email"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-          ></Input>
-          <Input
-            name="password"
-            data-testid="password"
-            onChange={handleInput}
-            value={inputValue.password}
-            placeholder="Password"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-            type="password"
-          ></Input>
-          <Input
-            name="employeeID"
-            data-testid="employeeID"
-            onChange={handleInput}
-            value={inputValue["employeeID"]}
-            placeholder="VS-ID"
-            variant="filled"
-            mb={3}
-            background="gray.200"
-            style={{ display: isPopUp ? "block" : "none" }}
-          ></Input>
-          {decision && (
-            <Text data-testid="invalidInput" color="red" mb={3}>
-              *Invalid Credential*
+    <div>
+      <NavBar
+        title={"Login"}
+        isLoggedIn="false"
+        isBlank="true"
+        userName={""}
+        role="voter"
+      ></NavBar>
+      <Flex height="75vh" alignItems="center" justifyContent="center">
+        <Flex direction="column" background="gray.100" p={12} rounded={6}>
+          <Stack direction="row" justify="left">
+            <Heading mb={6}>Login</Heading>
+            <Heading>as: </Heading>
+            <Select
+              name="role"
+              data-testid="role"
+              borderWidth={3}
+              onChange={handleSelection}
+              defaultValue="voter"
+            >
+              {roleOptions}
+            </Select>
+          </Stack>
+          <Stack direction="column" justify="center">
+            <Input
+              name="userID"
+              data-testid="userID"
+              onChange={handleInput}
+              value={inputValue.userID}
+              placeholder="Email"
+              variant="filled"
+              mb={3}
+              background="gray.200"
+            ></Input>
+            <Input
+              name="password"
+              data-testid="password"
+              onChange={handleInput}
+              value={inputValue.password}
+              placeholder="Password"
+              variant="filled"
+              mb={3}
+              background="gray.200"
+              type="password"
+            ></Input>
+            <Input
+              name="employeeID"
+              data-testid="employeeID"
+              onChange={handleInput}
+              value={inputValue["employeeID"]}
+              placeholder="VS-ID"
+              variant="filled"
+              mb={3}
+              background="gray.200"
+              style={{ display: isPopUp ? "block" : "none" }}
+            ></Input>
+            {decision && (
+              <Text data-testid="invalidInput" color="red" mb={3}>
+                *Invalid Credential*
+              </Text>
+            )}
+          </Stack>
+          <Wrap spacing="20px" mt={3}>
+            <Button
+              data-testid="loginButton"
+              colorScheme="teal"
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
+            <Button
+              data-testid="signupButton"
+              colorScheme="teal"
+              variant="outline"
+              onClick={handleSignup}
+            >
+              Sign Up
+            </Button>
+          </Wrap>
+          <Link href="/forgot_password" color="blue" mt={6}>
+            Forgot your Password?
+          </Link>
+          <Wrap justify="center">
+            <Text fontSize="xs" mt={6}>
+              Voting System
             </Text>
-          )}
-        </Stack>
-        <Wrap spacing="20px" mt={3}>
-          <Button
-            data-testid="loginButton"
-            colorScheme="teal"
-            onClick={handleLogin}
-          >
-            Login
-          </Button>
-          <Button
-            data-testid="signupButton"
-            colorScheme="teal"
-            variant="outline"
-            onClick={handleSignup}
-          >
-            Sign Up
-          </Button>
-        </Wrap>
-        <Link href="/forgot_password" color="blue" mt={6}>
-          Forgot your Password?
-        </Link>
-        <Wrap justify="center">
-          <Text fontSize="xs" mt={6}>
-            Voting System
-          </Text>
-        </Wrap>
+          </Wrap>
+        </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 }

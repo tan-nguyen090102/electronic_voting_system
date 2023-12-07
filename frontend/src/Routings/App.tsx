@@ -11,6 +11,7 @@ import PrecinctPanel from "../Features/Precinct";
 import CandidatePanel from "../Features/Candidate";
 import RacePanel from "../Features/Race";
 import DistrictPanel from "../Features/District";
+import ElectionPanel from "../Features/Election";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/candidate" element={<CandidatePanel />}></Route>
         <Route path="/race" element={<RacePanel />}></Route>
         <Route path="/district" element={<DistrictPanel />}></Route>
+        <Route path="/election" element={<ElectionPanel />}></Route>
       </Routes>
     </>
   );
