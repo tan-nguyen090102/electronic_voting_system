@@ -24,6 +24,11 @@ interface ListNavProps {
   indexClick: string;
 }
 
+interface ListNavVoterProps {
+  indexClick: string;
+  isLoggedIn: string;
+}
+
 //Top Navigation Bar
 export default function NavBar(props: TopNavProps) {
   const isLoggedIn = props.isLoggedIn;
@@ -128,6 +133,7 @@ export function ListNavigationBar(props: ListNavProps) {
   const SEARCH_INDEX = "5";
   const REQUEST_INDEX = "6";
   const MANAGER_INDEX = "7";
+  const BALLOT_INDEX = "8";
 
   //Receive data from other page.
   const { state } = useLocation();
@@ -159,7 +165,11 @@ export function ListNavigationBar(props: ListNavProps) {
         navigate("/search", { state: { user: user } });
         break;
       case MANAGER_INDEX:
-        navigate("/manager-list", { state: { user: user } });
+        navigate("/manager_list", { state: { user: user } });
+        break;
+      case BALLOT_INDEX:
+        navigate("/ballot_admin", { state: { user: user } });
+        break;
     }
   };
 
@@ -246,6 +256,95 @@ export function ListNavigationBar(props: ListNavProps) {
           isDisabled={props.indexClick === MANAGER_INDEX ? true : false}
         >
           MANAGERS
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(BALLOT_INDEX)}
+          isDisabled={props.indexClick === BALLOT_INDEX ? true : false}
+        >
+          BALLOTS
+        </Button>
+      </Stack>
+    </div>
+  );
+}
+
+//Administrator List Navigation Bar
+export function ListNavigationBarVoter(props: ListNavVoterProps) {
+  const HOME_INDEX = "0";
+  const BALLOT_INDEX = "1";
+  const PRECINCT_INDEX = "2";
+  const CANDIDATE_INDEX = "3";
+
+  //Receive data from other page.
+  const { state } = useLocation();
+  const { user } = state || { user: "" };
+
+  //Button Listeners
+  const navigate = useNavigate();
+  const handleClick = (index: string) => {
+    switch (index) {
+      case HOME_INDEX:
+        navigate("/", { state: { user: user, isLoggedIn: props.isLoggedIn } });
+        break;
+      case BALLOT_INDEX:
+        navigate("/ballot_voter", { state: { user: user } });
+        break;
+      case PRECINCT_INDEX:
+        navigate("/precinct_voter", { state: { user: user } });
+        break;
+      case CANDIDATE_INDEX:
+        navigate("/candidate_voter", { state: { user: user } });
+        break;
+    }
+  };
+
+  //DOM
+  return (
+    <div>
+      <Stack direction="row" bg="teal.400" spacing="0px">
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(HOME_INDEX)}
+          isDisabled={props.indexClick === HOME_INDEX ? true : false}
+        >
+          HOME
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(BALLOT_INDEX)}
+          isDisabled={props.indexClick === BALLOT_INDEX ? true : false}
+        >
+          BALLOT
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(PRECINCT_INDEX)}
+          isDisabled={props.indexClick === PRECINCT_INDEX ? true : false}
+        >
+          PRECINCT
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(CANDIDATE_INDEX)}
+          isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
+        >
+          CANDIDATE
         </Button>
       </Stack>
     </div>
