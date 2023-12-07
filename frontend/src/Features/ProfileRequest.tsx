@@ -103,7 +103,7 @@ export default function ProfileRequestPanel() {
         isLoggedIn="true"
         userName={user}
       ></NavBar>
-      <ListNavigationBar indexClick="5"></ListNavigationBar>
+      <ListNavigationBar indexClick="6"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
@@ -164,6 +164,9 @@ export default function ProfileRequestPanel() {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>
@@ -213,7 +216,7 @@ export default function ProfileRequestPanel() {
                 </List>
                 <Button
                   data-testid="approveButton"
-                  bg="teal.400"
+                  colorScheme="teal"
                   isDisabled={
                     user.approvalStatus === "denied" ||
                     user.approvalStatus === "approved"

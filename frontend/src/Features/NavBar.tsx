@@ -86,11 +86,12 @@ export default function NavBar(props: TopNavProps) {
 export function ListNavigationBar(props: ListNavProps) {
   const ELECTION_INDEX = "0";
   const RACE_INDEX = "1";
-  const PRECINCT_INDEX = "2";
-  const CANDIDATE_INDEX = "3";
-  const SEARCH_INDEX = "4";
-  const REQUEST_INDEX = "5";
-  const MANAGER_INDEX = "6";
+  const DISTRICT_INDEX = "2";
+  const PRECINCT_INDEX = "3";
+  const CANDIDATE_INDEX = "4";
+  const SEARCH_INDEX = "5";
+  const REQUEST_INDEX = "6";
+  const MANAGER_INDEX = "7";
 
   //Receive data from other page.
   const { state } = useLocation();
@@ -105,6 +106,9 @@ export function ListNavigationBar(props: ListNavProps) {
         break;
       case RACE_INDEX:
         navigate("/race", { state: { user: user } });
+        break;
+      case DISTRICT_INDEX:
+        navigate("/district", { state: { user: user } });
         break;
       case PRECINCT_INDEX:
         navigate("/precinct", { state: { user: user } });
@@ -146,6 +150,16 @@ export function ListNavigationBar(props: ListNavProps) {
           isDisabled={props.indexClick === RACE_INDEX ? true : false}
         >
           ELECTORAL RACES
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(DISTRICT_INDEX)}
+          isDisabled={props.indexClick === DISTRICT_INDEX ? true : false}
+        >
+          DISTRICT
         </Button>
         <Button
           bg="teal.400"

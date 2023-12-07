@@ -242,7 +242,7 @@ export default function PrecinctPanel() {
   return (
     <div>
       <NavBar title={"Precincts"} isLoggedIn="true" userName={user}></NavBar>
-      <ListNavigationBar indexClick="2"></ListNavigationBar>
+      <ListNavigationBar indexClick="3"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
@@ -283,7 +283,7 @@ export default function PrecinctPanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
+          <Accordion allowToggle>
             {CreateAccordionItem(receivedPrecinctList)}
           </Accordion>
           {isNoMatchPopUp && (
@@ -306,6 +306,9 @@ export default function PrecinctPanel() {
           >
             Add
           </Button>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>
@@ -457,23 +460,25 @@ export function CreateAddModalBox(props: ModalProps) {
       });
   }, []);*/
 
-  if (props.isLaunched) {
-    fetch("http://localhost:5000/precinct/add")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False") {
-          setReceiveDistrictList([]);
-          setDistrictListOnScreen([]);
-          setReceiveGeographyList([]);
-          setGeographyListOnScreen([]);
-        } else {
-          setReceiveDistrictList(data[0]);
-          setDistrictListOnScreen(data[0]);
-          setReceiveGeographyList(data[1]);
-          setGeographyListOnScreen(data[1]);
-        }
-      });
-  }
+  useEffect(() => {
+    if (props.isLaunched) {
+      fetch("http://localhost:5000/precinct/add")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "False") {
+            setReceiveDistrictList([]);
+            setDistrictListOnScreen([]);
+            setReceiveGeographyList([]);
+            setGeographyListOnScreen([]);
+          } else {
+            setReceiveDistrictList(data[0]);
+            setDistrictListOnScreen(data[0]);
+            setReceiveGeographyList(data[1]);
+            setGeographyListOnScreen(data[1]);
+          }
+        });
+    }
+  }, [props.isOpen]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);

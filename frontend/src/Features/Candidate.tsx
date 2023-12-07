@@ -238,7 +238,7 @@ export default function CandidatePanel() {
   return (
     <div>
       <NavBar title={"Candidates"} isLoggedIn="true" userName={user}></NavBar>
-      <ListNavigationBar indexClick="3"></ListNavigationBar>
+      <ListNavigationBar indexClick="4"></ListNavigationBar>
       <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
@@ -279,7 +279,7 @@ export default function CandidatePanel() {
               </Stack>
             </Stack>
           </Wrap>
-          <Accordion allowMultiple>
+          <Accordion allowToggle>
             {CreateAccordionItem(receivedCandidateList)}
           </Accordion>
           {isNoMatchPopUp && (
@@ -302,6 +302,9 @@ export default function CandidatePanel() {
           >
             Add
           </Button>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
       </Flex>
     </div>
@@ -432,19 +435,21 @@ export function CreateAddModalBox(props: ModalProps) {
   const [geographyListOnScreen, setGeographyListOnScreen] = React.useState<
     Array<any>
   >([]);
-  if (props.isLaunched) {
-    fetch("http://localhost:5000/candidate/add")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False") {
-          setReceiveGeographyList([]);
-          setGeographyListOnScreen([]);
-        } else {
-          setReceiveGeographyList(data);
-          setGeographyListOnScreen(data);
-        }
-      });
-  }
+  useEffect(() => {
+    if (props.isLaunched) {
+      fetch("http://localhost:5000/candidate/add")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "False") {
+            setReceiveGeographyList([]);
+            setGeographyListOnScreen([]);
+          } else {
+            setReceiveGeographyList(data);
+            setGeographyListOnScreen(data);
+          }
+        });
+    }
+  }, [props.isOpen]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);

@@ -280,7 +280,7 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 23:37:33
+-- Dump completed on 2023-12-05 21:24:25
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dev_db
@@ -325,6 +325,31 @@ LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
 INSERT INTO `admins` VALUES (_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `body_types`
+--
+
+DROP TABLE IF EXISTS `body_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `body_types` (
+  `type` varchar(60) NOT NULL,
+  `number_officials` int DEFAULT NULL,
+  PRIMARY KEY (`type`),
+  UNIQUE KEY `type_UNIQUE` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `body_types`
+--
+
+LOCK TABLES `body_types` WRITE;
+/*!40000 ALTER TABLE `body_types` DISABLE KEYS */;
+INSERT INTO `body_types` VALUES ('CORALVILLE-COUNCIL',5),('CORALVILLE-MAYOR',1),('IA-HOUSE',100),('IA-SENATE',50),('US-HOUSE',435),('US-PRESIDENT',1),('US-SENATE',100);
+/*!40000 ALTER TABLE `body_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -378,8 +403,36 @@ CREATE TABLE `districts` (
 
 LOCK TABLES `districts` WRITE;
 /*!40000 ALTER TABLE `districts` DISABLE KEYS */;
-INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','N/A'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A');
+INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','N/A'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A'),('US-PRED','United State President','N/A');
 /*!40000 ALTER TABLE `districts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `elections`
+--
+
+DROP TABLE IF EXISTS `elections`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `elections` (
+  `election_id` varchar(60) NOT NULL,
+  `title` text,
+  `start_time` datetime DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
+  `status` varchar(25) DEFAULT NULL,
+  PRIMARY KEY (`election_id`),
+  UNIQUE KEY `election_id_UNIQUE` (`election_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `elections`
+--
+
+LOCK TABLES `elections` WRITE;
+/*!40000 ALTER TABLE `elections` DISABLE KEYS */;
+INSERT INTO `elections` VALUES ('US-2024','United State Presidential Election of 2024','2024-11-03 06:00:00','2024-11-03 23:00:00','inactive');
+/*!40000 ALTER TABLE `elections` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -446,6 +499,36 @@ INSERT INTO `managers` VALUES (_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','Nicolas','Van','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `officials`
+--
+
+DROP TABLE IF EXISTS `officials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `officials` (
+  `official_id` varchar(60) NOT NULL,
+  `race_id` varchar(60) DEFAULT NULL,
+  `candidate_id` varchar(60) DEFAULT NULL,
+  `status` varchar(25) DEFAULT NULL,
+  PRIMARY KEY (`official_id`),
+  UNIQUE KEY `official_id_UNIQUE` (`official_id`),
+  KEY `race_id` (`race_id`),
+  KEY `candidate_id` (`candidate_id`),
+  CONSTRAINT `officials_ibfk_1` FOREIGN KEY (`race_id`) REFERENCES `races` (`race_id`),
+  CONSTRAINT `officials_ibfk_2` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`candidate_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `officials`
+--
+
+LOCK TABLES `officials` WRITE;
+/*!40000 ALTER TABLE `officials` DISABLE KEYS */;
+/*!40000 ALTER TABLE `officials` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `precincts`
 --
 
@@ -476,6 +559,42 @@ LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
 INSERT INTO `precincts` VALUES ('NY-2355',_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1');
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `races`
+--
+
+DROP TABLE IF EXISTS `races`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `races` (
+  `race_id` varchar(60) NOT NULL,
+  `body_type` varchar(60) DEFAULT NULL,
+  `title` text,
+  `term` varchar(60) DEFAULT NULL,
+  `number_candidates` int DEFAULT NULL,
+  `district_id` varchar(60) DEFAULT NULL,
+  `election_id` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`race_id`),
+  UNIQUE KEY `race_id_UNIQUE` (`race_id`),
+  KEY `body_type` (`body_type`),
+  KEY `district_id` (`district_id`),
+  KEY `election_id` (`election_id`),
+  CONSTRAINT `races_ibfk_1` FOREIGN KEY (`body_type`) REFERENCES `body_types` (`type`),
+  CONSTRAINT `races_ibfk_2` FOREIGN KEY (`district_id`) REFERENCES `districts` (`district_id`),
+  CONSTRAINT `races_ibfk_3` FOREIGN KEY (`election_id`) REFERENCES `elections` (`election_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `races`
+--
+
+LOCK TABLES `races` WRITE;
+/*!40000 ALTER TABLE `races` DISABLE KEYS */;
+INSERT INTO `races` VALUES ('US-SENATE-IA-SN-2-3773','US-SENATE','US Senate, Iowa Senate District 2','2024-2028',0,'IA-SN-2','US-2024');
+/*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -612,6 +731,31 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `check_official` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_official`(in input_official_id varchar(60))
+BEGIN
+	declare official_select int;
+    
+    select COUNT(*) into official_select from officials where official_id = input_official_id;
+	
+    if official_select = 1 then
+		SELECT * from officials where official_id = input_official_id;
+	end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `check_precinct` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -630,6 +774,31 @@ BEGIN
 	
     if precicnt_select = 1 then
 		SELECT * from precincts where precinct_id = input_precinct_id;
+	end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `check_race` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_race`(in input_race_id varchar(60))
+BEGIN
+	declare race_select int;
+    
+    select COUNT(*) into race_select from races where race_id = input_race_id;
+	
+    if race_select = 1 then
+		SELECT * from races where race_id = input_race_id;
 	end if;
 END ;;
 DELIMITER ;
@@ -708,6 +877,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_body_type` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_body_type`(in input_type varchar(60), in input_number_officials int)
+BEGIN
+	INSERT INTO body_types(type, number_officials) values (input_type, input_number_officials);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `create_candidate` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -740,6 +928,25 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_district`(in input_district_id varchar(60), in input_title text, in input_official text)
 BEGIN
 	INSERT INTO districts(district_id, title, head_official) values (input_district_id, input_title, input_official);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_election` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_election`(in input_election_id varchar(60), in input_title text, in input_start_time datetime, in input_end_time datetime, in input_status varchar(25))
+BEGIN
+	INSERT INTO elections(election_id, title, start_time, end_time, status) values (input_election_id, input_title, input_start_time, input_end_time, input_status);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -784,6 +991,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_official` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_official`(in input_official_id varchar(60), in input_race_id varchar(60), in input_candidate_id varchar(60), in input_status varchar(25))
+BEGIN
+	INSERT INTO officials(official_id, race_id, candidate_id, status) values (input_official_id, input_race_id, input_candidate_id, input_status);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `create_precinct` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -797,6 +1023,25 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_precinct`(in input_precinct_id varchar(60), in input_manager_id binary(16), in input_address text, in input_district varchar(60), in input_geography_id varchar(60))
 BEGIN
 	INSERT INTO precincts(precinct_id, manager_id, address, geography_id, district_id) values (input_precinct_id, input_manager_id, input_address, input_geography_id, input_district);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_race` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_race`(in input_race_id varchar(60), in input_type varchar(60), in input_title text, in input_term varchar(60), in input_number_candidates int, in input_district_id varchar(60), in input_election_id varchar(60))
+BEGIN
+	INSERT INTO races(race_id, body_type, title, term, number_candidates, district_id, election_id) values (input_race_id, input_type, input_title, input_term, input_number_candidates, input_district_id, input_election_id);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1034,6 +1279,28 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `select_some_from_table_with_join_where` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `select_some_from_table_with_join_where`(IN base_table_name varchar(255), IN target_table_name varchar(255), IN selection text, IN join_clause text, IN where_clause text)
+BEGIN
+	SET @select_all_from_table_with_join_sql = CONCAT('SELECT * FROM (', 'SELECT ', selection,' FROM ', base_table_name, ' b ', 'INNER JOIN ', target_table_name, ' t', ' ON ', join_clause, ')', " T WHERE ", where_clause, ";");
+    PREPARE select_all_from_table_with_join_stmt FROM @select_all_from_table_with_join_sql;
+    EXECUTE select_all_from_table_with_join_stmt;
+    DEALLOCATE PREPARE select_all_from_table_with_join_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_table` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1070,4 +1337,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 23:37:33
+-- Dump completed on 2023-12-05 21:24:25
