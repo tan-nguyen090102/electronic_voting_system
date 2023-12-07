@@ -280,7 +280,7 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-05 21:24:25
+-- Dump completed on 2023-12-05 22:57:31
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dev_db
@@ -393,7 +393,8 @@ CREATE TABLE `districts` (
   `district_id` varchar(60) NOT NULL,
   `title` varchar(60) DEFAULT NULL,
   `head_official` varchar(60) DEFAULT NULL,
-  PRIMARY KEY (`district_id`)
+  PRIMARY KEY (`district_id`),
+  UNIQUE KEY `district_id_UNIQUE` (`district_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -403,7 +404,7 @@ CREATE TABLE `districts` (
 
 LOCK TABLES `districts` WRITE;
 /*!40000 ALTER TABLE `districts` DISABLE KEYS */;
-INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','N/A'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A'),('US-PRED','United State President','N/A');
+INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','Nicolas Thompson'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A'),('US-PRED','United State President','N/A');
 /*!40000 ALTER TABLE `districts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,6 +526,7 @@ CREATE TABLE `officials` (
 
 LOCK TABLES `officials` WRITE;
 /*!40000 ALTER TABLE `officials` DISABLE KEYS */;
+INSERT INTO `officials` VALUES ('RUTTLE-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-2263','running'),('WILSON-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-9793','running');
 /*!40000 ALTER TABLE `officials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -593,7 +595,7 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
-INSERT INTO `races` VALUES ('US-SENATE-IA-SN-2-3773','US-SENATE','US Senate, Iowa Senate District 2','2024-2028',0,'IA-SN-2','US-2024');
+INSERT INTO `races` VALUES ('US-PRESIDENT-US-PRED-3206','US-PRESIDENT','US President','2024-2028',2,'US-PRED','US-2024');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -690,6 +692,31 @@ BEGIN
 			admins 
         where 
 			email = input_email and id = UUID_TO_BIN(input_id);
+	end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `check_district` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_district`(in input_district_id varchar(60))
+BEGIN
+	declare district_select int;
+    
+    select COUNT(*) into district_select from districts where district_id = input_district_id;
+	
+    if district_select = 1 then
+		SELECT * from districts where district_id = input_district_id;
 	end if;
 END ;;
 DELIMITER ;
@@ -1337,4 +1364,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-05 21:24:25
+-- Dump completed on 2023-12-05 22:57:31

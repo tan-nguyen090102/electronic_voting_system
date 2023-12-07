@@ -28,7 +28,8 @@ module.exports = {
         title: "Iowa Senate Seat 9",
         type: "IA-SENATE",
         term: "2024-2028",
-        districtID: "IA-9",
-        electionID: "IA-2024"
+        districtID: "IA-SN-9",
+        electionID: "IA-2024",
+        officialID: "THOMPSON-IA-576"
     }
 } 
