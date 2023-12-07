@@ -11,6 +11,15 @@ import {
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
+/* Request help with: Making userProfile not appear as undefined (for close / cancel button),
+Add new row to "zips" (and check for duplicate rows, probably with "check_zips") + the whole foreign key debacle with zips
+oldEmail not showing up on the backend despite being sent from the frontend (literally appears as nothing when printed)
+State selection not resetting when returning to initial values
+Probably should implement some "go back to home page" button somewhere
+Discuss removing the list navbar until some way to differentiate managers from voters is implemented (may be easiest to leave out)
+Probably more, we'll see when we get there
+*/
+
 export default function UserProfilePanel(){
 
   useEffect(() => {
@@ -25,7 +34,6 @@ export default function UserProfilePanel(){
   const [userProfile, setUserProfile] = React.useState<Array<any>>();
   const [isEditable, setEditable] = React.useState(false);
   const [isStateChanged, setStateChanged] = React.useState(false);
-  const [isPopUp, setPopUp] = React.useState(false);
   const [isEmpty, setIsEmpty] = React.useState(false);
 
   const initialValues = {
@@ -127,7 +135,7 @@ export default function UserProfilePanel(){
         initialValues.email = data[4]
         initialValues.driverID = data[5]
         initialValues.passport = data[6]
-        initialValues.zip = data[7]
+        initialValues.zip = data[7].substring(0,5)
         initialValues.city = data[8]
         initialSelections.state = data[9]
       });
@@ -169,8 +177,10 @@ export default function UserProfilePanel(){
     setEditable(true)
   }
 
+  const [decision, setDecision] = React.useState(false);
   const handleSave = () =>{
     let isFilled = false;
+    let isZipChanged = false;
 
     if (
       inputValue.firstName &&
@@ -185,15 +195,11 @@ export default function UserProfilePanel(){
       isFilled = true;
     }
 
-    if ( (inputValue.firstName).length === 0 && (inputValue.middleName).length === 0){
-      return
+    if (isStateChanged === false){
+      isZipChanged = true;
     }
-    else{
-      if (isStateChanged === true && inputValue.zip === initialValues.zip){
-        setPopUp(true);
-        return
-      }
-      else{
+      if (isFilled && isZipChanged && inputValue.email.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$") && 
+      inputValue.email.length > 0){
         setEditable(false);
         //Send updated user info to backend
         fetch("http://localhost:5000/user_profile/update", {
@@ -217,7 +223,6 @@ export default function UserProfilePanel(){
           }),
         })
       }
-    }
   }
 
   const handleClose = () =>{
