@@ -11,13 +11,8 @@ import {
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
-/* Request help with: Making userProfile not appear as undefined (for close / cancel button),
-Add new row to "zips" (and check for duplicate rows, probably with "check_zips") + the whole foreign key debacle with zips
-oldEmail not showing up on the backend despite being sent from the frontend (literally appears as nothing when printed)
+/* Request help with: the whole foreign key debacle with zips
 State selection not resetting when returning to initial values
-Probably should implement some "go back to home page" button somewhere
-Discuss removing the list navbar until some way to differentiate managers from voters is implemented (may be easiest to leave out)
-Probably more, we'll see when we get there
 */
 
 export default function UserProfilePanel(){
@@ -29,12 +24,14 @@ export default function UserProfilePanel(){
   const { state } = useLocation();
   const { user } = state || { user: "" };
 
-  console.log(user);
-
-  const [userProfile, setUserProfile] = React.useState<Array<any>>();
+  const [oldEmail, setOldEmail] = React.useState("");
+  const [oldZip, setOldZip] = React.useState("");
+  const [oldState, setOldState] = React.useState("")
+  const [userProfile, setUserProfile] = React.useState<Array<any>>([]);
   const [isEditable, setEditable] = React.useState(false);
   const [isStateChanged, setStateChanged] = React.useState(false);
   const [isEmpty, setIsEmpty] = React.useState(false);
+  const [isZipChange, setZipChange] = React.useState(false);
 
   const initialValues = {
     firstName: "",
@@ -44,10 +41,8 @@ export default function UserProfilePanel(){
     city: "",
     zip: "",
     email: "",
-    password: "",
     passport: "",
     driverID: "",
-    securityAnswer: "",
   };
 
   const initialSelections = {
@@ -128,6 +123,9 @@ export default function UserProfilePanel(){
       .then((response) => response.json())
       .then((data) => {
         setUserProfile(data)
+        setOldEmail(data[4])
+        setOldZip(data[7])
+        setOldState(data[9])
         initialValues.firstName = data[0]
         initialValues.middleName = data[1]
         initialValues.lastName = data[2]
@@ -139,16 +137,23 @@ export default function UserProfilePanel(){
         initialValues.city = data[8]
         initialSelections.state = data[9]
       });
+      console.log(initialValues.email)
   }, []);
 
   console.log(userProfile);
+  
 
         //Input listeners
   const [inputValue, setInputValue] = React.useState(initialValues);
   const handleInput = (e: { target: { name: any; value: any } }) => {
   const { name, value } = e.target;
-  if (name == "zip"){
-    setStateChanged(false)
+  if (name === "zip"){
+    if (value !== oldZip.substring(0,5)){
+      setZipChange(true)
+    }
+    else{
+      setZipChange(false)
+    }
   }
   if (value.length === 0){
     setIsEmpty(true)
@@ -180,7 +185,8 @@ export default function UserProfilePanel(){
   const [decision, setDecision] = React.useState(false);
   const handleSave = () =>{
     let isFilled = false;
-    let isZipChanged = false;
+    let isSatisfied = false;
+    console.log(initialValues.email)
 
     if (
       inputValue.firstName &&
@@ -195,10 +201,18 @@ export default function UserProfilePanel(){
       isFilled = true;
     }
 
-    if (isStateChanged === false){
-      isZipChanged = true;
+    if (isStateChanged === true){
+      if (isZipChange === true){
+        isSatisfied = true;
+      }
+      else{
+        isSatisfied = false;
+      }
     }
-      if (isFilled && isZipChanged && inputValue.email.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$") && 
+    else{
+      isSatisfied = true;
+    }
+      if (isFilled && isSatisfied && inputValue.email.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$") && 
       inputValue.email.length > 0){
         setEditable(false);
         //Send updated user info to backend
@@ -216,10 +230,10 @@ export default function UserProfilePanel(){
             email: inputValue.email,
             street: inputValue.street,
             city: inputValue.city,
-            zip: inputValue.zip,
+            zip: isZipChange ? inputValue.zip : oldZip,
             state: inputSelection.state,
-            oldEmail: initialValues.email,
-            oldZip: initialValues.zip
+            oldEmail: oldEmail,
+            oldZip: oldZip,
           }),
         })
       }
@@ -227,6 +241,16 @@ export default function UserProfilePanel(){
 
   const handleClose = () =>{
     setEditable(false)
+    setInputValue({ firstName : userProfile[0],
+    middleName : userProfile[1], 
+    lastName : userProfile[2],
+    street : userProfile[3],
+    city : userProfile[8],
+    zip : oldZip.substring(0,5),
+    email : userProfile[4],
+    driverID : userProfile[5],
+    passport : userProfile [6] })
+    setInputSelection({ state: oldState })
   }
 
   return( 
