@@ -28,11 +28,12 @@ module.exports = {
         title: "Iowa Senate Seat 9",
         type: "IA-SENATE",
         term: "2024-2028",
-        districtID: "IA-SN-9",
         electionID: "IA-2024",
         officialID: "THOMPSON-IA-576",
         date: "2020-11-03",
         startTime: "06:00",
-        endTime: "23:00"
+        endTime: "23:00",
+        raceID: "US-SENATE-IA-SN-2",
+        precinctID: "NY-2332"
     }
 } 
