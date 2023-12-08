@@ -5,7 +5,7 @@ class Settings:
 
     my_sql_config_dict = {
         "user": "root",
-        "password": "your_password",
+        "password": "Clete2345",
         "server": "localhost",
         "port": 3306,
         "db": "dev_db",
