@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Flex,
@@ -23,15 +23,20 @@ export default function UserProfilePanel(){
 
   const { state } = useLocation();
   const { user } = state || { user: "" };
+  const navigate = useNavigate();
 
   const [oldEmail, setOldEmail] = React.useState("");
   const [oldZip, setOldZip] = React.useState("");
   const [oldState, setOldState] = React.useState("")
+  const [oldCity, setOldCity] = React.useState("")
   const [userProfile, setUserProfile] = React.useState<Array<any>>([]);
   const [isEditable, setEditable] = React.useState(false);
   const [isStateChanged, setStateChanged] = React.useState(false);
+  const [isCorrect, setCorrect] = React.useState(true);
   const [isEmpty, setIsEmpty] = React.useState(false);
   const [isZipChange, setZipChange] = React.useState(false);
+  const [isCityChanged, setCityChange] = React.useState(false);
+  const [isEmailChanged, setEmailChange] = React.useState(false);
 
   const initialValues = {
     firstName: "",
@@ -126,6 +131,7 @@ export default function UserProfilePanel(){
         setOldEmail(data[4])
         setOldZip(data[7])
         setOldState(data[9])
+        setOldCity(data[8])
         initialValues.firstName = data[0]
         initialValues.middleName = data[1]
         initialValues.lastName = data[2]
@@ -147,12 +153,30 @@ export default function UserProfilePanel(){
   const [inputValue, setInputValue] = React.useState(initialValues);
   const handleInput = (e: { target: { name: any; value: any } }) => {
   const { name, value } = e.target;
+  if (name === "city"){
+    setCityChange(true)
+    setCorrect(false)
+    if (value === oldCity){
+      setCityChange(false)
+      setCorrect(true)
+    }
+  }
   if (name === "zip"){
     if (value !== oldZip.substring(0,5)){
       setZipChange(true)
+      setCorrect(true)
     }
     else{
       setZipChange(false)
+      if (isStateChanged === true || isCityChanged === true){
+        setCorrect(false)
+      }
+    }
+  }
+  if (name === "email"){
+    setEmailChange(true)
+    if (value === oldEmail){
+      setEmailChange(false)
     }
   }
   if (value.length === 0){
@@ -176,6 +200,11 @@ export default function UserProfilePanel(){
     [name]: value,
     });
     setStateChanged(true);
+    setCorrect(false);
+    if (value === oldState){
+      setStateChanged(false);
+      setCorrect(true);
+    }
   };
 
   const handleEdit = () => {
@@ -236,6 +265,9 @@ export default function UserProfilePanel(){
             oldZip: oldZip,
           }),
         })
+        if (isEmailChanged === true){
+          navigate("/login");
+        }
       }
   }
 
@@ -362,7 +394,7 @@ export default function UserProfilePanel(){
                 </Text>
               )}
               <Text style={{
-              display: isStateChanged ? "block" : "none",}} color="red" mb={3}>
+              display: isCorrect ? "none" : "block",}} color="red" mb={3}>
               *Please edit the ZIP code as well*
                </Text>
               <Stack direction="row">
@@ -389,6 +421,10 @@ export default function UserProfilePanel(){
                       *Please use correct email format*
                     </Text>
                   )}
+              <Text style={{
+              display: isEmailChanged ? "block" : "none",}} color="red" mb={3}>
+              *Changing your email will log you out*
+               </Text>
               </Stack>
               <Link href="/forgot_password" color="blue">Change Password</Link>
               <Text style={{
