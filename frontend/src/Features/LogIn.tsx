@@ -79,6 +79,10 @@ export default function LoginPanel() {
         if (data === "true") {
           if (inputSelection === "admin") {
             navigate("/requests", { state: { user: inputValue.userID } });
+          } else if (inputSelection === "manager") {
+            navigate("/dashboard_manager", {
+              state: { user: inputValue.userID, isLoggedIn: "true" },
+            });
           } else {
             navigate("/", {
               state: { user: inputValue.userID, isLoggedIn: "true" },

@@ -9,7 +9,7 @@ import {
   Stack,
   Center,
 } from "@chakra-ui/react";
-import NavBar, { ListNavigationBarVoter } from "./NavBar";
+import NavBar, { ListNavigationBarManager } from "./NavBar";
 
 export default function HomeManagerPage() {
   useEffect(() => {
@@ -34,10 +34,10 @@ export default function HomeManagerPage() {
         role="manager"
       />
       {isLoggedIn && user !== "" && (
-        <ListNavigationBarVoter
+        <ListNavigationBarManager
           indexClick="0"
           isLoggedIn={isLoggedIn}
-        ></ListNavigationBarVoter>
+        ></ListNavigationBarManager>
       )}
       <Stack direction="column">
         <Spacer />

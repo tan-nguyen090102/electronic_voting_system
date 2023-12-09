@@ -89,6 +89,8 @@ def update_ballot(database, election_id):
         ),
     )
 
+    print(all_races)
+
     if all_races is not None:
         for race in all_races:
             try:
@@ -97,14 +99,14 @@ def update_ballot(database, election_id):
                     "update_table",
                     (
                         "ballots",
-                        "status = active",
+                        "status = 'active'",
                         "race_id = '" + race[0] + "'",
                     ),
                 )
                 database.commit()
-                return 200
             except Exception as e:
                 print(e)
                 return 400
+        return 200
     else:
         return 404

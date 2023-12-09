@@ -29,6 +29,11 @@ interface ListNavVoterProps {
   isLoggedIn: string;
 }
 
+interface ListNavManagerProps {
+  indexClick: string;
+  isLoggedIn: string;
+}
+
 //Top Navigation Bar
 export default function NavBar(props: TopNavProps) {
   const isLoggedIn = props.isLoggedIn;
@@ -272,7 +277,7 @@ export function ListNavigationBar(props: ListNavProps) {
   );
 }
 
-//Administrator List Navigation Bar
+//Voter List Navigation Bar
 export function ListNavigationBarVoter(props: ListNavVoterProps) {
   const HOME_INDEX = "0";
   const BALLOT_INDEX = "1";
@@ -345,6 +350,71 @@ export function ListNavigationBarVoter(props: ListNavVoterProps) {
           isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
         >
           CANDIDATE
+        </Button>
+      </Stack>
+    </div>
+  );
+}
+
+//Manager List Navigation Bar
+export function ListNavigationBarManager(props: ListNavManagerProps) {
+  const HOME_INDEX = "0";
+  const BALLOT_INDEX = "1";
+  const PRECINCT_INDEX = "2";
+
+  //Receive data from other page.
+  const { state } = useLocation();
+  const { user } = state || { user: "" };
+
+  //Button Listeners
+  const navigate = useNavigate();
+  const handleClick = (index: string) => {
+    switch (index) {
+      case HOME_INDEX:
+        navigate("/", { state: { user: user, isLoggedIn: props.isLoggedIn } });
+        break;
+      case BALLOT_INDEX:
+        navigate("/ballot_manager", { state: { user: user } });
+        break;
+      case PRECINCT_INDEX:
+        navigate("/precinct_manager", { state: { user: user } });
+        break;
+    }
+  };
+
+  //DOM
+  return (
+    <div>
+      <Stack direction="row" bg="teal.400" spacing="0px">
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(HOME_INDEX)}
+          isDisabled={props.indexClick === HOME_INDEX ? true : false}
+        >
+          HOME
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(BALLOT_INDEX)}
+          isDisabled={props.indexClick === BALLOT_INDEX ? true : false}
+        >
+          BALLOT
+        </Button>
+        <Button
+          bg="teal.400"
+          height="40px"
+          width="200px"
+          borderRadius="0px"
+          onClick={() => handleClick(PRECINCT_INDEX)}
+          isDisabled={props.indexClick === PRECINCT_INDEX ? true : false}
+        >
+          PRECINCT
         </Button>
       </Stack>
     </div>

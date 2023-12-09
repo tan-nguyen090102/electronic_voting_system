@@ -256,12 +256,12 @@ export default function BallotPage() {
               bg="teal.400"
               onClick={() => {
                 handlePointer(race, index);
-                (race[6] === "inactive") === isDisable
+                (race[6] === "inactive") !== isDisable
                   ? alertBox.onOpen()
                   : modalBox.onOpen();
               }}
             >
-              {(race[6] === "inactive") === isDisable ? "View" : "Vote"}
+              {(race[6] === "inactive") !== isDisable ? "View" : "Vote"}
             </Button>
             <CreateAlertRaceBox
               isOpen={alertBox.isOpen}
