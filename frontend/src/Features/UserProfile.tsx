@@ -7,7 +7,8 @@ import {
   Text,
   Stack,
   Select,
-  Link
+  Link,
+  useToast
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
@@ -23,6 +24,7 @@ export default function UserProfilePanel(){
 
   const { state } = useLocation();
   const { user } = state || { user: "" };
+  const addToast = useToast();
   const navigate = useNavigate();
 
   const [oldEmail, setOldEmail] = React.useState("");
@@ -46,9 +48,9 @@ export default function UserProfilePanel(){
     city: "",
     zip: "",
     email: "",
-    passport: "",
+        passport: "",
     driverID: "",
-  };
+      };
 
   const initialSelections = {
     state: ""
@@ -128,7 +130,7 @@ export default function UserProfilePanel(){
       .then((response) => response.json())
       .then((data) => {
         setUserProfile(data)
-        setOldEmail(data[4])
+setOldEmail(data[4])
         setOldZip(data[7])
         setOldState(data[9])
         setOldCity(data[8])
@@ -143,11 +145,11 @@ export default function UserProfilePanel(){
         initialValues.city = data[8]
         initialSelections.state = data[9]
       });
-      console.log(initialValues.email)
+console.log(initialValues.email)
   }, []);
 
   console.log(userProfile);
-  
+
 
         //Input listeners
   const [inputValue, setInputValue] = React.useState(initialValues);
@@ -200,7 +202,7 @@ export default function UserProfilePanel(){
     [name]: value,
     });
     setStateChanged(true);
-    setCorrect(false);
+setCorrect(false);
     if (value === oldState){
       setStateChanged(false);
       setCorrect(true);
@@ -211,10 +213,10 @@ export default function UserProfilePanel(){
     setEditable(true)
   }
 
-  const [decision, setDecision] = React.useState(false);
+const [decision, setDecision] = React.useState(false);
   const handleSave = () =>{
     let isFilled = false;
-    let isSatisfied = false;
+let isSatisfied = false;
     console.log(initialValues.email)
 
     if (
@@ -232,7 +234,7 @@ export default function UserProfilePanel(){
 
     if (isStateChanged === true){
       if (isZipChange === true){
-        isSatisfied = true;
+      isSatisfied = true;
       }
       else{
         isSatisfied = false;
@@ -240,7 +242,7 @@ export default function UserProfilePanel(){
     }
     else{
       isSatisfied = true;
-    }
+      }
       if (isFilled && isSatisfied && inputValue.email.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$") && 
       inputValue.email.length > 0){
         setEditable(false);
@@ -265,15 +267,23 @@ export default function UserProfilePanel(){
             oldZip: oldZip,
           }),
         })
-        if (isEmailChanged === true){
+      if (isEmailChanged === true){
           navigate("/login");
         }
-      }
+
+        addToast({
+          title: "Updated!",
+          description: `Your profile has been updated.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });  
+    }
   }
 
   const handleClose = () =>{
     setEditable(false)
-    setInputValue({ firstName : userProfile[0],
+setInputValue({ firstName : userProfile[0],
     middleName : userProfile[1], 
     lastName : userProfile[2],
     street : userProfile[3],
@@ -287,7 +297,7 @@ export default function UserProfilePanel(){
 
   return( 
     <div>
-        <NavBar title={"User Profile"} isLoggedIn="true" userName={user}></NavBar>
+        <NavBar isBlank="false" title={"User Profile"} isLoggedIn="true" userName={user} role="voter"></NavBar>
       
         <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
