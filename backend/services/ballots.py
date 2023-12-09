@@ -76,3 +76,35 @@ def create_ballot(database, ballot):
             print(e)
             return 400
     return 200
+
+
+def update_ballot(database, election_id):
+    # Get all races asscociate with this election
+    all_races = execute_stored_proc(
+        database,
+        "select_all_from_table_with_where",
+        (
+            "races",
+            "election_id = '" + election_id + "'",
+        ),
+    )
+
+    if all_races is not None:
+        for race in all_races:
+            try:
+                execute_stored_proc(
+                    database,
+                    "update_table",
+                    (
+                        "ballots",
+                        "status = active",
+                        "race_id = '" + race[0] + "'",
+                    ),
+                )
+                database.commit()
+                return 200
+            except Exception as e:
+                print(e)
+                return 400
+    else:
+        return 404

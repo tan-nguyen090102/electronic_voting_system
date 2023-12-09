@@ -4,6 +4,7 @@ from database.database_functions import execute_stored_proc
 from flask import Blueprint, request
 from flask_bcrypt import Bcrypt
 from flask_cors import cross_origin
+from services.choices import create_choice, get_all_choices
 from services.voters import (
     create_voter,
     get_candidates_voter,
@@ -44,7 +45,9 @@ def ballots_voter(database=db):
     for race in all_races:
         list_of_candidate.append(get_candidates_voter(database, race[0]))
 
-    return json.dumps([precinct, all_races, list_of_candidate])
+    all_choices = get_all_choices(database, json_object)
+
+    return json.dumps([precinct, all_races, list_of_candidate, all_choices])
 
 
 @voters_bp.route("/ballot_voter/race", methods=["POST"])
@@ -52,5 +55,21 @@ def ballots_voter(database=db):
 def races_voter(database=db):
     json_object = request.json
     all_candidates = get_candidates_voter(database, json_object)
-
     return json.dumps(all_candidates)
+
+
+@voters_bp.route("/ballot_voter/vote", methods=["POST"])
+@cross_origin()
+def votes_voter(database=db):
+    if request.method == "POST":
+        json_object = request.json
+        response = create_choice(database, json_object)
+
+        if response == 200:
+            return "Choice Created", 200
+        elif response == 400:
+            return "Choice Already Exists", 400
+        elif response == 404:
+            return "Voter ID not found", 400
+        else:
+            return "Server Error", 500

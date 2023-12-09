@@ -81,7 +81,7 @@ export default function NavBar(props: TopNavProps) {
               ? "/"
               : props.role === "admin"
               ? "/election"
-              : ""
+              : "/dashboard_manager"
           }
           state={{ user: props.userName, isLoggedIn: isLoggedIn }}
         >

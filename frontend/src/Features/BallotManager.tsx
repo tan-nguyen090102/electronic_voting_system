@@ -57,17 +57,16 @@ interface ModalProps {
   onClose: any;
   race: any;
   listofCandidates: any[];
-  handleRefreshList: any;
 }
 
-export default function BallotPage() {
+export default function BallotManagerPage() {
   //Adding box
   const alertBox = useDisclosure();
   const modalBox = useDisclosure();
 
   //Change web title
   useEffect(() => {
-    document.title = "Ballot - Voting System";
+    document.title = "Ballot - Voting System Manager";
   }, []);
 
   //Receive data from other page.
@@ -85,7 +84,7 @@ export default function BallotPage() {
   const [isNothingMessage, setNothingMessage] = React.useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/voters/ballot_voter`, {
+    fetch(`http://localhost:5000/voters/ballot_manager`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -124,43 +123,6 @@ export default function BallotPage() {
   const handlePointer = (race: any, index: number) => {
     setCurrentRace(race);
     setCurrentIndex(index);
-  };
-
-  //Refresh from adding box listener
-  const handleRefreshList = () => {
-    fetch(`http://localhost:5000/voters/ballot_voter`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "content-type": "application/json; charset=UTF-8",
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        email: user,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False") {
-          setPrecinct("");
-          setRaceList([]);
-          setCandidateList([]);
-          setChoiceList([]);
-          handlePointer([], -1);
-          setNothingMessage(true);
-        } else {
-          setPrecinct(data[0]);
-          setRaceList(data[1]);
-          setCandidateList(data[2]);
-          setChoiceList(data[3]);
-          handlePointer(data[1], 0);
-          if (data[1].length === 0) {
-            setNothingMessage(true);
-          } else {
-            setNothingMessage(false);
-          }
-        }
-      });
   };
 
   //DOM
@@ -214,7 +176,6 @@ export default function BallotPage() {
             isLaunched={modalBox.isOpen}
             race={currentRace}
             listofCandidates={receivedCandidateList[currentIndex]}
-            handleRefreshList={handleRefreshList}
           ></CreateModalBox>
           <Text fontSize="xs" mt={6}>
             Voting System
@@ -358,7 +319,6 @@ export function CreateModalBox(props: ModalProps) {
 
     //Call from the top DOM
     props.onClose();
-    props.handleRefreshList();
 
     //Adding toast
     addToast({
