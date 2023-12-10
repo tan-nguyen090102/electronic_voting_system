@@ -30,6 +30,7 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Box,
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBarVoter } from "./NavBar";
 import React from "react";
@@ -49,6 +50,15 @@ interface AlertVoteProps {
   handleVote: any;
 }
 
+interface AlertSummaryProps {
+  isOpen: any;
+  onClose: any;
+  race: any;
+  index: number;
+  choiceList: any[];
+  isNoChoice: boolean;
+}
+
 interface ModalProps {
   user: any;
   precinct: any;
@@ -58,11 +68,13 @@ interface ModalProps {
   race: any;
   listofCandidates: any[];
   handleRefreshList: any;
+  setNoChoice: any;
 }
 
 export default function BallotPage() {
   //Adding box
   const alertBox = useDisclosure();
+  const alertSummaryBox = useDisclosure();
   const modalBox = useDisclosure();
 
   //Change web title
@@ -83,6 +95,7 @@ export default function BallotPage() {
   const [currentRace, setCurrentRace] = React.useState<any>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isNothingMessage, setNothingMessage] = React.useState(false);
+  const [isNoChoiceMessage, setNoChoiceMessage] = React.useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:5000/voters/ballot_voter`, {
@@ -115,6 +128,11 @@ export default function BallotPage() {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
+          }
+          if (data[3] === "False") {
+            setNoChoiceMessage(true);
+          } else {
+            setNoChoiceMessage(false);
           }
         }
       });
@@ -215,7 +233,25 @@ export default function BallotPage() {
             race={currentRace}
             listofCandidates={receivedCandidateList[currentIndex]}
             handleRefreshList={handleRefreshList}
+            setNoChoice={setNoChoiceMessage}
           ></CreateModalBox>
+          <Button
+            bg="green.400"
+            mt={6}
+            onClick={() => {
+              alertSummaryBox.onOpen();
+            }}
+          >
+            Summary
+          </Button>
+          <CreateAlertSummaryBox
+            isOpen={alertSummaryBox.isOpen}
+            onClose={alertSummaryBox.onClose}
+            race={currentRace}
+            index={currentIndex}
+            choiceList={receivedChoiceList}
+            isNoChoice={isNoChoiceMessage}
+          ></CreateAlertSummaryBox>
           <Text fontSize="xs" mt={6}>
             Voting System
           </Text>
@@ -293,7 +329,7 @@ export default function BallotPage() {
   }
 }
 
-//Alert box for deleting race
+//Alert box for race
 export function CreateAlertRaceBox(props: AlertRaceProps) {
   const cancelRef = React.useRef(null);
   return (
@@ -328,6 +364,75 @@ export function CreateAlertRaceBox(props: AlertRaceProps) {
   );
 }
 
+//Alert box for summary
+export function CreateAlertSummaryBox(props: AlertSummaryProps) {
+  const cancelRef = React.useRef(null);
+  return (
+    <AlertDialog
+      isOpen={props.isOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={props.onClose}
+      size="3x1"
+    >
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Summary of your ballot
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <List marginRight="auto" mt={3}>
+              {CreateSummaryList(props.choiceList)}
+            </List>
+            {props.isNoChoice && (
+              <Text data-testid="unfilledFields" mb={3} fontSize="2xl">
+                You have not selected any candidate for any electoral race.
+              </Text>
+            )}
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={props.onClose} ml={3} bg="red.400">
+              Close
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+
+  function CreateSummaryList(listToShown: any[]) {
+    const summaryDetails =
+      Array.isArray(listToShown) &&
+      listToShown.map((choice, index) => {
+        return (
+          <ListItem key={index}>
+            <Box
+              border="2px"
+              borderRadius="5px"
+              alignItems="baseline"
+              mb={1}
+              w="100%"
+            >
+              <Stack
+                direction="row"
+                alignItems="baseline"
+                justifyContent="space-between"
+              >
+                <Text ml={3} fontSize="lg">
+                  {choice[7]}
+                </Text>
+                <Text ml={3} mr={3} fontSize="lg">
+                  {choice[5] + " " + choice[6]}
+                </Text>
+              </Stack>
+            </Box>
+          </ListItem>
+        );
+      });
+
+    return summaryDetails;
+  }
+}
+
 //Modal box for voting
 export function CreateModalBox(props: ModalProps) {
   //Toast
@@ -359,6 +464,7 @@ export function CreateModalBox(props: ModalProps) {
     //Call from the top DOM
     props.onClose();
     props.handleRefreshList();
+    props.setNoChoice(false);
 
     //Adding toast
     addToast({

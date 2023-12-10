@@ -12,8 +12,8 @@ def get_all_choices(database, voter_email):
         (
             "choices",
             "ballots",
-            "choice_id, race_id, email, b.ballot_id, b.candidate_id, first_name, last_name",
-            "t.ballot_id = b.ballot_id INNER JOIN candidates c ON b.candidate_id = c.candidate_id",
+            "choice_id, r.race_id, email, b.ballot_id, b.candidate_id, first_name, last_name, title",
+            "t.ballot_id = b.ballot_id INNER JOIN candidates c ON b.candidate_id = c.candidate_id INNER JOIN races r ON t.race_id = r.race_id",
             "email = '" + voter_email["email"] + "'",
         ),
     )
