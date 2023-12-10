@@ -1,6 +1,9 @@
 import random
-
+import uuid
 from database.database_functions import execute_stored_proc
+from dependencies import email_server
+from config.config import config
+from email.mime.text import MIMEText
 
 
 def create_voter(db, bcrypt, voter):
@@ -45,6 +48,37 @@ def get_precinct_voter(database, voter):
     )
     if all_precincts is not None:
         return all_precincts[0]
+
+
+def get_all_voters(db):
+    all_voters = execute_stored_proc(db, "select_all_from_table", ("voters",))
+    if all_voters:
+        json_voters = []
+        for voter in all_voters:
+            json_voter = {
+                "userID": uuid.UUID(bytes=bytes(voter[0])),
+                "firstName": voter[1],
+                "middleName": voter[2],
+                "lastName": voter[3],
+                "streetAddress": voter[4],
+                "email": voter[5],
+                "dob": voter[7].strftime("%m/%d/%Y"),
+                "driverID": voter[8],
+                "approvalStatus": voter[9],
+                "zip": voter[13],
+                "city": voter[14],
+            }
+            zip = execute_stored_proc(
+                db,
+                "get_zip",
+                (
+                    voter[13],
+                    voter[14],
+                ),
+            )
+            json_voter["state"] = zip[0][2]
+            json_voters.append(json_voter)
+        return json_voters
     else:
         return "False"
 
@@ -83,3 +117,45 @@ def get_candidates_voter(database, race_id):
         return all_candidates
     else:
         return "False"
+
+
+def change_voter_status(db, status_info):
+    try:
+        execute_stored_proc(
+            db,
+            "update_voter_status",
+            (
+                status_info["email"],
+                status_info["approvalStatus"],
+            ),
+        )
+        db.commit()
+        return 200
+    except Exception as e:
+        print(e)
+        return 400
+
+
+def send_status_email(db, status_info):
+    subject = "Voter Request Status"
+
+    voter_status_response = execute_stored_proc(
+        db, "get_voter_status", (status_info["email"],)
+    )
+    voter_status = voter_status_response[0][0]
+
+    if status_info["approvalStatus"] == "approved":
+        body = "Congratulations, your voting request has been approved"
+    elif status_info["approvalStatus"] == "declined" and voter_status == "approved":
+        body = "After some review, your voting request has been revoked"
+    else:
+        body = "We regret to info you that your voting request has been denied"
+
+    sender_email = config.settings.email_config_dict["sender_email"]
+
+    message = MIMEText(body, "plain")
+    message["Subject"] = subject
+    message["From"] = sender_email
+    message["To"] = status_info["email"]
+
+    email_server.sendmail(sender_email, status_info["email"], message.as_string())

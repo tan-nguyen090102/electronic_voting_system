@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from database.database_functions import create_db_connection
-from dependencies import db
+from dependencies import db, email_server
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS, cross_origin
@@ -14,6 +14,7 @@ from routers.managers import managers_bp
 from routers.precincts import precinct_bp
 from routers.races import race_bp
 from routers.voters import voters_bp
+from routers.requests import requests_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -39,6 +40,8 @@ if __name__ == "__main__":
         app.register_blueprint(district_bp)
         app.register_blueprint(election_bp)
         app.register_blueprint(ballot_bp)
+        app.register_blueprint(requests_bp, url_prefix="/requests")
         app.run()
     finally:
         db.close()
+        email_server.close()

@@ -37,7 +37,7 @@ export default function ProfileRequestPanel() {
   const [receivedPendingList, setPendingList] = React.useState<Array<any>>([]);
   const [receivedDeniedList, setDeniedList] = React.useState<Array<any>>([]);
   useEffect(() => {
-    fetch("http://localhost:5000/request")
+    fetch("http://localhost:5000/requests")
       .then((response) => response.json())
       .then((data) => {
         var jsonList = DecomposeJSONObject(data);
@@ -49,8 +49,8 @@ export default function ProfileRequestPanel() {
 
   //Approve button listener
   const handleApprove = async (user: any, index: number) => {
-    await fetch("http://localhost:5000/request", {
-      method: "POST",
+    await fetch("http://localhost:5000/requests/update", {
+      method: "PATCH",
       headers: {
         Accept: "application/json",
         "content-type": "application/json; charset=UTF-8",
@@ -73,8 +73,8 @@ export default function ProfileRequestPanel() {
 
   //Deny button listener
   const handleDeny = async (user: any, index: number) => {
-    await fetch("http://localhost:5000/request", {
-      method: "POST",
+    await fetch("http://localhost:5000/requests/update", {
+      method: "PATCH",
       headers: {
         Accept: "application/json",
         "content-type": "application/json; charset=UTF-8",
@@ -82,7 +82,7 @@ export default function ProfileRequestPanel() {
       mode: "cors",
       body: JSON.stringify({
         email: user.email,
-        approvalStatus: "denied",
+        approvalStatus: "declined",
       }),
     })
       //After sending the updated status, fetch the backend again for a new list
@@ -149,7 +149,7 @@ export default function ProfileRequestPanel() {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4} width="100%">
-                {CreateAccordionItem(receivedDeniedList as any[], "denied")}
+                {CreateAccordionItem(receivedDeniedList as any[], "declined")}
               </AccordionPanel>
             </AccordionItem>
             <AccordionItem width="container.md" className="approvedAccordion">
@@ -206,7 +206,7 @@ export default function ProfileRequestPanel() {
                   </ListItem>
                   <ListItem>
                     Address:{" "}
-                    {user.street +
+                    {user.streetAddress +
                       ", " +
                       user.city +
                       ", " +
@@ -220,8 +220,8 @@ export default function ProfileRequestPanel() {
                   data-testid="approveButton"
                   colorScheme="teal"
                   isDisabled={
-                    user.approvalStatus === "denied" ||
-                    user.approvalStatus === "approved"
+                    user.approvalStatus === "declined" ||
+                      user.approvalStatus === "approved"
                       ? true
                       : false
                   }
@@ -234,7 +234,7 @@ export default function ProfileRequestPanel() {
                 <Button
                   data-testid="denyButton"
                   bg="red.400"
-                  isDisabled={user.approvalStatus === "denied" ? true : false}
+                  isDisabled={user.approvalStatus === "declined" ? true : false}
                   onClick={() => {
                     handleDeny(user, index);
                   }}
@@ -258,7 +258,7 @@ function DecomposeJSONObject(jsonList: any[] = []) {
   Object.values(jsonList).forEach((user) => {
     if (user.approvalStatus === "pending") {
       pendingList.push(user);
-    } else if (user.approvalStatus === "denied") {
+    } else if (user.approvalStatus === "declined") {
       deniedList.push(user);
     } else if (user.approvalStatus === "approved") {
       approvedList.push(user);

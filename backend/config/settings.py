@@ -11,6 +11,17 @@ class Settings:
         "db": "dev_db",
     }
 
+    email_config_dict = {
+        "port": 587,
+        "smtp_server": "smtp.gmail.com",
+        "sender_email": "voting.system.team.02.dev@gmail.com",
+        "password": "your_password",
+    }
+
     @property
     def database_config(self):
         return self.my_sql_config_dict
+
+    @property
+    def email_config(self):
+        return self.email_config_dict

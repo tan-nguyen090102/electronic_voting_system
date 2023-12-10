@@ -24,7 +24,8 @@ def execute_stored_proc(connection, proc_name, parameters):
     try:
         db_response = None
         cursor.callproc(proc_name, parameters)
-        if "select" in proc_name or "check" in proc_name:
+        func_matches = ["select", "check", "get"]
+        if any(x in proc_name for x in func_matches):
             db_response = cursor.fetchall()
         print(f"SUCCESS: {proc_name} stored procedure executed")
         if db_response:
