@@ -307,11 +307,15 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
 <<<<<<< HEAD
 INSERT INTO `precincts` VALUES ('NY-2355',_binary '\�\�H9�4�\�\�^\��','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\�\�m�ݤ\�\�^\��','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '\�a�ƪw�\�\�^\��','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
 =======
 INSERT INTO `precincts` VALUES ('NY-2355',_binary 'îÙH9¯4¤Í','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary 'îÂmûÝ¤\�','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1');
 >>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+INSERT INTO `precincts` VALUES ('NY-2355',_binary 'îÙH9¯4¤Í','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary 'îÂmûÝ¤\�','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary 'îaüÆªw¤\�','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -462,9 +466,15 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_ballot`(in input_ballot_id varchar(60))
 BEGIN
 	declare ballot_select int;
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
 
     select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
 
+=======
+
+    select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
+
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
     if ballot_select = 1 then
 		SELECT * from ballots where ballot_id = input_ballot_id;
 	end if;
@@ -1285,11 +1295,15 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
 <<<<<<< HEAD
 -- Dump completed on 2023-12-07 22:37:42
 =======
 -- Dump completed on 2023-12-10 17:20:03
 >>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+-- Dump completed on 2023-12-10 23:58:20
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: test_db
@@ -1573,8 +1587,12 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
 <<<<<<< HEAD
 -- Dump completed on 2023-12-07 22:37:42
 =======
 -- Dump completed on 2023-12-10 17:20:03
 >>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+-- Dump completed on 2023-12-10 23:58:20
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
