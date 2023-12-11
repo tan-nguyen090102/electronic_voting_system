@@ -89,8 +89,6 @@ def update_ballot(database, election_id):
         ),
     )
 
-    print(all_races)
-
     if all_races is not None:
         for race in all_races:
             try:

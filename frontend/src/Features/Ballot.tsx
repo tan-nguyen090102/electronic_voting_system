@@ -124,12 +124,12 @@ export default function BallotPage() {
           setCandidateList(data[2]);
           setChoiceList(data[3]);
           handlePointer(data[1], 0);
-          if (data[1].length === 0) {
+          if (Array.isArray(data[1]) && data[1].length === 0) {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
           }
-          if (data[3] === "False") {
+          if (Array.isArray(data[1]) && data[3] === "False") {
             setNoChoiceMessage(true);
           } else {
             setNoChoiceMessage(false);
@@ -172,7 +172,7 @@ export default function BallotPage() {
           setCandidateList(data[2]);
           setChoiceList(data[3]);
           handlePointer(data[1], 0);
-          if (data[1].length === 0) {
+          if (Array.isArray(data[1]) && data[1].length === 0) {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
@@ -230,12 +230,17 @@ export default function BallotPage() {
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             isLaunched={modalBox.isOpen}
-            race={currentRace}
-            listofCandidates={receivedCandidateList[currentIndex]}
+            race={Array.isArray(currentRace) ? currentRace : []}
+            listofCandidates={
+              Array.isArray(receivedCandidateList)
+                ? receivedCandidateList[currentIndex]
+                : []
+            }
             handleRefreshList={handleRefreshList}
             setNoChoice={setNoChoiceMessage}
           ></CreateModalBox>
           <Button
+            data-testid="summaryButton"
             bg="green.400"
             mt={6}
             onClick={() => {
@@ -262,53 +267,59 @@ export default function BallotPage() {
 
   //Helper function to create electoral race cards
   function CreateRaceCards(listToShown: any[]) {
-    const raceList = listToShown.map((race, index) => {
-      let isDisable = false;
+    const raceList =
+      Array.isArray(listToShown) &&
+      listToShown.map((race, index) => {
+        let isDisable = false;
 
-      //Find the race in the choice list
-      try {
-        receivedChoiceList.forEach((choice) => {
-          if (choice[1] === race[0]) {
-            isDisable = true;
-            throw new Error("Break");
-          } else {
-            isDisable = false;
-          }
-        });
-      } catch (error) {}
+        //Find the race in the choice list
+        try {
+          receivedChoiceList.forEach((choice) => {
+            if (choice[1] === race[0]) {
+              isDisable = true;
+              throw new Error("Break");
+            } else {
+              isDisable = false;
+            }
+          });
+        } catch (error) {}
 
-      return (
-        <Card key={index} direction="column">
-          <CardHeader height="60px">
-            <Heading size="md">{race[2]}</Heading>
-          </CardHeader>
-          <CardBody style={{ position: "relative" }}>
-            <List key={index}>
-              {CreateCandidateList(receivedCandidateList[index])}
-            </List>
-          </CardBody>
-          <CardFooter>
-            <Button
-              bg="teal.400"
-              onClick={() => {
-                handlePointer(race, index);
-                (race[6] === "inactive") !== isDisable
-                  ? alertBox.onOpen()
-                  : modalBox.onOpen();
-              }}
-            >
-              {(race[6] === "inactive") !== isDisable ? "View" : "Vote"}
-            </Button>
-            <CreateAlertRaceBox
-              isOpen={alertBox.isOpen}
-              onClose={alertBox.onClose}
-              race={currentRace}
-              index={currentIndex}
-            ></CreateAlertRaceBox>
-          </CardFooter>
-        </Card>
-      );
-    });
+        return (
+          <Card key={index} direction="column">
+            <CardHeader height="60px">
+              <Heading size="md">{race[2]}</Heading>
+            </CardHeader>
+            <CardBody style={{ position: "relative" }}>
+              <List key={index}>
+                {CreateCandidateList(receivedCandidateList[index])}
+              </List>
+            </CardBody>
+            <CardFooter>
+              <Button
+                bg={
+                  (race[6] === "inactive") !== isDisable
+                    ? "teal.400"
+                    : "orange.400"
+                }
+                onClick={() => {
+                  handlePointer(race, index);
+                  (race[6] === "inactive") !== isDisable
+                    ? alertBox.onOpen()
+                    : modalBox.onOpen();
+                }}
+              >
+                {(race[6] === "inactive") !== isDisable ? "View" : "Vote"}
+              </Button>
+              <CreateAlertRaceBox
+                isOpen={alertBox.isOpen}
+                onClose={alertBox.onClose}
+                race={currentRace}
+                index={currentIndex}
+              ></CreateAlertRaceBox>
+            </CardFooter>
+          </Card>
+        );
+      });
     return raceList;
   }
 
@@ -390,7 +401,13 @@ export function CreateAlertSummaryBox(props: AlertSummaryProps) {
             )}
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={props.onClose} ml={3} bg="red.400">
+            <Button
+              ref={cancelRef}
+              data-testid="closeButton"
+              onClick={props.onClose}
+              ml={3}
+              bg="red.400"
+            >
               Close
             </Button>
           </AlertDialogFooter>

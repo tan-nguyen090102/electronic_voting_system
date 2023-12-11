@@ -92,10 +92,10 @@ export default function BallotManagerPage() {
           handlePointer([], -1);
           setNothingMessage(true);
         } else {
-          setPrecinct(data[0][0]);
+          setPrecinct(Array.isArray(data[0]) ? data[0][0] : "");
           setRaceList(data[1]);
           handlePointer(data[1], 0);
-          if (data[1].length === 0) {
+          if (Array.isArray(data[1]) && data[1].length === 0) {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
@@ -132,10 +132,10 @@ export default function BallotManagerPage() {
           handlePointer([], -1);
           setNothingMessage(true);
         } else {
-          setPrecinct(data[0][0]);
+          setPrecinct(Array.isArray(data[0]) ? data[0][0] : "");
           setRaceList(data[1]);
           handlePointer(data[1], 0);
-          if (data[1].length === 0) {
+          if (Array.isArray(data[1]) && data[1].length === 0) {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
@@ -193,10 +193,11 @@ export default function BallotManagerPage() {
             isOpen={modalBox.isOpen}
             onClose={modalBox.onClose}
             isLaunched={modalBox.isOpen}
-            race={currentRace}
+            race={Array.isArray(currentRace) ? currentRace : []}
             handleRefreshList={handleRefreshList}
           ></CreateModalBox>
           <Button
+            data-testid="activateButton"
             bg="teal.400"
             mt={6}
             onClick={() => {
@@ -208,7 +209,7 @@ export default function BallotManagerPage() {
           <CreateAlertRaceBox
             isOpen={alertBox.isOpen}
             onClose={alertBox.onClose}
-            race={currentRace}
+            race={Array.isArray(currentRace) ? currentRace : []}
             index={currentIndex}
           ></CreateAlertRaceBox>
           <Text fontSize="xs" mt={6}>
@@ -221,27 +222,29 @@ export default function BallotManagerPage() {
 
   //Helper function to create electoral race cards
   function CreateRaceCards(listToShown: any[]) {
-    const raceList = listToShown.map((race, index) => {
-      return (
-        <Card key={index} direction="column">
-          <CardHeader height="60px">
-            <Heading size="md">{race[2]}</Heading>
-          </CardHeader>
-          <CardBody style={{ position: "relative" }}></CardBody>
-          <CardFooter>
-            <Button
-              bg="teal.400"
-              onClick={() => {
-                handlePointer(race, index);
-                alertBox.onOpen();
-              }}
-            >
-              View
-            </Button>
-          </CardFooter>
-        </Card>
-      );
-    });
+    const raceList =
+      Array.isArray(listToShown) &&
+      listToShown.map((race, index) => {
+        return (
+          <Card key={index} direction="column">
+            <CardHeader height="60px">
+              <Heading size="md">{race[2]}</Heading>
+            </CardHeader>
+            <CardBody style={{ position: "relative" }}></CardBody>
+            <CardFooter>
+              <Button
+                bg="teal.400"
+                onClick={() => {
+                  handlePointer(race, index);
+                  alertBox.onOpen();
+                }}
+              >
+                View
+              </Button>
+            </CardFooter>
+          </Card>
+        );
+      });
     return raceList;
   }
 }
@@ -389,7 +392,7 @@ export function CreateModalBox(props: ModalProps) {
           {listElectionJSX}
           <ModalFooter>
             <Button
-              data-testid="voteButton"
+              data-testid="activationButton"
               colorScheme="teal"
               onClick={() => {
                 handleActivate();
