@@ -9,7 +9,7 @@ import {
   Stack,
   Center,
 } from "@chakra-ui/react";
-import NavBar from "./NavBar";
+import NavBar, { ListNavigationBarVoter } from "./NavBar";
 
 export default function HomePage() {
   useEffect(() => {
@@ -23,12 +23,22 @@ export default function HomePage() {
   return (
     <>
       <NavBar
-        title={isLoggedIn === "true" ? "Welcome, " + user : "My Vote"}
+        title={
+          isLoggedIn === "true"
+            ? "Welcome, " + user
+            : "Electronic Voting System"
+        }
         isLoggedIn={isLoggedIn}
         isBlank="false"
         userName={user}
         role="voter"
       />
+      {isLoggedIn && user !== "" && (
+        <ListNavigationBarVoter
+          indexClick="0"
+          isLoggedIn={isLoggedIn}
+        ></ListNavigationBarVoter>
+      )}
       <Stack direction="column">
         <Spacer />
         <Box

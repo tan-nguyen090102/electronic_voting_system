@@ -45,6 +45,37 @@ INSERT INTO `admins` VALUES (_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','David','Van','Baste
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ballots`
+--
+
+DROP TABLE IF EXISTS `ballots`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ballots` (
+  `ballot_id` varchar(60) NOT NULL,
+  `race_id` varchar(60) DEFAULT NULL,
+  `precinct_id` varchar(60) DEFAULT NULL,
+  `status` varchar(25) DEFAULT NULL,
+  PRIMARY KEY (`ballot_id`),
+  UNIQUE KEY `ballot_id_UNIQUE` (`ballot_id`),
+  KEY `race_id` (`race_id`),
+  KEY `precinct_id` (`precinct_id`),
+  CONSTRAINT `ballots_ibfk_1` FOREIGN KEY (`race_id`) REFERENCES `races` (`race_id`),
+  CONSTRAINT `ballots_ibfk_2` FOREIGN KEY (`precinct_id`) REFERENCES `precincts` (`precinct_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ballots`
+--
+
+LOCK TABLES `ballots` WRITE;
+/*!40000 ALTER TABLE `ballots` DISABLE KEYS */;
+INSERT INTO `ballots` VALUES ('IA-HOUSE-NY-8408','IA-HOUSE-IA-CON-9-4480','NY-8408','inactive'),('US-PRESIDENT-NY-2355','US-PRESIDENT-US-PRED-3206','NY-2355','inactive'),('US-PRESIDENT-NY-8408','US-PRESIDENT-US-PRED-3206','NY-8408','inactive'),('US-SENATE-NY-2355','US-SENATE-IA-SN-1-9379','NY-2355','inactive'),('US-SENATE-NY-8408','US-SENATE-IA-SN-1-9379','NY-8408','inactive');
+/*!40000 ALTER TABLE `ballots` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `body_types`
 --
 
@@ -121,7 +152,7 @@ CREATE TABLE `districts` (
 
 LOCK TABLES `districts` WRITE;
 /*!40000 ALTER TABLE `districts` DISABLE KEYS */;
-INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','Nicolas Thompson'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A'),('US-PRED','United State President','N/A');
+INSERT INTO `districts` VALUES ('IA-1','Iowa District 1','Nicolas Thompson'),('IA-CON-9','Iowa Congressional District 9','N/A'),('IA-SN-1','Iowa Senate District 1','N/A'),('IA-SN-2','Iowa Senate District 2','N/A'),('MN-1','Minnesota District 1','N/A'),('NY-1','New York District 1','N/A'),('US-PRED','United State President','N/A');
 /*!40000 ALTER TABLE `districts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +180,7 @@ CREATE TABLE `elections` (
 
 LOCK TABLES `elections` WRITE;
 /*!40000 ALTER TABLE `elections` DISABLE KEYS */;
-INSERT INTO `elections` VALUES ('US-2024','United State Presidential Election of 2024','2024-11-03 06:00:00','2024-11-03 23:00:00','inactive');
+INSERT INTO `elections` VALUES ('IA-2024','Iowa Government of 2024','2023-12-30 06:00:00','2023-12-30 23:00:00','inactive'),('US-2024','United State Presidential Election of 2024','2024-11-03 06:00:00','2024-11-03 23:00:00','inactive');
 /*!40000 ALTER TABLE `elections` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,7 +243,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES (_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending'),(_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending');
+INSERT INTO `managers` VALUES (_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending'),(_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending'),(_binary '\Óïa¸∆™w§\Õ\ÿ^\”ì','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +274,7 @@ CREATE TABLE `officials` (
 
 LOCK TABLES `officials` WRITE;
 /*!40000 ALTER TABLE `officials` DISABLE KEYS */;
-INSERT INTO `officials` VALUES ('RUTTLE-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-2263','running'),('WILSON-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-9793','running');
+INSERT INTO `officials` VALUES ('RACHEL-US-SENATE-IA-SN-1-9379','US-SENATE-IA-SN-1-9379','New York City-NY-3964','running'),('RUTTLE-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-2263','running'),('RUTTLE-US-SENATE-IA-SN-1-9379','US-SENATE-IA-SN-1-9379','New York City-NY-2263','running'),('WILSON-US-PRESIDENT-US-PRED-3206','US-PRESIDENT-US-PRED-3206','New York City-NY-9793','running');
 /*!40000 ALTER TABLE `officials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,7 +307,7 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-INSERT INTO `precincts` VALUES ('NY-2355',_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1');
+INSERT INTO `precincts` VALUES ('NY-2355',_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '\Óïa¸∆™w§\Õ\ÿ^\”ì','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,7 +343,7 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
-INSERT INTO `races` VALUES ('US-PRESIDENT-US-PRED-3206','US-PRESIDENT','US President','2024-2028',2,'US-PRED','US-2024');
+INSERT INTO `races` VALUES ('IA-HOUSE-IA-CON-9-4480','IA-HOUSE','Iowa House of Representatives','2024-2028',0,'IA-CON-9','IA-2024'),('US-PRESIDENT-US-PRED-3206','US-PRESIDENT','US President','2024-2028',2,'US-PRED','US-2024'),('US-SENATE-IA-SN-1-9379','US-SENATE','US Senate, Iowa Senate District 2','2024-2028',2,'IA-SN-1','US-2024');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,6 +440,31 @@ BEGIN
 			admins 
         where 
 			email = input_email and id = UUID_TO_BIN(input_id);
+	end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `check_ballot` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_ballot`(in input_ballot_id varchar(60))
+BEGIN
+	declare ballot_select int;
+    
+    select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
+	
+    if ballot_select = 1 then
+		SELECT * from ballots where ballot_id = input_ballot_id;
 	end if;
 END ;;
 DELIMITER ;
@@ -616,6 +672,25 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `create_admin`(in input_first_name v
 begin 
 	insert into admins(first_name, middle_name, last_name, email, password) values (input_first_name, input_middle_name, input_last_name, input_email, input_password);
 end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_ballot` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_ballot`(in input_ballot_id varchar(60), in input_race_id varchar(60), in input_precinct_id varchar(60), in input_status varchar(25))
+BEGIN
+	INSERT INTO ballots(ballot_id, race_id, precinct_id, status) values (input_ballot_id, input_race_id, input_precinct_id, input_status);
+END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -1001,6 +1076,28 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `select_precinct_for_voter` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `select_precinct_for_voter`(IN selection text, IN where_clause text)
+BEGIN
+	SET @select_all_from_table_with_join_sql = CONCAT('SELECT ', selection, ' FROM voters v INNER JOIN geography g ON v.zip_code = g.zip INNER JOIN precincts p ON g.geography_id = p.geography_id WHERE ', where_clause, ';');
+    PREPARE select_all_from_table_with_join_stmt FROM @select_all_from_table_with_join_sql;
+    EXECUTE select_all_from_table_with_join_stmt;
+    DEALLOCATE PREPARE select_all_from_table_with_join_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `select_some_from_table_with_join` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1100,7 +1197,7 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-06 22:52:39
+-- Dump completed on 2023-12-07 22:37:42
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: test_db
@@ -1383,4 +1480,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-06 22:52:39
+-- Dump completed on 2023-12-07 22:37:42
