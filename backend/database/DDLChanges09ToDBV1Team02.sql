@@ -307,15 +307,7 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
-<<<<<<< HEAD
 INSERT INTO `precincts` VALUES ('NY-2355',_binary '\�\�H9�4�\�\�^\��','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\�\�m�ݤ\�\�^\��','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '\�a�ƪw�\�\�^\��','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
-=======
-INSERT INTO `precincts` VALUES ('NY-2355',_binary 'îÙH9¯4¤Í','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary 'îÂmûÝ¤\�','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1');
->>>>>>> 3def23f (DEV: Implemented approving user requests)
-=======
-INSERT INTO `precincts` VALUES ('NY-2355',_binary 'îÙH9¯4¤Í','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary 'îÂmûÝ¤\�','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary 'îaüÆªw¤\�','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
->>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -390,8 +382,10 @@ CREATE TABLE `voters` (
 
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
+INSERT INTO `voters` VALUES (_binary '\�an\"��q\�^\��','Daniel','Van','Basten','3423 York Street','daniel.basten@yahoo.com','$2b$12$ARll1q.V9yN5V9tIoEEoZeP8CSr/1H5W4ohj1Q0CvtkCZPIz56uFC','2004-02-14','f32r3tr2w','pending',1,'Van','5f43r23r','23421-1172','New York City'),(_binary '\�dc�傛\�\�^\��','Daniel','Van','Basten','1234 York Street','daniel.basten@uiowa.edu','$2b$12$uBzgEmMPhagRCBUzSedj3OKIXF27RZRGBtqmO76cf5jrPSTlG5U0G','2000-03-04','232dq3r3','pending',0,'New York City','fwse234d','98927-6793','New York City'),(_binary '\�e{]C_�\�\�^\��','William','Van','Thompson','1234 Havana Street','william.thompson@gmail.com','$2b$12$85T6myZ8V/Xr7r0WQ5itR.WT9FXb2WnLCavEylfn9YWd7HVPcVXBW','1999-08-14','f3rqrsd','pending',1,'Van','432dew3','76253-1821','New York City');
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 --
 -- Table structure for table `zips`
@@ -414,6 +408,7 @@ CREATE TABLE `zips` (
 
 LOCK TABLES `zips` WRITE;
 /*!40000 ALTER TABLE `zips` DISABLE KEYS */;
+INSERT INTO `zips` VALUES ('23421-1172','New York City','NY'),('76253-1821','New York City','NY'),('98927-6793','New York City','NY');
 /*!40000 ALTER TABLE `zips` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -466,15 +461,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_ballot`(in input_ballot_id varchar(60))
 BEGIN
 	declare ballot_select int;
-<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
 
     select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
 
-=======
-
-    select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
-
->>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
     if ballot_select = 1 then
 		SELECT * from ballots where ballot_id = input_ballot_id;
 	end if;
@@ -1295,15 +1284,7 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
-<<<<<<< HEAD
 -- Dump completed on 2023-12-07 22:37:42
-=======
--- Dump completed on 2023-12-10 17:20:03
->>>>>>> 3def23f (DEV: Implemented approving user requests)
-=======
--- Dump completed on 2023-12-10 23:58:20
->>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: test_db
@@ -1587,12 +1568,3 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
-<<<<<<< HEAD
--- Dump completed on 2023-12-07 22:37:42
-=======
--- Dump completed on 2023-12-10 17:20:03
->>>>>>> 3def23f (DEV: Implemented approving user requests)
-=======
--- Dump completed on 2023-12-10 23:58:20
->>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
