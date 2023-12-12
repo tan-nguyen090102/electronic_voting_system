@@ -137,7 +137,6 @@ export function ListNavigationBar(props: ListNavProps) {
   const CANDIDATE_INDEX = "4";
   const SEARCH_INDEX = "5";
   const REQUEST_INDEX = "6";
-  const MANAGER_INDEX = "7";
   const BALLOT_INDEX = "8";
 
   //Receive data from other page.
@@ -168,9 +167,6 @@ export function ListNavigationBar(props: ListNavProps) {
         break;
       case SEARCH_INDEX:
         navigate("/search", { state: { user: user } });
-        break;
-      case MANAGER_INDEX:
-        navigate("/manager_list", { state: { user: user } });
         break;
       case BALLOT_INDEX:
         navigate("/ballot_admin", { state: { user: user } });
@@ -257,16 +253,6 @@ export function ListNavigationBar(props: ListNavProps) {
           height="40px"
           width="200px"
           borderRadius="0px"
-          onClick={() => handleClick(MANAGER_INDEX)}
-          isDisabled={props.indexClick === MANAGER_INDEX ? true : false}
-        >
-          MANAGERS
-        </Button>
-        <Button
-          bg="teal.400"
-          height="40px"
-          width="200px"
-          borderRadius="0px"
           onClick={() => handleClick(BALLOT_INDEX)}
           isDisabled={props.indexClick === BALLOT_INDEX ? true : false}
         >
@@ -336,16 +322,6 @@ export function ListNavigationBarVoter(props: ListNavVoterProps) {
           height="40px"
           width="200px"
           borderRadius="0px"
-          onClick={() => handleClick(PRECINCT_INDEX)}
-          isDisabled={props.indexClick === PRECINCT_INDEX ? true : false}
-        >
-          PRECINCT
-        </Button>
-        <Button
-          bg="teal.400"
-          height="40px"
-          width="200px"
-          borderRadius="0px"
           onClick={() => handleClick(CANDIDATE_INDEX)}
           isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
         >
@@ -405,16 +381,6 @@ export function ListNavigationBarManager(props: ListNavManagerProps) {
           isDisabled={props.indexClick === BALLOT_INDEX ? true : false}
         >
           BALLOT
-        </Button>
-        <Button
-          bg="teal.400"
-          height="40px"
-          width="200px"
-          borderRadius="0px"
-          onClick={() => handleClick(PRECINCT_INDEX)}
-          isDisabled={props.indexClick === PRECINCT_INDEX ? true : false}
-        >
-          PRECINCT
         </Button>
       </Stack>
     </div>
