@@ -285,8 +285,8 @@ export default function BallotPage() {
         } catch (error) {}
 
         return (
-          <Card key={index} direction="column">
-            <CardHeader height="60px">
+          <Card key={index} direction="column" width="250px">
+            <CardHeader height="auto">
               <Heading size="md">{race[2]}</Heading>
             </CardHeader>
             <CardBody style={{ position: "relative" }}>
