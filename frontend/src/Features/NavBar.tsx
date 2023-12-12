@@ -336,16 +336,6 @@ export function ListNavigationBarVoter(props: ListNavVoterProps) {
         >
           PRECINCT
         </Button>
-        <Button
-          bg="teal.400"
-          height="40px"
-          width="200px"
-          borderRadius="0px"
-          onClick={() => handleClick(CANDIDATE_INDEX)}
-          isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
-        >
-          CANDIDATE
-        </Button>
       </Stack>
     </div>
   );

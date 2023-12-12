@@ -461,6 +461,9 @@ setInputValue({ firstName : userProfile[0],
               {isEditable ? "Close" : "Edit"}
               </Button>
               </Stack>
+        <Text fontSize="xs" mt={6}>
+        Voting System
+        </Text>
         </Flex>
         </Flex>
         </div>

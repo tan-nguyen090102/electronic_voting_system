@@ -15,6 +15,7 @@ import ElectionPanel from "../Features/Election";
 import BallotPage from "../Features/Ballot";
 import BallotAdminPanel from "../Features/BallotAdmin";
 import UserProfilePanel from "../Features/UserProfile";
+import CandidateProfilePanel from "../Features/CandidateProfile";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/ballot_admin" element={<BallotAdminPanel />}></Route>
         <Route path="/ballot_voter" element={<BallotPage />}></Route>
         <Route path="/user_profile" element={<UserProfilePanel />}></Route>
+        <Route path="/candidate_voter" element={<CandidateProfilePanel />}></Route>
       </Routes>
     </>
   );

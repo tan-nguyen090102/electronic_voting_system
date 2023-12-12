@@ -74,7 +74,7 @@ def get_candidates_voter(database, race_id):
         (
             "officials",
             "candidates",
-            "b.race_id, first_name, last_name",
+            "b.race_id, first_name, last_name, b.candidate_id",
             "t.candidate_id = b.candidate_id",
             "race_id = '" + race_id + "'",
         ),
