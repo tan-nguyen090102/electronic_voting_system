@@ -42,7 +42,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES (_binary '√Æ¬ê¬π¬ÑO%√Æ¬§\Ô','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq'),(_binary 'Óòß∫;á§\Õ\ÿ^\”ì','Tiger','Fire','Wood','tiger.wood@gmail.com','$2a$12$ZjZH6doru6bFEKylW8dl3uW8EycPRQ8nQFWnq37PXe7r40tMKBvVa');
+INSERT INTO `admins` VALUES (_binary '√Æ¬ê¬π¬ÑO%√Æ¬§\','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq'),(_binary 'Óòß;\\^\','Tiger','Fire','Wood','tiger.wood@gmail.com','$2a$12$ZjZH6doru6bFEKylW8dl3uW8EycPRQ8nQFWnq37PXe7r40tMKBvVa');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,7 +278,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES (_binary 'ÔøΩaÔøΩ∆™wÔøΩ\Ôø','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\Ô','pending'),(_binary 'ÔøΩÔøΩH9ÔøΩ4ÔøΩ','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\Ô','pending'),(_binary 'ÔøΩÔøΩmÔøΩ›§\Ôø','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\Ô','pending');
+INSERT INTO `managers` VALUES (_binary 'ÔøΩaÔøΩ∆™wÔøΩ\','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\','pending'),(_binary 'ÔøΩÔøΩH9ÔøΩ4ÔøΩ','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\','pending'),(_binary 'ÔøΩÔøΩmÔøΩ›§\','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÔøΩO%ÔøΩÔøΩ\','pending');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,7 +342,7 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-INSERT INTO `precincts` VALUES ('IA-6591',_binary 'ÔøΩÔøΩH9ÔøΩ4ÔøΩ','1212 Lamp Avenue, Iowa City, IA 52240','Coralville-Johnson-IA','IA-2'),('NY-7803',_binary 'ÔøΩaÔøΩ∆™wÔøΩ\Ôø','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
+INSERT INTO `precincts` VALUES ('IA-6591',_binary 'ÔøΩÔøΩH9ÔøΩ4ÔøΩ','1212 Lamp Avenue, Iowa City, IA 52240','Coralville-Johnson-IA','IA-2'),('NY-7803',_binary 'ÔøΩaÔøΩ∆™wÔøΩ\','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +418,7 @@ CREATE TABLE `voters` (
 
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
-INSERT INTO `voters` VALUES (_binary 'Óò•∞j∫§\Õ\ÿ^\”ì','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','declined',3,'0','dadwa1231','10002-1926','New York City'),(_binary '\Óô+e8\ƒw§\Õ\ÿ^\”ì','James','To','Hogward','5623 Covered Bridge','james.hogward@gmail.com','$2b$12$1cfq99cbEwwSf3cyFjV5sO2vxRIE3jo9B32JJmyE/i1w054Tj0UX2','1999-07-03','v34cq2dw','approved',0,'Iowa City','cawdwa42','52317-2484','Coralville'),(_binary '\Óôf\◊ÙÜó§\Õ\ÿ^\”ì','James','Don','Baston','1234 Jalapeno Avenue','james.baston@yahoo.com','$2b$12$cNIb5Obi56gGhs0lRT5.mOUxIq7jVpoO.2YqOCU/gOzp2hmBXkrtS','1999-04-12','4523rfsd','approved',2,'Papaya','dfw24wd','10001-4148','New York City'),(_binary '\Óôi¯Ñ\‰§\Õ\ÿ^\”ì','Halo','Van','Baston','1212 Covered Street','halo.baston@gmail.com','$2b$12$8osXbsYE3m7JcHWGTDNt3O84HyjbaBlsqw6tpK/FTseMucfaDfisG','1980-07-11','dq2eqe2','approved',3,'1','2qeq3234q','52241-4544','Coralville');
+INSERT INTO `voters` VALUES (_binary 'Óò•j\\^\','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','declined',3,'0','dadwa1231','10002-1926','New York City'),(_binary '\+e8\w\\^\','James','To','Hogward','5623 Covered Bridge','james.hogward@gmail.com','$2b$12$1cfq99cbEwwSf3cyFjV5sO2vxRIE3jo9B32JJmyE/i1w054Tj0UX2','1999-07-03','v34cq2dw','approved',0,'Iowa City','cawdwa42','52317-2484','Coralville'),(_binary '\f\ÙÜó§\\^\','James','Don','Baston','1234 Jalapeno Avenue','james.baston@yahoo.com','$2b$12$cNIb5Obi56gGhs0lRT5.mOUxIq7jVpoO.2YqOCU/gOzp2hmBXkrtS','1999-04-12','4523rfsd','approved',2,'Papaya','dfw24wd','10001-4148','New York City'),(_binary '\i\\\^\','Halo','Van','Baston','1212 Covered Street','halo.baston@gmail.com','$2b$12$8osXbsYE3m7JcHWGTDNt3O84HyjbaBlsqw6tpK/FTseMucfaDfisG','1980-07-11','dq2eqe2','approved',3,'1','2qeq3234q','52241-4544','Coralville');
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
