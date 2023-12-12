@@ -28,7 +28,7 @@ export default function App() {
           path="/change_password"
           element={<ChangePasswordPanel />}
         ></Route>
-        <Route path="/request" element={<ProfileRequestPanel />}></Route>
+        <Route path="/requests" element={<ProfileRequestPanel />}></Route>
         <Route path="/search" element={<SearchPanel />}></Route>
         <Route path="/precinct" element={<PrecinctPanel />}></Route>
         <Route path="/candidate" element={<CandidatePanel />}></Route>

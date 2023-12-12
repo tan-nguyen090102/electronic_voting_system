@@ -17,7 +17,9 @@ class Config:
         self._settings = Settings()
 
         print(f"Running in app_env: {self.settings.app_env}")
-        print(f"Running with my_sql_server: {self.settings.my_sql_config_dict['server']}")
+        print(
+            f"Running with my_sql_server: {self.settings.my_sql_config_dict['server']}"
+        )
         print(f"Running with my_sql_db: {self.settings.my_sql_config_dict['db']}")
 
         return self.settings
@@ -25,8 +27,8 @@ class Config:
     def __setup_database(self, my_sql_config_dict: dict):
         if self._settings:
             db_connection = pymysql.connect(
-                user=my_sql_config_dict['user'],
-                password=my_sql_config_dict['password'],
+                user=my_sql_config_dict["user"],
+                password=my_sql_config_dict["password"],
                 host=my_sql_config_dict["server"],
                 port=my_sql_config_dict["port"],
                 database=my_sql_config_dict["db"],

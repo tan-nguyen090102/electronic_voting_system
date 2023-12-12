@@ -78,7 +78,7 @@ export default function LoginPanel() {
         //Handle login
         if (data === "true") {
           if (inputSelection === "admin") {
-            navigate("/request", { state: { user: inputValue.userID } });
+            navigate("/requests", { state: { user: inputValue.userID } });
           } else {
             navigate("/", {
               state: { user: inputValue.userID, isLoggedIn: "true" },

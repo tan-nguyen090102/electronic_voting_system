@@ -159,7 +159,7 @@ export function ListNavigationBar(props: ListNavProps) {
         navigate("/candidate", { state: { user: user } });
         break;
       case REQUEST_INDEX:
-        navigate("/request", { state: { user: user } });
+        navigate("/requests", { state: { user: user } });
         break;
       case SEARCH_INDEX:
         navigate("/search", { state: { user: user } });

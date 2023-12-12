@@ -40,14 +40,14 @@ def admin_login(db, bcrypt, login_info):
     #     db,
     #     "create_admin",
     #     (
-    #         "David",
-    #         "Van",
-    #         "Basten",
+    #         "John",
+    #         "Frederick",
+    #         "Doe",
     #         login_info["userID"],
     #         password_hash,
     #     ),
     # )
-    # db.commit()
+    db.commit()
 
     get_admin = execute_stored_proc(
         db, "check_admin", (login_info["employeeID"], login_info["userID"])

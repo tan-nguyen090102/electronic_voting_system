@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: dev_db
+-- Host: localhost    Database: dev_db
 -- ------------------------------------------------------
 -- Server version	8.0.34
 
@@ -40,7 +40,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES (_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq');
+INSERT INTO `admins` VALUES (_binary '√Æ¬ê¬π¬ÑO%√Æ¬§\ÔøΩ','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +243,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES (_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending'),(_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending'),(_binary '\Óïa¸∆™w§\Õ\ÿ^\”ì','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary 'ÓêπÑO%\Ó§\Õ\ÿ^\”ì','pending');
+INSERT INTO `managers` VALUES (_binary '\ÔøΩ\ÔøΩmÔøΩ›§\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary 'ÓêπÔøΩO%\ÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','pending'),(_binary '\ÔøΩ\ÔøΩH9ÔøΩ4ÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary 'ÓêπÔøΩO%\ÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','pending'),(_binary '\ÔøΩaÔøΩ∆™wÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary 'ÓêπÔøΩO%\ÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','pending');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -307,7 +307,15 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-INSERT INTO `precincts` VALUES ('NY-2355',_binary '\Óê\ŸH9Ø4§\Õ\ÿ^\”ì','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\Óê\¬m˚›§\Õ\ÿ^\”ì','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '\Óïa¸∆™w§\Õ\ÿ^\”ì','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
+<<<<<<< HEAD
+INSERT INTO `precincts` VALUES ('NY-2355',_binary '\ÔøΩ\ÔøΩH9ÔøΩ4ÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '\ÔøΩ\ÔøΩmÔøΩ›§\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '\ÔøΩaÔøΩ∆™wÔøΩ\ÔøΩ\ÔøΩ^\ÔøΩÔøΩ','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
+=======
+INSERT INTO `precincts` VALUES ('NY-2355',_binary '√Æ¬ê√ôH9¬Ø4¬§√ç','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '√Æ¬ê√Çm√ª√ù¬§\ÔøΩ','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1');
+>>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+INSERT INTO `precincts` VALUES ('NY-2355',_binary '√Æ¬ê√ôH9¬Ø4¬§√ç','243 Covered, Minneapolis, MN 55401','New York City-Brooklyn-NY','MN-1'),('NY-5573',_binary '√Æ¬ê√Çm√ª√ù¬§\ÔøΩ','3434 Covered, Minneapolis, MN 55401','New York City-Queens-NY','MN-1'),('NY-8408',_binary '√Æ¬ïa√º√Ü¬™w¬§\ÔøΩ','9773 Bayton Street, New York City, NY 32762','New York City-Kings-NY','NY-1');
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -382,7 +390,6 @@ CREATE TABLE `voters` (
 
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
-INSERT INTO `voters` VALUES (_binary '\ÓÉan\"≥©q\ÿ^\”ì','Daniel','Van','Basten','3423 York Street','daniel.basten@yahoo.com','$2b$12$ARll1q.V9yN5V9tIoEEoZeP8CSr/1H5W4ohj1Q0CvtkCZPIz56uFC','2004-02-14','f32r3tr2w','pending',1,'Van','5f43r23r','23421-1172','New York City'),(_binary '\ÓÜdc¿ÂÇõ\Ï\ÿ^\”ì','Daniel','Van','Basten','1234 York Street','daniel.basten@uiowa.edu','$2b$12$uBzgEmMPhagRCBUzSedj3OKIXF27RZRGBtqmO76cf5jrPSTlG5U0G','2000-03-04','232dq3r3','pending',0,'New York City','fwse234d','98927-6793','New York City'),(_binary '\ÓÜe{]C_õ\Ï\ÿ^\”ì','William','Van','Thompson','1234 Havana Street','william.thompson@gmail.com','$2b$12$85T6myZ8V/Xr7r0WQ5itR.WT9FXb2WnLCavEylfn9YWd7HVPcVXBW','1999-08-14','f3rqrsd','pending',1,'Van','432dew3','76253-1821','New York City');
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -407,7 +414,6 @@ CREATE TABLE `zips` (
 
 LOCK TABLES `zips` WRITE;
 /*!40000 ALTER TABLE `zips` DISABLE KEYS */;
-INSERT INTO `zips` VALUES ('23421-1172','New York City','NY'),('76253-1821','New York City','NY'),('98927-6793','New York City','NY');
 /*!40000 ALTER TABLE `zips` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,16 +435,16 @@ BEGIN
 	declare admin_select int;
 	select COUNT(*) into admin_select from admins where email = input_email and id = UUID_TO_BIN(input_id);
     if admin_select = 1 then
-		SELECT 
+		SELECT
 			BIN_TO_UUID(id) as id,
             first_name,
             middle_name,
             last_name,
             email,
             password
-        from 
-			admins 
-        where 
+        from
+			admins
+        where
 			email = input_email and id = UUID_TO_BIN(input_id);
 	end if;
 END ;;
@@ -460,9 +466,15 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_ballot`(in input_ballot_id varchar(60))
 BEGIN
 	declare ballot_select int;
-    
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
+
     select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
-	
+
+=======
+
+    select COUNT(*) into ballot_select from ballots where ballot_id = input_ballot_id;
+
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
     if ballot_select = 1 then
 		SELECT * from ballots where ballot_id = input_ballot_id;
 	end if;
@@ -485,9 +497,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_district`(in input_district_id varchar(60))
 BEGIN
 	declare district_select int;
-    
+
     select COUNT(*) into district_select from districts where district_id = input_district_id;
-	
+
     if district_select = 1 then
 		SELECT * from districts where district_id = input_district_id;
 	end if;
@@ -512,7 +524,7 @@ BEGIN
 	declare manager_select int;
 	select COUNT(*) into manager_select from managers where email = input_email and id = UUID_TO_BIN(input_id);
     if manager_select = 1 then
-		SELECT 
+		SELECT
 			BIN_TO_UUID(id) as id,
             first_name,
             middle_name,
@@ -520,9 +532,9 @@ BEGIN
             email,
             password,
             admin_id
-        from 
+        from
 			managers
-        where 
+        where
 			email = input_email and id = UUID_TO_BIN(input_id);
 	end if;
 END ;;
@@ -544,9 +556,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_official`(in input_official_id varchar(60))
 BEGIN
 	declare official_select int;
-    
+
     select COUNT(*) into official_select from officials where official_id = input_official_id;
-	
+
     if official_select = 1 then
 		SELECT * from officials where official_id = input_official_id;
 	end if;
@@ -569,9 +581,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_precinct`(in input_precinct_id varchar(60))
 BEGIN
 	declare precinct_select int;
-    
+
     select COUNT(*) into precinct_select from precincts where precinct_id = input_precinct_id;
-	
+
     if precicnt_select = 1 then
 		SELECT * from precincts where precinct_id = input_precinct_id;
 	end if;
@@ -594,9 +606,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_race`(in input_race_id varchar(60))
 BEGIN
 	declare race_select int;
-    
+
     select COUNT(*) into race_select from races where race_id = input_race_id;
-	
+
     if race_select = 1 then
 		SELECT * from races where race_id = input_race_id;
 	end if;
@@ -619,9 +631,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_voter`(in input_email varchar(255))
 begin
 	declare voter_select int;
-    
+
     select COUNT(*) into voter_select from voters where email = input_email;
-	
+
     if voter_select = 1 then
 		SELECT * from voters where email = input_email;
 	end if;
@@ -669,7 +681,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_admin`(in input_first_name varchar(60), in input_middle_name varchar(60), in input_last_name varchar(60), in input_email text, in input_password text)
-begin 
+begin
 	insert into admins(first_name, middle_name, last_name, email, password) values (input_first_name, input_middle_name, input_last_name, input_email, input_password);
 end ;;
 DELIMITER ;
@@ -945,7 +957,32 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_admin_id`(in input_email text)
 BEGIN
 	select
 		BIN_TO_UUID(id) id
-	from 
+	from
+		admins
+    where
+		email = input_email;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_admin_id_from_binary` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_admin_id_from_binary`(in input_email text)
+BEGIN
+	select
+		BIN_TO_UUID(employee_id) employee_id,
+		email
+	from
 		admins
     where
 		email = input_email;
@@ -969,10 +1006,50 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_manager_id`(in input_email text
 BEGIN
 	select
 		BIN_TO_UUID(id) id
-	from 
+	from
 		managers
     where
 		email = input_email;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_voter_status` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_voter_status`(in input_email varchar(255))
+BEGIN
+	SELECT approval_status
+	FROM voters
+    WHERE email = input_email;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_zip` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_zip`(in input_zip_code varchar(10), in input_city varchar(255))
+BEGIN
+	select * from zips where zip_code = input_zip_code and city= input_city;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1187,6 +1264,27 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_voter_status` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_voter_status`( in input_email varchar(255), in input_approval_status varchar(20))
+BEGIN
+	UPDATE voters
+    SET approval_status= input_approval_status
+    WHERE email = input_email;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1197,10 +1295,18 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
+<<<<<<< HEAD
 -- Dump completed on 2023-12-07 22:37:42
+=======
+-- Dump completed on 2023-12-10 17:20:03
+>>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+-- Dump completed on 2023-12-10 23:58:20
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: test_db
+-- Host: localhost    Database: test_db
 -- ------------------------------------------------------
 -- Server version	8.0.34
 
@@ -1223,7 +1329,7 @@ DROP TABLE IF EXISTS `voters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `voters` (
-  `id` binary(16) DEFAULT (uuid_to_bin(uuid(),1)),
+  `id` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
   `first_name` varchar(60) DEFAULT NULL,
   `middle_name` varchar(60) DEFAULT NULL,
   `last_name` varchar(60) DEFAULT NULL,
@@ -1238,6 +1344,7 @@ CREATE TABLE `voters` (
   `passport` text,
   `zip_code` varchar(10) DEFAULT NULL,
   `city` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `zip_code` (`zip_code`,`city`),
   CONSTRAINT `voters_ibfk_1` FOREIGN KEY (`zip_code`, `city`) REFERENCES `zips` (`zip_code`, `city`)
@@ -1293,9 +1400,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_voter`(in input_email varchar(255))
 begin
 	declare voter_select int;
-    
+
     select COUNT(*) into voter_select from voters where email = input_email;
-	
+
     if voter_select = 1 then
 		SELECT * from voters where email = input_email;
 	end if;
@@ -1480,4 +1587,12 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD:backend/database/DDLChanges08ToDBV1Team02.sql
+<<<<<<< HEAD
 -- Dump completed on 2023-12-07 22:37:42
+=======
+-- Dump completed on 2023-12-10 17:20:03
+>>>>>>> 3def23f (DEV: Implemented approving user requests)
+=======
+-- Dump completed on 2023-12-10 23:58:20
+>>>>>>> f87c40f (ENH: Updated ddl file):backend/database/DDLChanges09ToDBV1Team02.sql

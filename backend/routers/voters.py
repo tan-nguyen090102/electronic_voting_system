@@ -1,6 +1,6 @@
 import json
-
 from dependencies import db
+from database.database_functions import execute_stored_proc
 from flask import Blueprint, request
 from flask_bcrypt import Bcrypt
 from flask_cors import cross_origin
@@ -9,24 +9,28 @@ from services.voters import (
     get_candidates_voter,
     get_precinct_voter,
     get_races_voter,
+    get_all_voters,
 )
 
 voters_bp = Blueprint("voters_bp", __name__)
 bcrypt = Bcrypt()
 
 
-@voters_bp.route("/", methods=["POST"])
+@voters_bp.route("/", methods=["GET", "POST"])
 @cross_origin()
 def voters(database=db, bcrypt_input=bcrypt):
-    json_object = request.json
-    response = create_voter(database, bcrypt_input, json_object)
-
-    if response == 200:
-        return "Voter Created", 200
-    elif response == 400:
-        return "Voter Already Exists", 400
-    else:
-        return "Server Error", 500
+    if request.method == "POST":
+        json_object = request.json
+        response = create_voter(database, bcrypt_input, json_object)
+        if response == 200:
+            return "Voter Created", 200
+        elif response == 400:
+            return "Voter Already Exists", 400
+        else:
+            return "Server Error", 500
+    if request.method == "GET":
+        voters = get_all_voters(database)
+        return voters
 
 
 @voters_bp.route("/ballot_voter", methods=["POST"])
