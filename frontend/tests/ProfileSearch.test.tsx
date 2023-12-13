@@ -21,16 +21,29 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-test("Name input", async () => {
+test("First Name input", async () => {
   render(
     <BrowserRouter>
       <SearchPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("name");
-    userEvent.type(field, testObject.name);
-    expect(field).toHaveValue(testObject.name);
+    const field = screen.getByTestId("firstName");
+    userEvent.type(field, testObject.firstName);
+    expect(field).toHaveValue(testObject.firstName);
+  });
+});
+
+test("Last Name input", async () => {
+  render(
+    <BrowserRouter>
+      <SearchPanel />
+    </BrowserRouter>
+  );
+  await act(() => {
+    const field = screen.getByTestId("lastName");
+    userEvent.type(field, testObject.lastName);
+    expect(field).toHaveValue(testObject.lastName);
   });
 });
 
@@ -47,16 +60,16 @@ test("Zip input", async () => {
   });
 });
 
-test("Station ID input", async () => {
+test("Precinct ID input", async () => {
   render(
     <BrowserRouter>
       <SearchPanel />
     </BrowserRouter>
   );
   await act(() => {
-    const field = screen.getByTestId("stationID");
-    userEvent.type(field, testObject.stationID);
-    expect(field).toHaveValue(testObject.stationID);
+    const field = screen.getByTestId("precinctID");
+    userEvent.type(field, testObject.precinctID);
+    expect(field).toHaveValue(testObject.precinctID);
   });
 });
 
