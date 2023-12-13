@@ -13,8 +13,9 @@ from routers.elections import election_bp
 from routers.managers import managers_bp
 from routers.precincts import precinct_bp
 from routers.races import race_bp
-from routers.voters import voters_bp
 from routers.requests import requests_bp
+from routers.searches import search_bp
+from routers.voters import voters_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -34,6 +35,7 @@ if __name__ == "__main__":
         app.register_blueprint(voters_bp, url_prefix="/voters")
         app.register_blueprint(managers_bp, url_prefix="/managers")
         app.register_blueprint(auth_bp)
+        app.register_blueprint(search_bp)
         app.register_blueprint(precinct_bp)
         app.register_blueprint(candidate_bp)
         app.register_blueprint(race_bp)
