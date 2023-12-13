@@ -8,10 +8,6 @@ import {
   Box,
   Stack,
   Center,
-<<<<<<< HEAD
-=======
-  AbsoluteCenter,
->>>>>>> d9b73d4 (basic two step verification page (not functional at the moment))
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBarVoter } from "./NavBar";
 
@@ -54,28 +50,17 @@ export default function HomePage() {
           borderColor="teal"
         >
           <Center>
-<<<<<<< HEAD
             RIGHT NOW: Candidate A vs Candidate B in Random Location's
             Presidental Race
-=======
-          RIGHT NOW: Candidate A vs Candidate B in Random Location's Presidental
-          Race
->>>>>>> d9b73d4 (basic two step verification page (not functional at the moment))
           </Center>
         </Box>
         <Stack direction="row" w="100%">
           <Container w="50px"></Container>
           <Stack direction="column">
             <Container maxW="600">
-<<<<<<< HEAD
               <Center>
                 <Heading>Your Vote Matters!</Heading>
               </Center>
-=======
-            <Center>
-            <Heading>Your Vote Matters!</Heading>
-            </Center>
->>>>>>> d9b73d4 (basic two step verification page (not functional at the moment))
               <Image
                 boxSize="350px"
                 w="500"
@@ -93,17 +78,10 @@ export default function HomePage() {
             </Container>
           </Stack>
           <Stack direction="column">
-<<<<<<< HEAD
             <Spacer />
             <Spacer />
             <Spacer />
             <Spacer />
-=======
-          <Spacer />
-          <Spacer />
-          <Spacer />
-          <Spacer />
->>>>>>> d9b73d4 (basic two step verification page (not functional at the moment))
             <Container maxW="2xl" centerContent>
               <Box
                 padding="4"
