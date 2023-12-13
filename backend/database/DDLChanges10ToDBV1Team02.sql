@@ -1,286 +1,5 @@
--- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
---
--- Host: 127.0.0.1    Database: test_db
--- ------------------------------------------------------
--- Server version	8.0.34
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `voters`
---
-
-DROP TABLE IF EXISTS `voters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `voters` (
-  `id` binary(16) DEFAULT (uuid_to_bin(uuid(),1)),
-  `first_name` varchar(60) DEFAULT NULL,
-  `middle_name` varchar(60) DEFAULT NULL,
-  `last_name` varchar(60) DEFAULT NULL,
-  `street_address` text,
-  `email` varchar(255) DEFAULT NULL,
-  `password` text,
-  `dob` date DEFAULT NULL,
-  `drivers_license` text,
-  `approval_status` enum('pending','approved','declined') DEFAULT 'pending',
-  `question_index` int DEFAULT NULL,
-  `question_answer` text,
-  `passport` text,
-  `zip_code` varchar(10) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `email_UNIQUE` (`email`),
-  KEY `zip_code` (`zip_code`,`city`),
-  CONSTRAINT `voters_ibfk_1` FOREIGN KEY (`zip_code`, `city`) REFERENCES `zips` (`zip_code`, `city`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `voters`
---
-
-LOCK TABLES `voters` WRITE;
-/*!40000 ALTER TABLE `voters` DISABLE KEYS */;
-/*!40000 ALTER TABLE `voters` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `zips`
---
-
-DROP TABLE IF EXISTS `zips`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `zips` (
-  `zip_code` varchar(10) NOT NULL,
-  `city` varchar(255) NOT NULL,
-  `state` varchar(2) DEFAULT NULL,
-  PRIMARY KEY (`zip_code`,`city`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `zips`
---
-
-LOCK TABLES `zips` WRITE;
-/*!40000 ALTER TABLE `zips` DISABLE KEYS */;
-/*!40000 ALTER TABLE `zips` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping routines for database 'test_db'
---
-/*!50003 DROP PROCEDURE IF EXISTS `check_voter` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_voter`(in input_email varchar(255))
-begin
-	declare voter_select int;
-    
-    select COUNT(*) into voter_select from voters where email = input_email;
-	
-    if voter_select = 1 then
-		SELECT * from voters where email = input_email;
-	end if;
-end ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `create_voter` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_voter`(in input_first_name varchar(60), in input_middle_name varchar(60), in input_last_name varchar(60), in input_street_address text, in input_zip_code varchar(10), in input_city varchar(255), in input_state varchar(2),  in input_email varchar(255), in input_password text, in input_dob date, in input_drivers_license text,  in input_question_index int, in input_question_answer text, in input_passport text)
-begin
-	call create_zip(input_zip_code, input_city, input_state);
-	insert into voters(first_name, middle_name, last_name, street_address, email, password, dob, drivers_license, question_index, question_answer, passport, zip_code, city)  values (input_first_name, input_middle_name, input_last_name, input_street_address, input_email, input_password, input_dob, input_drivers_license, input_question_index, input_question_answer, input_passport, input_zip_code, input_city);
-end ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `create_zip` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_zip`(in input_zip varchar(10), in input_city varchar(255), in input_state varchar(2))
-begin
-	insert ignore into zips (zip_code, city, state) values (input_zip, input_city, input_state);
-end ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `delete_from_table` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_from_table`(
- IN table_name VARCHAR(255),
- IN where_clause TEXT
-)
-BEGIN
-    SET @delete_from_table_sql = CONCAT('DELETE FROM ', table_name, ' WHERE ', where_clause,';');
-    PREPARE delete_from_table_with_where_stmt FROM @delete_from_table_sql;
-    EXECUTE delete_from_table_with_where_stmt;
-    DEALLOCATE PREPARE delete_from_table_with_where_stmt;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `insert_into_table` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_into_table`(
-    IN table_name VARCHAR(255),
-    IN insert_proto TEXT,
-    IN insert_values TEXT
-)
-BEGIN
-    SET @insert_values_sql = CONCAT('INSERT INTO ', table_name, ' ', insert_proto ,' VALUES ', insert_values, ';');
-    PREPARE insert_values_stmt FROM @insert_values_sql;
-    EXECUTE insert_values_stmt;
-    DEALLOCATE PREPARE insert_values_stmt;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `select_all_from_table` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `select_all_from_table`(
- IN table_name VARCHAR(255)
-)
-BEGIN
-    SET @select_all_from_table_sql = CONCAT('SELECT * FROM ', table_name, ';');
-    PREPARE select_all_from_table_stmt FROM @select_all_from_table_sql;
-    EXECUTE select_all_from_table_stmt;
-    DEALLOCATE PREPARE select_all_from_table_stmt;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `select_all_from_table_with_where` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `select_all_from_table_with_where`(
- IN table_name VARCHAR(255),
- IN where_clause TEXT
-)
-BEGIN
-    SET @select_all_from_table_with_where_sql = CONCAT('SELECT * FROM ', table_name, ' WHERE ', where_clause,';');
-    PREPARE select_all_from_table_with_where_stmt FROM @select_all_from_table_with_where_sql;
-    EXECUTE select_all_from_table_with_where_stmt;
-    DEALLOCATE PREPARE select_all_from_table_with_where_stmt;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `update_table` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_table`(
- IN table_name VARCHAR(255),
- IN set_clause text,
- IN where_clause TEXT
-)
-BEGIN
-    SET @update_table_sql = CONCAT('UPDATE ', table_name,' SET ',set_clause,' WHERE ', where_clause,';');
-    PREPARE update_table_stmt FROM @update_table_sql;
-    EXECUTE update_table_stmt;
-    DEALLOCATE PREPARE update_table_stmt;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-12-11 23:42:46
+CREATE DATABASE  IF NOT EXISTS `dev_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `dev_db`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dev_db
@@ -354,7 +73,7 @@ CREATE TABLE `ballots` (
 
 LOCK TABLES `ballots` WRITE;
 /*!40000 ALTER TABLE `ballots` DISABLE KEYS */;
-INSERT INTO `ballots` VALUES ('NY-HOUSE-NY-7803','NY-HOUSE-NY-CON-2-1763','NY-7803','inactive'),('US-PRESIDENT-NY-7803','US-PRESIDENT-US-PRED-6258','NY-7803','active');
+INSERT INTO `ballots` VALUES ('IA-HOUSE-IA-6591','IA-HOUSE-IA-CON-9-8161','IA-6591','active'),('NY-HOUSE-NY-7803','NY-HOUSE-NY-CON-2-1763','NY-7803','inactive'),('US-PRESIDENT-IA-6591','US-PRESIDENT-US-PRED-6258','IA-6591','active'),('US-PRESIDENT-NY-7803','US-PRESIDENT-US-PRED-6258','NY-7803','active');
 /*!40000 ALTER TABLE `ballots` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,7 +128,7 @@ CREATE TABLE `candidates` (
 
 LOCK TABLES `candidates` WRITE;
 /*!40000 ALTER TABLE `candidates` DISABLE KEYS */;
-INSERT INTO `candidates` VALUES ('New York City-NY-1415','Amy','Thompson','1982-02-04','New York City-Bronx-NY'),('New York City-NY-5069','Paul','Brown','1973-12-14','New York City-Bronx-NY');
+INSERT INTO `candidates` VALUES ('Coralville-IA-9613','Babel','Smith','1988-10-12','Coralville-Johnson-IA'),('New York City-NY-1415','Amy','Thompson','1982-02-04','New York City-Bronx-NY'),('New York City-NY-5069','Paul','Brown','1973-12-14','New York City-Bronx-NY');
 /*!40000 ALTER TABLE `candidates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -496,7 +215,7 @@ CREATE TABLE `elections` (
 
 LOCK TABLES `elections` WRITE;
 /*!40000 ALTER TABLE `elections` DISABLE KEYS */;
-INSERT INTO `elections` VALUES ('IA-2024','Iowa State Election of 2024','2024-11-05 06:00:00','2024-11-05 23:00:00','inactive'),('NY-2024','New York State Election of 2024','2024-11-05 06:00:00','2024-11-05 23:00:00','inactive'),('US-2024','United State Presidential Election of 2024','2024-11-03 06:00:00','2024-11-03 23:00:00','inactive');
+INSERT INTO `elections` VALUES ('IA-2024','Iowa State Election of 2024','2024-11-05 06:00:00','2024-11-05 23:00:00','inactive'),('NY-2024','New York State Election of 2024','2024-11-05 06:00:00','2024-11-05 23:00:00','inactive'),('US-2024','United State Presidential Election of 2024','2024-11-03 06:00:00','2024-11-03 23:00:00','inactive'),('US-2025','Election 2025','2023-12-28 10:04:00','2023-12-28 22:04:00','active');
 /*!40000 ALTER TABLE `elections` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -526,7 +245,7 @@ CREATE TABLE `geography` (
 
 LOCK TABLES `geography` WRITE;
 /*!40000 ALTER TABLE `geography` DISABLE KEYS */;
-INSERT INTO `geography` VALUES ('New York City-Bronx-NY','10002-1926','New York City','Bronx','NY');
+INSERT INTO `geography` VALUES ('Coralville-Johnson-IA','52317-2484','Coralville','Johnson','IA'),('New York City-Bronx-NY','10002-1926','New York City','Bronx','NY'),('New York City-Kings-NY','10001-4148','New York City','Kings','NY');
 /*!40000 ALTER TABLE `geography` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -590,7 +309,7 @@ CREATE TABLE `officials` (
 
 LOCK TABLES `officials` WRITE;
 /*!40000 ALTER TABLE `officials` DISABLE KEYS */;
-INSERT INTO `officials` VALUES ('BROWN-NY-HOUSE-NY-CON-2-1763','NY-HOUSE-NY-CON-2-1763','New York City-NY-5069','running'),('BROWN-US-PRESIDENT-US-PRED-6258','US-PRESIDENT-US-PRED-6258','New York City-NY-5069','running'),('THOMPSON-NY-HOUSE-NY-CON-2-1763','NY-HOUSE-NY-CON-2-1763','New York City-NY-1415','running'),('THOMPSON-US-PRESIDENT-US-PRED-6258','US-PRESIDENT-US-PRED-6258','New York City-NY-1415','running');
+INSERT INTO `officials` VALUES ('BROWN-NY-HOUSE-NY-CON-2-1763','NY-HOUSE-NY-CON-2-1763','New York City-NY-5069','running'),('BROWN-US-PRESIDENT-US-PRED-6258','US-PRESIDENT-US-PRED-6258','New York City-NY-5069','running'),('SMITH-IA-HOUSE-IA-CON-9-8161','IA-HOUSE-IA-CON-9-8161','Coralville-IA-9613','running'),('SMITH-IA-SENATE-IA-SEN-3-9373','IA-SENATE-IA-SEN-3-9373','Coralville-IA-9613','running'),('SMITH-US-PRESIDENT-US-PRED-6258','US-PRESIDENT-US-PRED-6258','Coralville-IA-9613','running'),('THOMPSON-NY-HOUSE-NY-CON-2-1763','NY-HOUSE-NY-CON-2-1763','New York City-NY-1415','running'),('THOMPSON-US-PRESIDENT-US-PRED-6258','US-PRESIDENT-US-PRED-6258','New York City-NY-1415','running');
 /*!40000 ALTER TABLE `officials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -623,7 +342,7 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-INSERT INTO `precincts` VALUES ('NY-7803',_binary 'ï¿½aï¿½Æªwï¿½\ï¿','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
+INSERT INTO `precincts` VALUES ('IA-6591',_binary 'ï¿½ï¿½H9ï¿½4ï¿½','1212 Lamp Avenue, Iowa City, IA 52240','Coralville-Johnson-IA','IA-2'),('NY-7803',_binary 'ï¿½aï¿½Æªwï¿½\ï¿','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -659,7 +378,7 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
-INSERT INTO `races` VALUES ('NY-HOUSE-NY-CON-2-1763','NY-HOUSE','New York State Assembly of 2024','2024-2028',2,'NY-CON-2','NY-2024'),('US-PRESIDENT-US-PRED-6258','US-PRESIDENT','United State President of 2024','2024-2028',2,'US-PRED','US-2024');
+INSERT INTO `races` VALUES ('IA-HOUSE-IA-CON-9-8161','IA-HOUSE','Iowa Representatives Election of 2024, Seat 9','2024-2028',1,'IA-CON-9','IA-2024'),('IA-SENATE-IA-SEN-3-9373','IA-SENATE','Iowa Senate Election of 2024, Seat 3','2024-2028',1,'IA-SEN-3','IA-2024'),('NY-HOUSE-NY-CON-2-1763','NY-HOUSE','New York State Assembly of 2024','2024-2028',2,'NY-CON-2','NY-2024'),('US-PRESIDENT-US-PRED-6258','US-PRESIDENT','United State President of 2024','2024-2028',3,'US-PRED','US-2024');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -699,7 +418,7 @@ CREATE TABLE `voters` (
 
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
-INSERT INTO `voters` VALUES (_binary 'î˜¥°jº¤\Í\Ø^\Ó“','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','approved',3,'0','dadwa1231','10002-1926','New York City');
+INSERT INTO `voters` VALUES (_binary 'î˜¥°jº¤\Í\Ø^\Ó“','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','declined',3,'0','dadwa1231','10002-1926','New York City'),(_binary '\î™+e8\Äw¤\Í\Ø^\Ó“','James','To','Hogward','5623 Covered Bridge','james.hogward@gmail.com','$2b$12$1cfq99cbEwwSf3cyFjV5sO2vxRIE3jo9B32JJmyE/i1w054Tj0UX2','1999-07-03','v34cq2dw','approved',0,'Iowa City','cawdwa42','52317-2484','Coralville'),(_binary '\î™f\×ô†—¤\Í\Ø^\Ó“','James','Don','Baston','1234 Jalapeno Avenue','james.baston@yahoo.com','$2b$12$cNIb5Obi56gGhs0lRT5.mOUxIq7jVpoO.2YqOCU/gOzp2hmBXkrtS','1999-04-12','4523rfsd','approved',2,'Papaya','dfw24wd','10001-4148','New York City'),(_binary '\î™iø„\ä¤\Í\Ø^\Ó“','Halo','Van','Baston','1212 Covered Street','halo.baston@gmail.com','$2b$12$8osXbsYE3m7JcHWGTDNt3O84HyjbaBlsqw6tpK/FTseMucfaDfisG','1980-07-11','dq2eqe2','approved',3,'1','2qeq3234q','52241-4544','Coralville');
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -724,7 +443,7 @@ CREATE TABLE `zips` (
 
 LOCK TABLES `zips` WRITE;
 /*!40000 ALTER TABLE `zips` DISABLE KEYS */;
-INSERT INTO `zips` VALUES ('10002-1926','New York City','NY');
+INSERT INTO `zips` VALUES ('10001-4148','New York City','NY'),('10002-1926','New York City','NY'),('52241-4544','Coralville','IA'),('52317-2484','Coralville','IA');
 /*!40000 ALTER TABLE `zips` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1668,4 +1387,289 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-11 23:42:47
+-- Dump completed on 2023-12-12 23:09:38
+CREATE DATABASE  IF NOT EXISTS `test_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `test_db`;
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: test_db
+-- ------------------------------------------------------
+-- Server version	8.0.34
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `voters`
+--
+
+DROP TABLE IF EXISTS `voters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `voters` (
+  `id` binary(16) DEFAULT (uuid_to_bin(uuid(),1)),
+  `first_name` varchar(60) DEFAULT NULL,
+  `middle_name` varchar(60) DEFAULT NULL,
+  `last_name` varchar(60) DEFAULT NULL,
+  `street_address` text,
+  `email` varchar(255) DEFAULT NULL,
+  `password` text,
+  `dob` date DEFAULT NULL,
+  `drivers_license` text,
+  `approval_status` enum('pending','approved','declined') DEFAULT 'pending',
+  `question_index` int DEFAULT NULL,
+  `question_answer` text,
+  `passport` text,
+  `zip_code` varchar(10) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  KEY `zip_code` (`zip_code`,`city`),
+  CONSTRAINT `voters_ibfk_1` FOREIGN KEY (`zip_code`, `city`) REFERENCES `zips` (`zip_code`, `city`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `voters`
+--
+
+LOCK TABLES `voters` WRITE;
+/*!40000 ALTER TABLE `voters` DISABLE KEYS */;
+/*!40000 ALTER TABLE `voters` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `zips`
+--
+
+DROP TABLE IF EXISTS `zips`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `zips` (
+  `zip_code` varchar(10) NOT NULL,
+  `city` varchar(255) NOT NULL,
+  `state` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`zip_code`,`city`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `zips`
+--
+
+LOCK TABLES `zips` WRITE;
+/*!40000 ALTER TABLE `zips` DISABLE KEYS */;
+/*!40000 ALTER TABLE `zips` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'test_db'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `check_voter` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_voter`(in input_email varchar(255))
+begin
+	declare voter_select int;
+    
+    select COUNT(*) into voter_select from voters where email = input_email;
+	
+    if voter_select = 1 then
+		SELECT * from voters where email = input_email;
+	end if;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_voter` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_voter`(in input_first_name varchar(60), in input_middle_name varchar(60), in input_last_name varchar(60), in input_street_address text, in input_zip_code varchar(10), in input_city varchar(255), in input_state varchar(2),  in input_email varchar(255), in input_password text, in input_dob date, in input_drivers_license text,  in input_question_index int, in input_question_answer text, in input_passport text)
+begin
+	call create_zip(input_zip_code, input_city, input_state);
+	insert into voters(first_name, middle_name, last_name, street_address, email, password, dob, drivers_license, question_index, question_answer, passport, zip_code, city)  values (input_first_name, input_middle_name, input_last_name, input_street_address, input_email, input_password, input_dob, input_drivers_license, input_question_index, input_question_answer, input_passport, input_zip_code, input_city);
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_zip` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_zip`(in input_zip varchar(10), in input_city varchar(255), in input_state varchar(2))
+begin
+	insert ignore into zips (zip_code, city, state) values (input_zip, input_city, input_state);
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_from_table` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_from_table`(
+ IN table_name VARCHAR(255),
+ IN where_clause TEXT
+)
+BEGIN
+    SET @delete_from_table_sql = CONCAT('DELETE FROM ', table_name, ' WHERE ', where_clause,';');
+    PREPARE delete_from_table_with_where_stmt FROM @delete_from_table_sql;
+    EXECUTE delete_from_table_with_where_stmt;
+    DEALLOCATE PREPARE delete_from_table_with_where_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insert_into_table` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_into_table`(
+    IN table_name VARCHAR(255),
+    IN insert_proto TEXT,
+    IN insert_values TEXT
+)
+BEGIN
+    SET @insert_values_sql = CONCAT('INSERT INTO ', table_name, ' ', insert_proto ,' VALUES ', insert_values, ';');
+    PREPARE insert_values_stmt FROM @insert_values_sql;
+    EXECUTE insert_values_stmt;
+    DEALLOCATE PREPARE insert_values_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `select_all_from_table` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `select_all_from_table`(
+ IN table_name VARCHAR(255)
+)
+BEGIN
+    SET @select_all_from_table_sql = CONCAT('SELECT * FROM ', table_name, ';');
+    PREPARE select_all_from_table_stmt FROM @select_all_from_table_sql;
+    EXECUTE select_all_from_table_stmt;
+    DEALLOCATE PREPARE select_all_from_table_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `select_all_from_table_with_where` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `select_all_from_table_with_where`(
+ IN table_name VARCHAR(255),
+ IN where_clause TEXT
+)
+BEGIN
+    SET @select_all_from_table_with_where_sql = CONCAT('SELECT * FROM ', table_name, ' WHERE ', where_clause,';');
+    PREPARE select_all_from_table_with_where_stmt FROM @select_all_from_table_with_where_sql;
+    EXECUTE select_all_from_table_with_where_stmt;
+    DEALLOCATE PREPARE select_all_from_table_with_where_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_table` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_table`(
+ IN table_name VARCHAR(255),
+ IN set_clause text,
+ IN where_clause TEXT
+)
+BEGIN
+    SET @update_table_sql = CONCAT('UPDATE ', table_name,' SET ',set_clause,' WHERE ', where_clause,';');
+    PREPARE update_table_stmt FROM @update_table_sql;
+    EXECUTE update_table_stmt;
+    DEALLOCATE PREPARE update_table_stmt;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-12-12 23:09:38
