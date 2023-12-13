@@ -37,9 +37,10 @@ export default function SearchPanel() {
 
   //Sets of initial values
   const initialValues = {
-    name: "",
+    firstName: "",
+    lastName: "",
     zip: "",
-    stationID: "",
+    precinctID: "",
   };
 
   //Input listener
@@ -53,13 +54,20 @@ export default function SearchPanel() {
   };
 
   //Search button listener
-  const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>();
+  const [receivedApprovedList, setApprovedList] = React.useState<Array<any>>(
+    []
+  );
   const [isInvalidSearch, setInvalidSearch] = React.useState(false);
   const handleSearch = async () => {
     let isFilled = false;
 
     //Check if there is at least one field filled in
-    if (inputValue.name || inputValue.stationID || inputValue.zip) {
+    if (
+      inputValue.firstName ||
+      inputValue.lastName ||
+      inputValue.precinctID ||
+      inputValue.zip
+    ) {
       isFilled = true;
       setInvalidSearch(false);
     } else {
@@ -76,15 +84,20 @@ export default function SearchPanel() {
         },
         mode: "cors",
         body: JSON.stringify({
-          name: inputValue.name,
+          firstName: inputValue.firstName,
+          lastName: inputValue.lastName,
           zip: inputValue.zip,
-          stationID: inputValue.stationID,
+          precinctID: inputValue.precinctID,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
-          var jsonList = DecomposeJSONObject(data);
-          setApprovedList(jsonList.pop());
+          console.log(data);
+          if (data === "False") {
+            setApprovedList([]);
+          } else {
+            setApprovedList(data);
+          }
         });
     } else {
       setApprovedList([]);
@@ -116,13 +129,26 @@ export default function SearchPanel() {
             <Stack direction="column">
               <Stack direction="row" align="baseline">
                 <Text fontSize="md" width="100px">
-                  Name:
+                  First name:
                 </Text>
                 <Input
-                  name="name"
-                  data-testid="name"
+                  name="firstName"
+                  data-testid="firstName"
                   onChange={handleInput}
-                  value={inputValue.name}
+                  value={inputValue.firstName}
+                  variant="filled"
+                  background="gray.200"
+                ></Input>
+              </Stack>
+              <Stack direction="row" align="baseline">
+                <Text fontSize="md" width="100px">
+                  Last name:
+                </Text>
+                <Input
+                  name="lastName"
+                  data-testid="lastName"
+                  onChange={handleInput}
+                  value={inputValue.lastName}
                   variant="filled"
                   background="gray.200"
                 ></Input>
@@ -142,13 +168,13 @@ export default function SearchPanel() {
               </Stack>
               <Stack direction="row" align="baseline">
                 <Text fontSize="md" width="100px">
-                  Station ID:
+                  Precinct ID:
                 </Text>
                 <Input
-                  name="stationID"
-                  data-testid="stationID"
+                  name="precinctID"
+                  data-testid="precinctID"
                   onChange={handleInput}
-                  value={inputValue.stationID}
+                  value={inputValue.precinctID}
                   variant="filled"
                   mb={3}
                   background="gray.200"
@@ -192,62 +218,45 @@ export default function SearchPanel() {
   );
 
   //Helper function to create each accordion box
-  function CreateAccordionItem(jsonList: any[]) {
-    const userDetails = jsonList?.map((user, index) => {
-      return (
-        <AccordionItem data-testid="accordion" width="container.md" key={index}>
-          <h2>
-            <AccordionButton>
-              <Box as="span" flex="1" textAlign="left">
-                User #{user.userID}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4} width="100%">
-            <Stack direction="row" justifyContent="flex-end">
-              <List marginRight="auto">
-                <ListItem>
-                  Name:{" "}
-                  {user.firstName + " " + user.middleName + " " + user.lastName}
-                </ListItem>
-                <ListItem>
-                  Address:{" "}
-                  {user.street +
-                    ", " +
-                    user.city +
-                    ", " +
-                    user.state +
-                    " " +
-                    user.zip}
-                </ListItem>
-                <ListItem>Driver License ID: {user.driverID}</ListItem>
-                <ListItem>
-                  Current status: <b>{user.approvalStatus.toUpperCase()}</b>
-                </ListItem>
-              </List>
-            </Stack>
-          </AccordionPanel>
-        </AccordionItem>
-      );
-    });
+  function CreateAccordionItem(listToShown: any[]) {
+    const userDetails =
+      Array.isArray(listToShown) &&
+      listToShown?.map((user, index) => {
+        return (
+          <AccordionItem
+            data-testid="accordion"
+            width="container.md"
+            key={index}
+          >
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex="1" textAlign="left">
+                  User #{user[10]}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4} width="100%">
+              <Stack direction="row" justifyContent="flex-end">
+                <List marginRight="auto">
+                  <ListItem>
+                    Full name: {user[0] + " " + user[1] + " " + user[2]}
+                  </ListItem>
+                  <ListItem>Date of Birth: {user[3]}</ListItem>
+                  <ListItem>
+                    Address:{" "}
+                    {user[4] + ", " + user[5] + ", " + user[6] + " " + user[7]}
+                  </ListItem>
+                  <ListItem>Driver License ID: {user[8]}</ListItem>
+                  <ListItem>
+                    Current status: <b>{user[9].toUpperCase()}</b>
+                  </ListItem>
+                </List>
+              </Stack>
+            </AccordionPanel>
+          </AccordionItem>
+        );
+      });
     return userDetails;
   }
-}
-
-function DecomposeJSONObject(allJson: JSON) {
-  var approvedList: any[] = [];
-  var jsonList: any[] = [];
-
-  Object.keys(allJson).forEach((key) => {
-    jsonList.push(allJson[key as keyof JSON]);
-  });
-
-  jsonList.forEach((user) => {
-    approvedList.push(user);
-  });
-
-  jsonList = [];
-  jsonList.push(approvedList);
-  return jsonList;
 }

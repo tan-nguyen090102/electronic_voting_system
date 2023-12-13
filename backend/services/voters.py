@@ -1,9 +1,10 @@
 import random
 import uuid
+from email.mime.text import MIMEText
+
+from config.config import config
 from database.database_functions import execute_stored_proc
 from dependencies import email_server
-from config.config import config
-from email.mime.text import MIMEText
 
 
 def create_voter(db, bcrypt, voter):
@@ -115,6 +116,66 @@ def get_candidates_voter(database, race_id):
     )
     if all_candidates is not None:
         return all_candidates
+    else:
+        return "False"
+
+
+def get_all_voter_search(database, criteria):
+    first_name = criteria["firstName"]
+    if len(first_name) == 0:
+        first_name = ""
+
+    last_name = criteria["lastName"]
+    if len(last_name) == 0:
+        last_name = ""
+
+    zip = criteria["zip"]
+    if len(zip) == 0:
+        zip = ""
+
+    precinct_id = criteria["precinctID"]
+    if len(precinct_id) == 0:
+        precinct_id = ""
+
+    # Check criteria
+    get_voter = execute_stored_proc(
+        database,
+        "select_some_from_table_with_join_where",
+        (
+            "voters",
+            "geography",
+            "first_name, middle_name, last_name, dob, street_address, b.city, state, b.zip_code, drivers_license, approval_status, id, precinct_id",
+            "b.zip_code = t.zip INNER JOIN precincts p ON p.geography_id = t.geography_id",
+            "(first_name = '"
+            + first_name
+            + "' OR '"
+            + first_name
+            + "' = '') AND (last_name = '"
+            + last_name
+            + "' OR '"
+            + last_name
+            + "' = '') AND (zip_code = '"
+            + zip
+            + "' OR '"
+            + zip
+            + "' = '') AND (precinct_id = '"
+            + precinct_id
+            + "' OR '"
+            + precinct_id
+            + "' = '')",
+        ),
+    )
+
+    if get_voter is not None:
+        list_of_voter = []
+
+        for voter in get_voter:
+            voter = list(voter)
+            voter[3] = voter[3].strftime("%m-%d-%Y")
+            voter[10] = str(uuid.UUID(int=int.from_bytes(voter[10], "big")))
+            list_of_voter.append(voter)
+
+        return list_of_voter
     else:
         return "False"
 
