@@ -3,7 +3,12 @@ import json
 from dependencies import db
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
-from services.ballots import create_ballot, delete_ballot, get_all_ballots
+from services.ballots import (
+    create_ballot,
+    delete_ballot,
+    get_all_ballots,
+    update_ballot,
+)
 from services.precincts import get_all_precincts
 from services.races import get_all_races
 
@@ -46,5 +51,22 @@ def ballots_add(database=db):
             return jsonify("true")
         elif response == 400:
             return jsonify("Ballot already exists.")
+        else:
+            return jsonify("Server Error")
+
+
+@ballot_bp.route("/ballot_manager/activate", methods=["POST"])
+@cross_origin()
+def ballots_activate(database=db):
+    if request.method == "POST":
+        json_object = request.json
+        response = update_ballot(database, json_object["electionID"])
+
+        if response == 200:
+            return jsonify("true")
+        elif response == 400:
+            return jsonify("Cannot activate ballot.")
+        elif response == 404:
+            return jsonify("Electoral race not found.")
         else:
             return jsonify("Server Error")

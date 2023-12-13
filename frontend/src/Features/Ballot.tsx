@@ -20,20 +20,62 @@ import {
   AlertDialogFooter,
   Wrap,
   Text,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
+  RadioGroup,
+  Stack,
+  Radio,
+  Box,
 } from "@chakra-ui/react";
 import NavBar, { ListNavigationBarVoter } from "./NavBar";
 import React from "react";
 
-interface AlertProps {
+interface AlertRaceProps {
   isOpen: any;
   onClose: any;
   race: any;
   index: number;
 }
 
+interface AlertVoteProps {
+  isOpen: any;
+  onClose: any;
+  race: any;
+  choice: any[];
+  handleVote: any;
+}
+
+interface AlertSummaryProps {
+  isOpen: any;
+  onClose: any;
+  race: any;
+  index: number;
+  choiceList: any[];
+  isNoChoice: boolean;
+}
+
+interface ModalProps {
+  user: any;
+  precinct: any;
+  isLaunched: boolean;
+  isOpen: any;
+  onClose: any;
+  race: any;
+  listofCandidates: any[];
+  handleRefreshList: any;
+  setNoChoice: any;
+}
+
 export default function BallotPage() {
   //Adding box
   const alertBox = useDisclosure();
+  const alertSummaryBox = useDisclosure();
+  const modalBox = useDisclosure();
 
   //Change web title
   useEffect(() => {
@@ -49,9 +91,11 @@ export default function BallotPage() {
   const [receivedCandidateList, setCandidateList] = React.useState<Array<any>>(
     []
   );
+  const [receivedChoiceList, setChoiceList] = React.useState<Array<any>>([]);
   const [currentRace, setCurrentRace] = React.useState<any>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isNothingMessage, setNothingMessage] = React.useState(false);
+  const [isNoChoiceMessage, setNoChoiceMessage] = React.useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:5000/voters/ballot_voter`, {
@@ -67,26 +111,32 @@ export default function BallotPage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data === "False") {
           setPrecinct("");
           setRaceList([]);
           setCandidateList([]);
+          setChoiceList([]);
           handlePointer([], -1);
           setNothingMessage(true);
         } else {
           setPrecinct(data[0]);
           setRaceList(data[1]);
           setCandidateList(data[2]);
+          setChoiceList(data[3]);
           handlePointer(data[1], 0);
-          if (data[1].length === 0) {
+          if (Array.isArray(data[1]) && data[1].length === 0) {
             setNothingMessage(true);
           } else {
             setNothingMessage(false);
           }
+          if (Array.isArray(data[1]) && data[3] === "False") {
+            setNoChoiceMessage(true);
+          } else {
+            setNoChoiceMessage(false);
+          }
         }
       });
-  }, []);
+  }, [user]);
 
   //Pointer to current item
   const handlePointer = (race: any, index: number) => {
@@ -94,8 +144,42 @@ export default function BallotPage() {
     setCurrentIndex(index);
   };
 
-  //Vote button listeners
-  const handleVote = () => {};
+  //Refresh from adding box listener
+  const handleRefreshList = () => {
+    fetch(`http://localhost:5000/voters/ballot_voter`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        email: user,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === "False") {
+          setPrecinct("");
+          setRaceList([]);
+          setCandidateList([]);
+          setChoiceList([]);
+          handlePointer([], -1);
+          setNothingMessage(true);
+        } else {
+          setPrecinct(data[0]);
+          setRaceList(data[1]);
+          setCandidateList(data[2]);
+          setChoiceList(data[3]);
+          handlePointer(data[1], 0);
+          if (Array.isArray(data[1]) && data[1].length === 0) {
+            setNothingMessage(true);
+          } else {
+            setNothingMessage(false);
+          }
+        }
+      });
+  };
 
   //DOM
   return (
@@ -140,6 +224,39 @@ export default function BallotPage() {
           >
             {CreateRaceCards(receivedRaceList)}
           </SimpleGrid>
+          <CreateModalBox
+            user={user}
+            precinct={receivedPrecinct}
+            isOpen={modalBox.isOpen}
+            onClose={modalBox.onClose}
+            isLaunched={modalBox.isOpen}
+            race={Array.isArray(currentRace) ? currentRace : []}
+            listofCandidates={
+              Array.isArray(receivedCandidateList)
+                ? receivedCandidateList[currentIndex]
+                : []
+            }
+            handleRefreshList={handleRefreshList}
+            setNoChoice={setNoChoiceMessage}
+          ></CreateModalBox>
+          <Button
+            data-testid="summaryButton"
+            bg="green.400"
+            mt={6}
+            onClick={() => {
+              alertSummaryBox.onOpen();
+            }}
+          >
+            Summary
+          </Button>
+          <CreateAlertSummaryBox
+            isOpen={alertSummaryBox.isOpen}
+            onClose={alertSummaryBox.onClose}
+            race={currentRace}
+            index={currentIndex}
+            choiceList={receivedChoiceList}
+            isNoChoice={isNoChoiceMessage}
+          ></CreateAlertSummaryBox>
           <Text fontSize="xs" mt={6}>
             Voting System
           </Text>
@@ -150,37 +267,59 @@ export default function BallotPage() {
 
   //Helper function to create electoral race cards
   function CreateRaceCards(listToShown: any[]) {
-    const raceList = listToShown.map((race, index) => {
-      return (
-        <Card key={index} direction="column">
-          <CardHeader height="60px">
-            <Heading size="md">{race[2]}</Heading>
-          </CardHeader>
-          <CardBody style={{ position: "relative" }}>
-            <List key={index}>
-              {CreateCandidateList(receivedCandidateList[index])}
-            </List>
-          </CardBody>
-          <CardFooter>
-            <Button
-              bg="teal.400"
-              onClick={() => {
-                handlePointer(race, index);
-                race[6] === "inactive" ? alertBox.onOpen() : handleVote();
-              }}
-            >
-              {race[6] === "inactive" ? "View" : "Vote"}
-            </Button>
-            <CreateAlertBox
-              isOpen={alertBox.isOpen}
-              onClose={alertBox.onClose}
-              race={currentRace}
-              index={currentIndex}
-            ></CreateAlertBox>
-          </CardFooter>
-        </Card>
-      );
-    });
+    const raceList =
+      Array.isArray(listToShown) &&
+      listToShown.map((race, index) => {
+        let isDisable = false;
+
+        //Find the race in the choice list
+        try {
+          receivedChoiceList.forEach((choice) => {
+            if (choice[1] === race[0]) {
+              isDisable = true;
+              throw new Error("Break");
+            } else {
+              isDisable = false;
+            }
+          });
+        } catch (error) {}
+
+        return (
+          <Card key={index} direction="column" width="250px">
+            <CardHeader height="auto">
+              <Heading size="md">{race[2]}</Heading>
+            </CardHeader>
+            <CardBody style={{ position: "relative" }}>
+              <List key={index}>
+                {CreateCandidateList(receivedCandidateList[index])}
+              </List>
+            </CardBody>
+            <CardFooter>
+              <Button
+                bg={
+                  (race[6] === "inactive") !== isDisable
+                    ? "teal.400"
+                    : "orange.400"
+                }
+                onClick={() => {
+                  handlePointer(race, index);
+                  (race[6] === "inactive") !== isDisable
+                    ? alertBox.onOpen()
+                    : modalBox.onOpen();
+                }}
+              >
+                {(race[6] === "inactive") !== isDisable ? "View" : "Vote"}
+              </Button>
+              <CreateAlertRaceBox
+                isOpen={alertBox.isOpen}
+                onClose={alertBox.onClose}
+                race={currentRace}
+                index={currentIndex}
+              ></CreateAlertRaceBox>
+            </CardFooter>
+          </Card>
+        );
+      });
     return raceList;
   }
 
@@ -191,7 +330,7 @@ export default function BallotPage() {
         return (
           <ListItem key={index}>
             {candidate.length === 0
-              ? "There is nothing"
+              ? "There is no candidate for this race."
               : candidate[1] + " " + candidate[2]}
           </ListItem>
         );
@@ -201,8 +340,8 @@ export default function BallotPage() {
   }
 }
 
-//Alert box for deleting precinct
-export function CreateAlertBox(props: AlertProps) {
+//Alert box for race
+export function CreateAlertRaceBox(props: AlertRaceProps) {
   const cancelRef = React.useRef(null);
   return (
     <AlertDialog
@@ -226,6 +365,253 @@ export function CreateAlertBox(props: AlertProps) {
             </List>
           </AlertDialogBody>
           <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={props.onClose} ml={3}>
+              Cancel
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+}
+
+//Alert box for summary
+export function CreateAlertSummaryBox(props: AlertSummaryProps) {
+  const cancelRef = React.useRef(null);
+  return (
+    <AlertDialog
+      isOpen={props.isOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={props.onClose}
+      size="3x1"
+    >
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Summary of your ballot
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <List marginRight="auto" mt={3}>
+              {CreateSummaryList(props.choiceList)}
+            </List>
+            {props.isNoChoice && (
+              <Text data-testid="unfilledFields" mb={3} fontSize="2xl">
+                You have not selected any candidate for any electoral race.
+              </Text>
+            )}
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              ref={cancelRef}
+              data-testid="closeButton"
+              onClick={props.onClose}
+              ml={3}
+              bg="red.400"
+            >
+              Close
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  );
+
+  function CreateSummaryList(listToShown: any[]) {
+    const summaryDetails =
+      Array.isArray(listToShown) &&
+      listToShown.map((choice, index) => {
+        return (
+          <ListItem key={index}>
+            <Box
+              border="2px"
+              borderRadius="5px"
+              alignItems="baseline"
+              mb={1}
+              w="100%"
+            >
+              <Stack
+                direction="row"
+                alignItems="baseline"
+                justifyContent="space-between"
+              >
+                <Text ml={3} fontSize="lg">
+                  {choice[7]}
+                </Text>
+                <Text ml={3} mr={3} fontSize="lg">
+                  {choice[5] + " " + choice[6]}
+                </Text>
+              </Stack>
+            </Box>
+          </ListItem>
+        );
+      });
+
+    return summaryDetails;
+  }
+}
+
+//Modal box for voting
+export function CreateModalBox(props: ModalProps) {
+  //Toast
+  const addToast = useToast();
+
+  //Alert box
+  const alertVoteBox = useDisclosure();
+
+  //Choice listener
+  const [radioValue, setRadioValue] = React.useState("");
+  const [candidateChoice, setCadidateChoice] = React.useState("");
+  const handleVote = async () => {
+    //Fetch the backend to send the data
+    await fetch(`http://localhost:5000/voters/ballot_voter/vote`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        email: props.user,
+        raceID: props.race[0],
+        precinctID: props.precinct[0],
+        candidateID: radioValue,
+      }),
+    });
+
+    //Call from the top DOM
+    props.onClose();
+    props.handleRefreshList();
+    props.setNoChoice(false);
+
+    //Adding toast
+    addToast({
+      title: "You have voted!",
+      description: `You have choose ${candidateChoice} for the next official of ${props.race[2]}`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  //Box DOM
+  return (
+    <Modal
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      closeOnOverlayClick={false}
+      motionPreset="slideInBottom"
+    >
+      <ModalOverlay></ModalOverlay>
+      <ModalContent>
+        <ModalHeader>Vote For {props.race[2]}</ModalHeader>
+        <ModalBody>
+          <RadioGroup>
+            <Stack direction="column">
+              {CreateRadioList(props.listofCandidates)}
+            </Stack>
+          </RadioGroup>
+          <ModalFooter>
+            <Button
+              data-testid="voteButton"
+              colorScheme="teal"
+              onClick={
+                radioValue === ""
+                  ? () =>
+                      addToast({
+                        title: "You have not chosen yet!",
+                        status: "error",
+                        position: "top",
+                        duration: 3000,
+                        isClosable: true,
+                      })
+                  : () => alertVoteBox.onOpen()
+              }
+            >
+              Vote
+            </Button>
+            <Button
+              data-testid="cancelButton"
+              colorScheme="teal"
+              variant="outline"
+              onClick={() => {
+                setRadioValue("");
+                setCadidateChoice("");
+                props.onClose();
+              }}
+              ml={3}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+          <CreateAlertVoteBox
+            isOpen={alertVoteBox.isOpen}
+            onClose={alertVoteBox.onClose}
+            race={props.race}
+            choice={[radioValue, candidateChoice]}
+            handleVote={handleVote}
+          ></CreateAlertVoteBox>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+
+  function CreateRadioList(listToShown: any[]) {
+    const candidateDetails =
+      Array.isArray(listToShown) &&
+      listToShown.map((candidate, index) => {
+        return (
+          <Radio
+            key={index}
+            value={candidate[3]}
+            colorScheme="green"
+            onChange={() => {
+              setRadioValue(candidate[3]);
+              setCadidateChoice(candidate[1] + " " + candidate[2]);
+            }}
+          >
+            {candidate[1] + " " + candidate[2]}
+          </Radio>
+        );
+      });
+
+    return candidateDetails;
+  }
+}
+
+//Alert box for deleting precinct
+export function CreateAlertVoteBox(props: AlertVoteProps) {
+  const cancelRef = React.useRef(null);
+  return (
+    <AlertDialog
+      isOpen={props.isOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={props.onClose}
+    >
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Are you sure about this choice?
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <List marginRight="auto" mt={3}>
+              <ListItem>
+                Title: <b>{props.race[2]}</b>
+              </ListItem>
+              <ListItem>
+                Candidate: <b>{props.choice[1]}</b>
+              </ListItem>
+            </List>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                props.handleVote(props.choice[0]);
+                props.onClose();
+              }}
+            >
+              Vote
+            </Button>
             <Button ref={cancelRef} onClick={props.onClose} ml={3}>
               Cancel
             </Button>

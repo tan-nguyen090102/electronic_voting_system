@@ -455,7 +455,7 @@ export function CreateAddModalBox(props: ModalProps) {
           }
         });
     }
-  }, [props.isOpen]);
+  }, [props.isLaunched, props.isOpen]);
 
   //Input listener
   const [inputValue, setInputValue] = React.useState(initialValues);

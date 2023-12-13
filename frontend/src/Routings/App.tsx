@@ -15,6 +15,8 @@ import ElectionPanel from "../Features/Election";
 import BallotPage from "../Features/Ballot";
 import BallotAdminPanel from "../Features/BallotAdmin";
 import UserProfilePanel from "../Features/UserProfile";
+import BallotManagerPage from "../Features/BallotManager";
+import HomeManagerPage from "../Features/HomeManager";
 
 export default function App() {
   return (
@@ -22,6 +24,7 @@ export default function App() {
       <Routes>
         <Route path="login" element={<LoginPanel />}></Route>
         <Route path="/" element={<HomePage />}></Route>
+        <Route path="/dashboard_manager" element={<HomeManagerPage />}></Route>
         <Route path="signup" element={<SignUpPanel />}></Route>
         <Route path="/forgot_password" element={<ForgotPanel />}></Route>
         <Route
@@ -38,6 +41,7 @@ export default function App() {
         <Route path="/ballot_admin" element={<BallotAdminPanel />}></Route>
         <Route path="/ballot_voter" element={<BallotPage />}></Route>
         <Route path="/user_profile" element={<UserProfilePanel />}></Route>
+        <Route path="/ballot_manager" element={<BallotManagerPage />}></Route>
       </Routes>
     </>
   );
