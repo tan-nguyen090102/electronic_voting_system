@@ -335,7 +335,7 @@ export default function BallotPage() {
           to={
             "/candidate_voter" }
           state={{ user: user, candidate: candidate[3] }}
-          style={{ color: '#319795' }}
+          style={{ color: '#008080' }}
         >
             {candidate.length === 0
               ? "There is no candidate for this race."
