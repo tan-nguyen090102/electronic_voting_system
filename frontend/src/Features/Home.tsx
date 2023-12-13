@@ -50,6 +50,7 @@ export default function HomePage() {
           bg="teal.400"
           color="white"
           w="100%"
+          w="100%"
           border="2px"
           borderColor="teal"
         >
@@ -63,6 +64,7 @@ export default function HomePage() {
 >>>>>>> d9b73d4 (basic two step verification page (not functional at the moment))
           </Center>
         </Box>
+        <Stack direction="row" w="100%">
         <Stack direction="row" w="100%">
           <Container w="50px"></Container>
           <Stack direction="column">
