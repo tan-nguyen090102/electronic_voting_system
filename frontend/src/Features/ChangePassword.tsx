@@ -20,26 +20,6 @@ export default function ChangePasswordPanel() {
   const { state } = useLocation();
   const { user } = state || { user: "" };
 
-  //Backend response the password request back to the panel
-   const [receivedPassword, setPassword] = React.useState("");
-   /*useEffect(() => {
-    fetch("http://localhost:5000/change_password", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "content-type": "application/json; charset=UTF-8",
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        email: user,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPassword(data["password"]);
-      });
-  }, []); */
-
   //Input listeners
   const [inputPassword, setInputPassword] = React.useState("");
   const handleInput = (e: {
@@ -61,20 +41,13 @@ export default function ChangePasswordPanel() {
   const [isRepeatedPopUp, setRepeatedPopUp] = React.useState(false);
   const handleConfirm = async () => {
     let isMatch = false;
-    let isRepeated = false;
 
     //Check if the password met all requirements
     if (inputPassword.match("(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}")) {
       isMatch = true;
     }
 
-    //Check if the password is the same as the old one
-    /* if (inputPassword === receivedPassword) {
-      setRepeatedPopUp(true);
-      isRepeated = true;
-    } */
-
-    if (inputRetype === inputPassword && isMatch /* && !isRepeated */) {
+    if (inputRetype === inputPassword && isMatch) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       await fetch("http://localhost:5000/change_password", {
         method: "POST",
@@ -85,19 +58,19 @@ export default function ChangePasswordPanel() {
         mode: "cors",
         body: JSON.stringify({
           email: user,
-          password: inputPassword
+          password: inputPassword,
         }),
       })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "False"){
-          setRepeatedPopUp(true);
-          return
-        }
-        if (data === "True"){
-          navigate("/login");
-        }
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === "False") {
+            setRepeatedPopUp(true);
+            return;
+          }
+          if (data === "True") {
+            navigate("/login");
+          }
+        });
     }
   };
 

@@ -31,9 +31,10 @@ module.exports = {
         electionID: "IA-2024",
         officialID: "THOMPSON-IA-576",
         date: "2020-11-03",
-        startTime: "06:00",
-        endTime: "23:00",
+        startTime: "2020-11-03T06:00:00",
+        endTime: "2020-11-03T23:00:00",
         raceID: "US-SENATE-IA-SN-2",
-        precinctID: "NY-2332"
+        precinctID: "NY-2332",
+        code: "128731"
     }
 } 

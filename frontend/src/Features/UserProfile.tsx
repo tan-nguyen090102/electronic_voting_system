@@ -8,7 +8,7 @@ import {
   Stack,
   Select,
   Link,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
@@ -16,8 +16,7 @@ import NavBar from "./NavBar";
 State selection not resetting when returning to initial values
 */
 
-export default function UserProfilePanel(){
-
+export default function UserProfilePanel() {
   useEffect(() => {
     document.title = "User Profile - Voting System";
   }, []);
@@ -29,8 +28,8 @@ export default function UserProfilePanel(){
 
   const [oldEmail, setOldEmail] = React.useState("");
   const [oldZip, setOldZip] = React.useState("");
-  const [oldState, setOldState] = React.useState("")
-  const [oldCity, setOldCity] = React.useState("")
+  const [oldState, setOldState] = React.useState("");
+  const [oldCity, setOldCity] = React.useState("");
   const [userProfile, setUserProfile] = React.useState<Array<any>>([]);
   const [isEditable, setEditable] = React.useState(false);
   const [isStateChanged, setStateChanged] = React.useState(false);
@@ -48,12 +47,12 @@ export default function UserProfilePanel(){
     city: "",
     zip: "",
     email: "",
-        passport: "",
+    passport: "",
     driverID: "",
-      };
+  };
 
   const initialSelections = {
-    state: ""
+    state: "",
   };
 
   const stateOptions = (
@@ -114,7 +113,7 @@ export default function UserProfilePanel(){
     </>
   );
 
-  // Get user info from backend 
+  // Get user info from backend
   useEffect(() => {
     fetch("http://localhost:5000/user_profile", {
       method: "POST",
@@ -124,100 +123,100 @@ export default function UserProfilePanel(){
       },
       mode: "cors",
       body: JSON.stringify({
-        user: user
+        user: user,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        setUserProfile(data)
-setOldEmail(data[4])
-        setOldZip(data[7])
-        setOldState(data[9])
-        setOldCity(data[8])
-        initialValues.firstName = data[0]
-        initialValues.middleName = data[1]
-        initialValues.lastName = data[2]
-        initialValues.street = data[3]
-        initialValues.email = data[4]
-        initialValues.driverID = data[5]
-        initialValues.passport = data[6]
-        initialValues.zip = data[7].substring(0,5)
-        initialValues.city = data[8]
-        initialSelections.state = data[9]
+        if (Array.isArray(data)) {
+          setUserProfile(data);
+          setOldEmail(data[4]);
+          setOldZip(data[7]);
+          setOldState(data[9]);
+          setOldCity(data[8]);
+          initialValues.firstName = data[0];
+          initialValues.middleName = data[1];
+          initialValues.lastName = data[2];
+          initialValues.street = data[3];
+          initialValues.email = data[4];
+          initialValues.driverID = data[5];
+          initialValues.passport = data[6];
+          initialValues.zip = data[7].substring(0, 5);
+          initialValues.city = data[8];
+          initialSelections.state = data[9];
+        } else {
+          setUserProfile([]);
+          setOldEmail("");
+          setOldZip("");
+          setOldState("");
+          setOldCity("");
+        }
       });
-console.log(initialValues.email)
   }, []);
 
-  console.log(userProfile);
-
-
-        //Input listeners
+  //Input listeners
   const [inputValue, setInputValue] = React.useState(initialValues);
   const handleInput = (e: { target: { name: any; value: any } }) => {
-  const { name, value } = e.target;
-  if (name === "city"){
-    setCityChange(true)
-    setCorrect(false)
-    if (value === oldCity){
-      setCityChange(false)
-      setCorrect(true)
-    }
-  }
-  if (name === "zip"){
-    if (value !== oldZip.substring(0,5)){
-      setZipChange(true)
-      setCorrect(true)
-    }
-    else{
-      setZipChange(false)
-      if (isStateChanged === true || isCityChanged === true){
-        setCorrect(false)
+    const { name, value } = e.target;
+    if (name === "city") {
+      setCityChange(true);
+      setCorrect(false);
+      if (value === oldCity) {
+        setCityChange(false);
+        setCorrect(true);
       }
     }
-  }
-  if (name === "email"){
-    setEmailChange(true)
-    if (value === oldEmail){
-      setEmailChange(false)
+    if (name === "zip") {
+      if (value !== oldZip.substring(0, 5)) {
+        setZipChange(true);
+        setCorrect(true);
+      } else {
+        setZipChange(false);
+        if (isStateChanged === true || isCityChanged === true) {
+          setCorrect(false);
+        }
+      }
     }
-  }
-  if (value.length === 0){
-    setIsEmpty(true)
-  }
-  else{
-    setIsEmpty(false)
-  }
-  setInputValue({
-    ...inputValue,
-    [name]: value,
+    if (name === "email") {
+      setEmailChange(true);
+      if (value === oldEmail) {
+        setEmailChange(false);
+      }
+    }
+    if (value.length === 0) {
+      setIsEmpty(true);
+    } else {
+      setIsEmpty(false);
+    }
+    setInputValue({
+      ...inputValue,
+      [name]: value,
     });
-  };  
+  };
 
-    //Selection listener
+  //Selection listener
   const [inputSelection, setInputSelection] = React.useState(initialSelections);
   const handleSelection = (e: { target: { name: any; value: any } }) => {
-  const { name, value } = e.target;
-  setInputSelection({
-    ...inputSelection,
-    [name]: value,
+    const { name, value } = e.target;
+    setInputSelection({
+      ...inputSelection,
+      [name]: value,
     });
     setStateChanged(true);
-setCorrect(false);
-    if (value === oldState){
+    setCorrect(false);
+    if (value === oldState) {
       setStateChanged(false);
       setCorrect(true);
     }
   };
 
   const handleEdit = () => {
-    setEditable(true)
-  }
+    setEditable(true);
+  };
 
-const [decision, setDecision] = React.useState(false);
-  const handleSave = () =>{
+  const handleSave = () => {
     let isFilled = false;
-let isSatisfied = false;
-    console.log(initialValues.email)
+    let isSatisfied = false;
 
     if (
       inputValue.firstName &&
@@ -227,79 +226,91 @@ let isSatisfied = false;
       inputValue.city &&
       inputValue.zip &&
       inputSelection.state &&
-      inputValue.email 
+      inputValue.email
     ) {
       isFilled = true;
     }
 
-    if (isStateChanged === true){
-      if (isZipChange === true){
-      isSatisfied = true;
-      }
-      else{
+    if (isStateChanged === true) {
+      if (isZipChange === true) {
+        isSatisfied = true;
+      } else {
         isSatisfied = false;
       }
-    }
-    else{
+    } else {
       isSatisfied = true;
-      }
-      if (isFilled && isSatisfied && inputValue.email.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$") && 
-      inputValue.email.length > 0){
-        setEditable(false);
-        //Send updated user info to backend
-        fetch("http://localhost:5000/user_profile/update", {
-          method: "POST",
-          headers: {
-           Accept: "application/json",
-          "content-type": "application/json; charset=UTF-8",
-          },
-          mode: "cors",
-          body: JSON.stringify({
-            firstName: inputValue.firstName,
-            middleName: inputValue.middleName,
-            lastName: inputValue.lastName,
-            email: inputValue.email,
-            street: inputValue.street,
-            city: inputValue.city,
-            zip: isZipChange ? inputValue.zip : oldZip,
-            state: inputSelection.state,
-            oldEmail: oldEmail,
-            oldZip: oldZip,
-          }),
-        })
-      if (isEmailChanged === true){
-          navigate("/login");
-        }
-
-        addToast({
-          title: "Updated!",
-          description: `Your profile has been updated.`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });  
     }
-  }
+    if (
+      isFilled &&
+      isSatisfied &&
+      inputValue.email.match(
+        "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
+      ) &&
+      inputValue.email.length > 0
+    ) {
+      setEditable(false);
+      //Send updated user info to backend
+      fetch("http://localhost:5000/user_profile/update", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          firstName: inputValue.firstName,
+          middleName: inputValue.middleName,
+          lastName: inputValue.lastName,
+          email: inputValue.email,
+          street: inputValue.street,
+          city: inputValue.city,
+          zip: isZipChange ? inputValue.zip : oldZip,
+          state: inputSelection.state,
+          oldEmail: oldEmail,
+          oldZip: oldZip,
+        }),
+      });
+      if (isEmailChanged === true) {
+        navigate("/login");
+      }
 
-  const handleClose = () =>{
-    setEditable(false)
-setInputValue({ firstName : userProfile[0],
-    middleName : userProfile[1], 
-    lastName : userProfile[2],
-    street : userProfile[3],
-    city : userProfile[8],
-    zip : oldZip.substring(0,5),
-    email : userProfile[4],
-    driverID : userProfile[5],
-    passport : userProfile [6] })
-    setInputSelection({ state: oldState })
-  }
+      addToast({
+        title: "Updated!",
+        description: `Your profile has been updated.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
-  return( 
+  const handleClose = () => {
+    setEditable(false);
+    setInputValue({
+      firstName: userProfile[0],
+      middleName: userProfile[1],
+      lastName: userProfile[2],
+      street: userProfile[3],
+      city: userProfile[8],
+      zip: oldZip.substring(0, 5),
+      email: userProfile[4],
+      driverID: userProfile[5],
+      passport: userProfile[6],
+    });
+    setInputSelection({ state: oldState });
+  };
+
+  return (
     <div>
-        <NavBar isBlank="false" title={"User Profile"} isLoggedIn="true" userName={user} role="voter"></NavBar>
-      
-        <Flex height="auto" alignItems="left" justifyContent="center">
+      <NavBar
+        isBlank="false"
+        title={"User Profile"}
+        isLoggedIn="true"
+        userName={user}
+        role="voter"
+      ></NavBar>
+
+      <Flex height="auto" alignItems="left" justifyContent="center">
         <Flex
           width="1000px"
           alignItems="center"
@@ -308,21 +319,40 @@ setInputValue({ firstName : userProfile[0],
           p={10}
           rounded={6}
         >
-          <Flex style={{
-            display: isEditable ? "none" : "block",}}
+          <Flex
+            style={{
+              display: isEditable ? "none" : "block",
+            }}
             alignItems="left"
-            justifyContent="left">
-            <Text><b>First Name:</b> {inputValue.firstName} </Text> 
-            <Text><b>Middle Name:</b> {inputValue.middleName}  </Text>
-            <Text><b>Last Name:</b> {inputValue.lastName}  </Text>
-            <Text><b>Email:</b> {inputValue.email} </Text>
-            <b>Address:</b> {inputValue.street}, {inputValue.city}, {inputSelection.state} {inputValue.zip} 
-            <Text><b>Driver's ID:</b> {inputValue.driverID} </Text>
-            <Text><b>Passport ID:</b> {inputValue.passport} </Text>
-            </Flex>
-            <Flex style={{
-            display: isEditable ? "block" : "none",}}>
-            <Input 
+            justifyContent="left"
+          >
+            <Text>
+              <b>First Name:</b> {inputValue.firstName}{" "}
+            </Text>
+            <Text>
+              <b>Middle Name:</b> {inputValue.middleName}{" "}
+            </Text>
+            <Text>
+              <b>Last Name:</b> {inputValue.lastName}{" "}
+            </Text>
+            <Text>
+              <b>Email:</b> {inputValue.email}{" "}
+            </Text>
+            <b>Address:</b> {inputValue.street}, {inputValue.city},{" "}
+            {inputSelection.state} {inputValue.zip}
+            <Text>
+              <b>Driver's ID:</b> {inputValue.driverID}{" "}
+            </Text>
+            <Text>
+              <b>Passport ID:</b> {inputValue.passport}{" "}
+            </Text>
+          </Flex>
+          <Flex
+            style={{
+              display: isEditable ? "block" : "none",
+            }}
+          >
+            <Input
               name="firstName"
               data-testid="firstName"
               onChange={handleInput}
@@ -353,7 +383,7 @@ setInputValue({ firstName : userProfile[0],
               mb={3}
               background="gray.200"
             ></Input>
-              <Stack direction="row">
+            <Stack direction="row">
               <Input
                 name="street"
                 data-testid="street"
@@ -396,78 +426,92 @@ setInputValue({ firstName : userProfile[0],
                 mb={3}
                 background="gray.200"
               ></Input>
-              </Stack>
-              {!inputValue.zip.match("^[0-9]{0,5}$") &&
+            </Stack>
+            {!inputValue.zip.match("^[0-9]{0,5}$") &&
               inputValue.zip.length > 0 && (
                 <Text data-testid="invalidZip" color="red" mb={3}>
                   *Please enter correct zip code format (0-9)*
                 </Text>
               )}
-              <Text style={{
-              display: isCorrect ? "none" : "block",}} color="red" mb={3}>
+            <Text
+              style={{
+                display: isCorrect ? "none" : "block",
+              }}
+              color="red"
+              mb={3}
+            >
               *Please edit the ZIP code as well*
-               </Text>
-              <Stack direction="row">
-                <Input
-                  name="email"
-                  data-testid="email"
-                  width={500}
-                  onChange={handleInput}
-                  value={inputValue["email"]}
-                  placeholder="Email"
-                  variant="filled"
-                  mb={3}
-                  background="gray.200"
-                ></Input>
-                {!inputValue.email.match(
-                  "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
-                ) &&
-                  inputValue.email.length > 0 && (
-                    <Text
-                      data-testid="invalidEmail"
-                      color="red"
-                      mb={3}
-                    >
-                      *Please use correct email format*
-                    </Text>
-                  )}
-              <Text style={{
-              display: isEmailChanged ? "block" : "none",}} color="red" mb={3}>
-              *Changing your email will log you out*
-               </Text>
-              </Stack>
-              <Link href="/forgot_password" color="blue">Change Password</Link>
-              <Text style={{
-              display: isEmpty ? "block" : "none",}} color="red" mb={3}>
+            </Text>
+            <Stack direction="row">
+              <Input
+                name="email"
+                data-testid="email"
+                width={500}
+                onChange={handleInput}
+                value={inputValue["email"]}
+                placeholder="Email"
+                variant="filled"
+                mb={3}
+                background="gray.200"
+              ></Input>
+              {!inputValue.email.match(
+                "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
+              ) &&
+                inputValue.email.length > 0 && (
+                  <Text data-testid="invalidEmail" color="red" mb={3}>
+                    *Please use correct email format*
+                  </Text>
+                )}
+              <Text
+                style={{
+                  display: isEmailChanged ? "block" : "none",
+                }}
+                color="red"
+                mb={3}
+              >
+                *Changing your email will log you out*
+              </Text>
+            </Stack>
+            <Link href="/forgot_password" color="blue">
+              Change Password
+            </Link>
+            <Text
+              style={{
+                display: isEmpty ? "block" : "none",
+              }}
+              color="red"
+              mb={3}
+            >
               *Please fill out all fields*
-               </Text>
-              </Flex>
-              <Stack direction="row">
-              <Button
+            </Text>
+          </Flex>
+          <Stack direction="row">
+            <Button
               data-testid="saveButton"
               colorScheme="teal"
               width="70px"
               style={{
-              display: isEditable ? "block" : "none",}}
+                display: isEditable ? "block" : "none",
+              }}
               onClick={handleSave}
-              > Save
-              </Button>
-              <Button
+            >
+              {" "}
+              Save
+            </Button>
+            <Button
               data-testid="editButton"
               colorScheme="teal"
               width="70px"
               onClick={isEditable ? handleClose : handleEdit}
-              >
+            >
               {isEditable ? "Close" : "Edit"}
-              </Button>
-              </Stack>
-        <Text fontSize="xs" mt={6}>
-        Voting System
-        </Text>
+            </Button>
+          </Stack>
+          <Text fontSize="xs" mt={6}>
+            Voting System
+          </Text>
         </Flex>
-        </Flex>
-        </div>
-    
-      )
-  
+      </Flex>
+    </div>
+  );
 }

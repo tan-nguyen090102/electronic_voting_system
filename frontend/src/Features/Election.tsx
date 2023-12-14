@@ -102,17 +102,24 @@ export default function ElectionPanel() {
           setCopyElectionList([]);
           handlePointer([], -1);
         } else {
-          electionLists = DecomposeJSONObject(data);
-          if (electionLists[0].length === 0) {
-            setNoMatchActivePopUp(true);
+          if (Array.isArray(data)) {
+            electionLists = DecomposeJSONObject(data);
+            if (electionLists[0].length === 0) {
+              setNoMatchActivePopUp(true);
+            }
+            if (electionLists[1].length === 0) {
+              setNoMatchInactivePopUp(true);
+            }
+            setCopyElectionList(data);
+            setActiveElectionList(electionLists[0]);
+            setInactiveElectionList(electionLists[1]);
+            handlePointer(data[0], 0);
+          } else {
+            setActiveElectionList([]);
+            setInactiveElectionList([]);
+            setCopyElectionList([]);
+            handlePointer([], -1);
           }
-          if (electionLists[1].length === 0) {
-            setNoMatchInactivePopUp(true);
-          }
-          setCopyElectionList(data);
-          setActiveElectionList(electionLists[0]);
-          setInactiveElectionList(electionLists[1]);
-          handlePointer(data[0], 0);
         }
       });
 
