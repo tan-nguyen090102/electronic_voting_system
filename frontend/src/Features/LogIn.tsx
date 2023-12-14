@@ -93,6 +93,7 @@ export default function LoginPanel() {
               state: { user: inputValue.userID, isLoggedIn: "true" },
             });
           } else {
+            onOpen();
             handleSendCode("/")
           }
         } else {
@@ -107,7 +108,7 @@ export default function LoginPanel() {
     navigate("/signup");
   };
 
-   //Send link button listener
+   //Send code button listener
    const [alertMessage, setAlertMessage] = React.useState("");
    const handleSendCode = async (linkPath: string) => {
     await fetch("http://localhost:5000/forgot_password/send_code", {
@@ -126,7 +127,7 @@ export default function LoginPanel() {
           //After sucessfully send an email, proceed to verification page
           if (data[0] === "True") {
             setAlertMessage(
-              "The link has been sent. Proceeding to verification page..."
+              "The verification code has been sent. Proceeding to verification page..."
             );
             Navigate(true, data[1], linkPath);
           }
@@ -220,8 +221,7 @@ export default function LoginPanel() {
               colorScheme="teal"
               onClick={ () => { 
                 handleLogin();
-                onOpen(); }}
-              
+                 }}
             >
               Login
             </Button>
