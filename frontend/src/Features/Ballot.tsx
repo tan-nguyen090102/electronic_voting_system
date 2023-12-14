@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Heading,
   Flex,
@@ -85,6 +85,7 @@ export default function BallotPage() {
   //Receive data from other page.
   const { state } = useLocation();
   const { user } = state || { user: "" };
+  const { candidate } = state || { candidate: "" }
 
   const [receivedPrecinct, setPrecinct] = React.useState<any>();
   const [receivedRaceList, setRaceList] = React.useState<Array<any>>([]);
@@ -327,11 +328,19 @@ export default function BallotPage() {
     const candidateDetails =
       Array.isArray(listToShown) &&
       listToShown.map((candidate, index) => {
+        console.log(candidate)
         return (
           <ListItem key={index}>
+        <Link
+          to={
+            "/candidate_voter" }
+          state={{ user: user, candidate: candidate[3] }}
+          style={{ color: '#008080' }}
+        >
             {candidate.length === 0
               ? "There is no candidate for this race."
               : candidate[1] + " " + candidate[2]}
+            </Link>
           </ListItem>
         );
       });

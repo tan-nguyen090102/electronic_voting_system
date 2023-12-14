@@ -1,4 +1,5 @@
 import json
+from database.database_functions import execute_stored_proc
 
 from dependencies import db
 from flask import Blueprint, jsonify, request
@@ -46,3 +47,17 @@ def candidates_add(database=db):
             return jsonify("candidate already exists")
         else:
             return jsonify("Server Error")
+
+@candidate_bp.route("/candidate_voter", methods=["POST"])
+@cross_origin()
+def candidate_voter(database=db):
+    json_object = request.json
+    print ("hello '" + json_object["candidate"] + "'")
+    get_candidate = execute_stored_proc(database, "select_all_from_table_with_where", ("candidates", "candidate_id = '" + json_object["candidate"] + "'"))
+    candidate = get_candidate[0]
+    candidate = list(candidate)
+    print (candidate)
+    candidate[3] = candidate[3].strftime("%m-%d-%Y")
+    print (candidate)
+    return jsonify(candidate)
+

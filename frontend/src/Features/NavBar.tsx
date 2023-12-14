@@ -322,10 +322,10 @@ export function ListNavigationBarVoter(props: ListNavVoterProps) {
           height="40px"
           width="200px"
           borderRadius="0px"
-          onClick={() => handleClick(CANDIDATE_INDEX)}
-          isDisabled={props.indexClick === CANDIDATE_INDEX ? true : false}
+          onClick={() => handleClick(PRECINCT_INDEX)}
+          isDisabled={props.indexClick === PRECINCT_INDEX ? true : false}
         >
-          CANDIDATE
+          PRECINCT
         </Button>
       </Stack>
     </div>
