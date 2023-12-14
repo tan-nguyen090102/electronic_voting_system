@@ -67,17 +67,16 @@ export default function ForgotPanel() {
   const [isInvalidCredential, setInvalidCredential] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState("");
   const handleSend = async () => {
-    let isEmailGood = false
-    console.log(isSecurityPopUp)
+    let isEmailGood = false;
+
     //If the email is accepted, proceed to fetch the backend
     //Check if the email met all requirements
     if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
       isEmailGood = true;
     } else {
-
       isEmailGood = false;
     }
-    console.log(isEmailGood)
+
     if (isEmailGood && !isSecurityPopUp) {
       await fetch("http://localhost:5000/forgot_password/verify", {
         method: "POST",
@@ -92,7 +91,7 @@ export default function ForgotPanel() {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
+          console.log(data);
           if (data === "False") {
             setSecurityPopup(false);
             setInvalidCredential(true);
@@ -266,8 +265,8 @@ export default function ForgotPanel() {
               }}
             >
               <Text mb={3}>
-                <b>Verification completed</b>. For extra security, please click the button to
-                receive an email with a verification code.
+                <b>Verification completed</b>. For extra security, please click
+                the button to receive an email with a verification code.
               </Text>
               <AlertAfterCompletion></AlertAfterCompletion>
               <Button
@@ -325,7 +324,9 @@ export default function ForgotPanel() {
   async function Navigate(isNavigate: boolean, code: string) {
     await Delay(3000);
     if (isNavigate) {
-      navigate("/verification", { state: { user: inputEmail, code: code, requestedPage: "forgot" } });
+      navigate("/verification", {
+        state: { user: inputEmail, code: code, requestedPage: "forgot" },
+      });
     } else {
       window.location.reload();
     }

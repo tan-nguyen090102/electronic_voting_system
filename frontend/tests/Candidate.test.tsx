@@ -14,6 +14,14 @@ afterEach(() => {
   cleanup();
 });
 
+let spy: jest.SpyInstance;
+beforeEach(() => {
+  spy = jest.spyOn(console, "error").mockImplementation(() => null);
+});
+afterEach(() => {
+  spy.mockRestore();
+});
+
 //Mock fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({

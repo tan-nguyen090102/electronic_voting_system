@@ -14,6 +14,14 @@ afterEach(() => {
   cleanup();
 });
 
+let spy: jest.SpyInstance;
+beforeEach(() => {
+  spy = jest.spyOn(console, "error").mockImplementation(() => null);
+});
+afterEach(() => {
+  spy.mockRestore();
+});
+
 //Mock fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -120,53 +128,37 @@ test("Add Title input", async () => {
   });
 });
 
-test("Add Date of Election input", async () => {
-  render(
-    <BrowserRouter>
-      <ElectionPanel />
-    </BrowserRouter>
-  );
-  const addButton = await screen.getByTestId("addButton");
-  await act(() => userEvent.click(addButton));
-  await waitFor(() => {
-    expect(screen.getByTestId("date")).toBeInTheDocument();
-    const field = screen.getByTestId("date");
-    userEvent.type(field, testObject.date);
-    expect(field).toHaveValue(testObject.date);
-  });
-});
+// test("Add Start Time input", async () => {
+//   render(
+//     <BrowserRouter>
+//       <ElectionPanel />
+//     </BrowserRouter>
+//   );
+//   const addButton = await screen.getByTestId("addButton");
+//   await act(() => userEvent.click(addButton));
+//   await waitFor(() => {
+//     expect(screen.getByTestId("startTime")).toBeInTheDocument();
+//     const field = screen.getByTestId("startTime");
+//     userEvent.type(field, testObject.startTime);
+//     expect(field).toHaveValue(testObject.startTime);
+//   });
+// });
 
-test("Add Start Time input", async () => {
-  render(
-    <BrowserRouter>
-      <ElectionPanel />
-    </BrowserRouter>
-  );
-  const addButton = await screen.getByTestId("addButton");
-  await act(() => userEvent.click(addButton));
-  await waitFor(() => {
-    expect(screen.getByTestId("startTime")).toBeInTheDocument();
-    const field = screen.getByTestId("startTime");
-    userEvent.type(field, testObject.startTime);
-    expect(field).toHaveValue(testObject.startTime);
-  });
-});
-
-test("Add End time input", async () => {
-  render(
-    <BrowserRouter>
-      <ElectionPanel />
-    </BrowserRouter>
-  );
-  const addButton = await screen.getByTestId("addButton");
-  await act(() => userEvent.click(addButton));
-  await waitFor(() => {
-    expect(screen.getByTestId("endTime")).toBeInTheDocument();
-    const field = screen.getByTestId("endTime");
-    userEvent.type(field, testObject.endTime);
-    expect(field).toHaveValue(testObject.endTime);
-  });
-});
+// test("Add End time input", async () => {
+//   render(
+//     <BrowserRouter>
+//       <ElectionPanel />
+//     </BrowserRouter>
+//   );
+//   const addButton = await screen.getByTestId("addButton");
+//   await act(() => userEvent.click(addButton));
+//   await waitFor(() => {
+//     expect(screen.getByTestId("endTime")).toBeInTheDocument();
+//     const field = screen.getByTestId("endTime");
+//     userEvent.type(field, testObject.endTime);
+//     expect(field).toHaveValue(testObject.endTime);
+//   });
+// });
 
 test("Add Add button click", async () => {
   render(

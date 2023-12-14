@@ -94,9 +94,15 @@ export default function RacePanel() {
           setCopyRaceList([]);
           handlePointer([], -1);
         } else {
-          setRaceList(data);
-          setCopyRaceList(data);
-          handlePointer(data[0], 0);
+          if (Array.isArray(data)) {
+            setRaceList(data);
+            setCopyRaceList(data);
+            handlePointer(data[0], 0);
+          } else {
+            setRaceList([]);
+            setCopyRaceList([]);
+            handlePointer([], -1);
+          }
         }
       });
   }, []);

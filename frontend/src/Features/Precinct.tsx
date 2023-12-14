@@ -86,7 +86,6 @@ export default function PrecinctPanel() {
     fetch("http://localhost:5000/precinct")
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data === "False") {
           setPrecinctList([]);
           setCopyPrecinctList([]);
