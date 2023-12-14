@@ -18,6 +18,7 @@ import UserProfilePanel from "../Features/UserProfile";
 import BallotManagerPage from "../Features/BallotManager";
 import HomeManagerPage from "../Features/HomeManager";
 import CandidateProfilePanel from "../Features/CandidateProfile";
+import TwoStepPanel from "../Features/TwoStepVerification";
 
 export default function App() {
   return (
@@ -44,6 +45,8 @@ export default function App() {
         <Route path="/user_profile" element={<UserProfilePanel />}></Route>
         <Route path="/candidate_voter" element={<CandidateProfilePanel />}></Route>
         <Route path="/ballot_manager" element={<BallotManagerPage />}></Route>
+        <Route path="/verification" element={<TwoStepPanel />}></Route>
+        <Route path="/verification" element={<TwoStepPanel />}></Route>
       </Routes>
     </>
   );

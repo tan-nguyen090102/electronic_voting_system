@@ -45,18 +45,10 @@ export default function ForgotPanel() {
 
   //Input email listener
   const [inputEmail, setInputEmail] = React.useState("");
-  const [isAccepted, setDecision] = React.useState(false);
   const handleInput = async (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setInputEmail(e.target.value);
-
-    //Check if the email met all requirements
-    if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
-      setDecision(true);
-    } else {
-      setDecision(false);
-    }
   };
 
   //Input answer listener
@@ -75,8 +67,18 @@ export default function ForgotPanel() {
   const [isInvalidCredential, setInvalidCredential] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState("");
   const handleSend = async () => {
+    let isEmailGood = false
+    console.log(isSecurityPopUp)
     //If the email is accepted, proceed to fetch the backend
-    if (isAccepted && !isSecurityPopUp) {
+    //Check if the email met all requirements
+    if (inputEmail.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$")) {
+      isEmailGood = true;
+    } else {
+
+      isEmailGood = false;
+    }
+    console.log(isEmailGood)
+    if (isEmailGood && !isSecurityPopUp) {
       await fetch("http://localhost:5000/forgot_password/verify", {
         method: "POST",
         headers: {
@@ -90,12 +92,13 @@ export default function ForgotPanel() {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data === "false") {
+          console.log(data)
+          if (data === "False") {
             setSecurityPopup(false);
             setInvalidCredential(true);
           } else {
-            setQuestion(data["questionIndex"]);
-            setReceivedAnswer(data["securityAnswer"]);
+            setQuestion(data[1]);
+            setReceivedAnswer(data[2]);
             setSecurityPopup(true);
             setInvalidCredential(false);
           }
@@ -118,10 +121,10 @@ export default function ForgotPanel() {
     }
   };
 
-  //Send link button listener
-  const handleSendLink = async () => {
+  //Send code button listener
+  const handleSendCode = async () => {
     if (isValidAnswer && isSecurityPopUp) {
-      await fetch("http://localhost:5000/forgot_password/send_email", {
+      await fetch("http://localhost:5000/forgot_password/send_code", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -134,20 +137,19 @@ export default function ForgotPanel() {
       })
         .then((response) => response.json())
         .then((data) => {
-          //After sucessfully send an email, return to home page
-          console.log(data);
-          if (data === "true") {
+          //After sucessfully send an email, proceed to verification page
+          if (data[0] === "True") {
             setAlertMessage(
-              "The link has been sent. Returning to the home page..."
+              "The verification code has been sent. Proceeding to verification page..."
             );
-            Navigate(true);
+            Navigate(true, data[1]);
           }
           //Otherwise, automatically reload the page.
           else {
             setAlertMessage(
               "There is something wrong with our system. Please wait for reloading..."
             );
-            Navigate(false);
+            Navigate(false, "");
           }
         });
     }
@@ -181,7 +183,7 @@ export default function ForgotPanel() {
             <Text>Let's get into your account!</Text>
             <Text mb={3}>
               First, provide us your registered email so that we can send you a
-              link to change your password.
+              verification code to change your password.
             </Text>
             <Input
               name="email"
@@ -264,19 +266,19 @@ export default function ForgotPanel() {
               }}
             >
               <Text mb={3}>
-                <b>Verification completed</b>. Please click the button to
-                receive an email with a link
+                <b>Verification completed</b>. For extra security, please click the button to
+                receive an email with a verification code.
               </Text>
               <AlertAfterCompletion></AlertAfterCompletion>
               <Button
                 data-testid="sendLinkButton"
                 colorScheme="teal"
                 onClick={() => {
-                  handleSendLink();
+                  handleSendCode();
                   onOpen();
                 }}
               >
-                Send the link
+                Send the code
               </Button>
             </Stack>
           </Wrap>
@@ -320,10 +322,10 @@ export default function ForgotPanel() {
     });
   }
 
-  async function Navigate(isNavigate: boolean) {
+  async function Navigate(isNavigate: boolean, code: string) {
     await Delay(3000);
     if (isNavigate) {
-      navigate("/");
+      navigate("/verification", { state: { user: inputEmail, code: code, requestedPage: "forgot" } });
     } else {
       window.location.reload();
     }

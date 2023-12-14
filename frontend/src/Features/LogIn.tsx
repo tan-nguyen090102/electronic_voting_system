@@ -10,6 +10,11 @@ import {
   Link,
   Stack,
   Select,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogBody,
+  useDisclosure,
 } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
@@ -18,6 +23,8 @@ export default function LoginPanel() {
   useEffect(() => {
     document.title = "Log In - Voting System";
   }, []);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   //Input initial values
   const initialValues = {
@@ -78,15 +85,16 @@ export default function LoginPanel() {
         //Handle login
         if (data === "true") {
           if (inputSelection === "admin") {
+            //handleSendCode("/requests")
             navigate("/requests", { state: { user: inputValue.userID } });
           } else if (inputSelection === "manager") {
+            //handleSendCode("/dashboard_manager")
             navigate("/dashboard_manager", {
               state: { user: inputValue.userID, isLoggedIn: "true" },
             });
           } else {
-            navigate("/", {
-              state: { user: inputValue.userID, isLoggedIn: "true" },
-            });
+            onOpen();
+            handleSendCode("/")
           }
         } else {
           setDecision(true);
@@ -99,6 +107,39 @@ export default function LoginPanel() {
   const handleSignup = async () => {
     navigate("/signup");
   };
+
+   //Send code button listener
+   const [alertMessage, setAlertMessage] = React.useState("");
+   const handleSendCode = async (linkPath: string) => {
+    await fetch("http://localhost:5000/forgot_password/send_code", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json; charset=UTF-8",
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          email: inputValue.userID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          //After sucessfully send an email, proceed to verification page
+          if (data[0] === "True") {
+            setAlertMessage(
+              "The verification code has been sent. Proceeding to verification page..."
+            );
+            Navigate(true, data[1], linkPath);
+          }
+          //Otherwise, automatically reload the page.
+          else {
+            setAlertMessage(
+              "There is something wrong with our system. Please wait for reloading..."
+            );
+            Navigate(false, "", linkPath);
+          }
+        });
+    }
 
   //Container for role options
   const roleOptions = (
@@ -173,11 +214,14 @@ export default function LoginPanel() {
               </Text>
             )}
           </Stack>
+          <AlertAfterCompletion></AlertAfterCompletion>
           <Wrap spacing="20px" mt={3}>
             <Button
               data-testid="loginButton"
               colorScheme="teal"
-              onClick={handleLogin}
+              onClick={ () => { 
+                handleLogin();
+                 }}
             >
               Login
             </Button>
@@ -202,4 +246,43 @@ export default function LoginPanel() {
       </Flex>
     </div>
   );
+
+    //Helper function to create an alert box
+    function AlertAfterCompletion() {
+      const cancelReference = React.useRef<HTMLButtonElement>(null);
+      return (
+        <>
+          <AlertDialog
+            isOpen={isOpen}
+            leastDestructiveRef={cancelReference}
+            onClose={onClose}
+            motionPreset="slideInBottom"
+            isCentered
+            closeOnOverlayClick={false}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogBody>{alertMessage}</AlertDialogBody>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+        </>
+      );
+    }
+
+    //Helper function to delay navigation
+    function Delay(ms: number) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+    }
+  
+    async function Navigate(isNavigate: boolean, code: string, linkPath: string) {
+      await Delay(3000);
+      if (isNavigate) {
+        navigate("/verification", { state: { user: inputValue.userID, code: code, requestedPage: "login", linkPath: linkPath } });
+      } else {
+        window.location.reload();
+      }
+    }
 }

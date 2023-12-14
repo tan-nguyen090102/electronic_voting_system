@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Flex,
@@ -17,15 +17,28 @@ export default function ChangePasswordPanel() {
     document.title = "Change Password - Voting System";
   }, []);
 
+  const { state } = useLocation();
+  const { user } = state || { user: "" };
+
   //Backend response the password request back to the panel
-  const [receivedPassword, setPassword] = React.useState("");
-  useEffect(() => {
-    fetch("http://localhost:5000/change_password")
+   const [receivedPassword, setPassword] = React.useState("");
+   /*useEffect(() => {
+    fetch("http://localhost:5000/change_password", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json; charset=UTF-8",
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        email: user,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         setPassword(data["password"]);
       });
-  }, []);
+  }, []); */
 
   //Input listeners
   const [inputPassword, setInputPassword] = React.useState("");
@@ -56,12 +69,12 @@ export default function ChangePasswordPanel() {
     }
 
     //Check if the password is the same as the old one
-    if (inputPassword === receivedPassword) {
+    /* if (inputPassword === receivedPassword) {
       setRepeatedPopUp(true);
       isRepeated = true;
-    }
+    } */
 
-    if (inputRetype === inputPassword && isMatch && !isRepeated) {
+    if (inputRetype === inputPassword && isMatch /* && !isRepeated */) {
       //Stringify the value to be in JSON file for backend retrieval. Fetch should have the backend's url.
       await fetch("http://localhost:5000/change_password", {
         method: "POST",
@@ -71,10 +84,20 @@ export default function ChangePasswordPanel() {
         },
         mode: "cors",
         body: JSON.stringify({
-          password: inputPassword,
+          email: user,
+          password: inputPassword
         }),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === "False"){
+          setRepeatedPopUp(true);
+          return
+        }
+        if (data === "True"){
+          navigate("/login");
+        }
       });
-      navigate("/login");
     }
   };
 

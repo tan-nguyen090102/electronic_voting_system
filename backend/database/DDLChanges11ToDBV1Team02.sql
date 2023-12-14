@@ -42,7 +42,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES (_binary 'î¹O%î¤\','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq'),(_binary ';\\^\','Tiger','Fire','Wood','tiger.wood@gmail.com','$2a$12$ZjZH6doru6bFEKylW8dl3uW8EycPRQ8nQFWnq37PXe7r40tMKBvVa');
+INSERT INTO `admins` VALUES (_binary 'î¹O%î¤\�','David','Van','Basten','daniel.basten@hotmail.com','$2b$12$63ihBI9rgq4AwrPBvhlEVelruReGUdKtthp/YEpsQmIOEKM2HocZq'),(_binary '�;��\�\�^\��','Tiger','Fire','Wood','tiger.wood@gmail.com','$2a$12$ZjZH6doru6bFEKylW8dl3uW8EycPRQ8nQFWnq37PXe7r40tMKBvVa');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,40 +131,6 @@ LOCK TABLES `candidates` WRITE;
 INSERT INTO `candidates` VALUES ('Coralville-IA-9613','Babel','Smith','1988-10-12','Coralville-Johnson-IA'),('New York City-NY-1415','Amy','Thompson','1982-02-04','New York City-Bronx-NY'),('New York City-NY-5069','Paul','Brown','1973-12-14','New York City-Bronx-NY');
 /*!40000 ALTER TABLE `candidates` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `choices`
---
-
-DROP TABLE IF EXISTS `choices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `choices` (
-  `choice_id` varchar(255) NOT NULL,
-  `voter_id` binary(16) DEFAULT NULL,
-  `ballot_id` varchar(60) DEFAULT NULL,
-  `candidate_id` varchar(60) DEFAULT NULL,
-  `email` text,
-  PRIMARY KEY (`choice_id`),
-  UNIQUE KEY `choice_id_UNIQUE` (`choice_id`),
-  KEY `voter_id` (`voter_id`),
-  KEY `ballot_id` (`ballot_id`),
-  KEY `candidate_id` (`candidate_id`),
-  CONSTRAINT `choices_ibfk_1` FOREIGN KEY (`voter_id`) REFERENCES `voters` (`id`),
-  CONSTRAINT `choices_ibfk_2` FOREIGN KEY (`ballot_id`) REFERENCES `ballots` (`ballot_id`),
-  CONSTRAINT `choices_ibfk_3` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`candidate_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `choices`
---
-
-LOCK TABLES `choices` WRITE;
-/*!40000 ALTER TABLE `choices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `choices` ENABLE KEYS */;
-UNLOCK TABLES;
-
 --
 -- Table structure for table `districts`
 --
@@ -278,7 +244,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES (_binary '�a�ƪw�\','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary '�O%��\','pending'),(_binary '��H9�4�','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary '�O%��\','pending'),(_binary '��m�ݤ\','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary '�O%��\','pending');
+INSERT INTO `managers` VALUES (_binary '�a�ƪw�\�','Warsel','Laymen','Conn','warsel.conn@gmail.com','$2b$12$3xoQV67OsMUjs0D4CHbjWOXLA4DdTBN5cWO6iFOaxTi1bTQyeNApm',_binary '�O%��\�','pending'),(_binary '��H9�4�','Wiliam','Burg','Nasvada','william.nasvada@yahoo.com','$2b$12$nrq5wY8v1aaa1/6vinwCBe6WmM/8f631Zmj./mkxgiey5.JzcYWZC',_binary '�O%��\�','pending'),(_binary '��m�ݤ\�','Nicolas','Van','Thompson','nicolas.thompson@gmail.com','$2b$12$gf6Oydg2EGG4BICXvxU7F.bMQnRN9R386UsptY8Uu6qWTm8IjQE8q',_binary '�O%��\�','pending');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,7 +308,7 @@ CREATE TABLE `precincts` (
 
 LOCK TABLES `precincts` WRITE;
 /*!40000 ALTER TABLE `precincts` DISABLE KEYS */;
-INSERT INTO `precincts` VALUES ('IA-6591',_binary '��H9�4�','1212 Lamp Avenue, Iowa City, IA 52240','Coralville-Johnson-IA','IA-2'),('NY-7803',_binary '�a�ƪw�\','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
+INSERT INTO `precincts` VALUES ('IA-6591',_binary '��H9�4�','1212 Lamp Avenue, Iowa City, IA 52240','Coralville-Johnson-IA','IA-2'),('NY-7803',_binary '�a�ƪw�\�','6736 Wall Street, New York City, NY 10005','New York City-Bronx-NY','NY-3');
 /*!40000 ALTER TABLE `precincts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,9 +384,43 @@ CREATE TABLE `voters` (
 
 LOCK TABLES `voters` WRITE;
 /*!40000 ALTER TABLE `voters` DISABLE KEYS */;
-INSERT INTO `voters` VALUES (_binary 'j\\^\','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','declined',3,'0','dadwa1231','10002-1926','New York City'),(_binary '\+e8\w\\^\','James','To','Hogward','5623 Covered Bridge','james.hogward@gmail.com','$2b$12$1cfq99cbEwwSf3cyFjV5sO2vxRIE3jo9B32JJmyE/i1w054Tj0UX2','1999-07-03','v34cq2dw','approved',0,'Iowa City','cawdwa42','52317-2484','Coralville'),(_binary '\f\􆗤\\^\','James','Don','Baston','1234 Jalapeno Avenue','james.baston@yahoo.com','$2b$12$cNIb5Obi56gGhs0lRT5.mOUxIq7jVpoO.2YqOCU/gOzp2hmBXkrtS','1999-04-12','4523rfsd','approved',2,'Papaya','dfw24wd','10001-4148','New York City'),(_binary '\i\\\^\','Halo','Van','Baston','1212 Covered Street','halo.baston@gmail.com','$2b$12$8osXbsYE3m7JcHWGTDNt3O84HyjbaBlsqw6tpK/FTseMucfaDfisG','1980-07-11','dq2eqe2','approved',3,'1','2qeq3234q','52241-4544','Coralville');
+INSERT INTO `voters` VALUES (_binary '�j��\�\�^\��','William','Da','Vinci','1234 York Street','lechsong04242023@gmail.com','$2b$12$DF6.tVszrL9RrwEwvzJ9Ru7FJT4Hyq/62gz4ZfAbcxQtZ7zFvIfqm','1997-08-09','bregew1212','declined',3,'0','dadwa1231','10002-1926','New York City'),(_binary '\�+e8\�w�\�\�^\��','James','To','Hogward','5623 Covered Bridge','james.hogward@gmail.com','$2b$12$1cfq99cbEwwSf3cyFjV5sO2vxRIE3jo9B32JJmyE/i1w054Tj0UX2','1999-07-03','v34cq2dw','approved',0,'Iowa City','cawdwa42','52317-2484','Coralville'),(_binary '\�f\�􆗤\�\�^\��','James','Don','Baston','1234 Jalapeno Avenue','james.baston@yahoo.com','$2b$12$cNIb5Obi56gGhs0lRT5.mOUxIq7jVpoO.2YqOCU/gOzp2hmBXkrtS','1999-04-12','4523rfsd','approved',2,'Papaya','dfw24wd','10001-4148','New York City'),(_binary '\�i��\�\�\�^\��','Halo','Van','Baston','1212 Covered Street','halo.baston@gmail.com','$2b$12$8osXbsYE3m7JcHWGTDNt3O84HyjbaBlsqw6tpK/FTseMucfaDfisG','1980-07-11','dq2eqe2','approved',3,'1','2qeq3234q','52241-4544','Coralville');
 /*!40000 ALTER TABLE `voters` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `choices`
+--
+
+DROP TABLE IF EXISTS `choices`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `choices` (
+  `choice_id` varchar(255) NOT NULL,
+  `voter_id` binary(16) DEFAULT NULL,
+  `ballot_id` varchar(60) DEFAULT NULL,
+  `candidate_id` varchar(60) DEFAULT NULL,
+  `email` text,
+  PRIMARY KEY (`choice_id`),
+  UNIQUE KEY `choice_id_UNIQUE` (`choice_id`),
+  KEY `voter_id` (`voter_id`),
+  KEY `ballot_id` (`ballot_id`),
+  KEY `candidate_id` (`candidate_id`),
+  CONSTRAINT `choices_ibfk_1` FOREIGN KEY (`voter_id`) REFERENCES `voters` (`id`),
+  CONSTRAINT `choices_ibfk_2` FOREIGN KEY (`ballot_id`) REFERENCES `ballots` (`ballot_id`),
+  CONSTRAINT `choices_ibfk_3` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`candidate_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `choices`
+--
+
+LOCK TABLES `choices` WRITE;
+/*!40000 ALTER TABLE `choices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `choices` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Table structure for table `zips`
