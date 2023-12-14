@@ -46,6 +46,7 @@ export default function App() {
         <Route path="/candidate_voter" element={<CandidateProfilePanel />}></Route>
         <Route path="/ballot_manager" element={<BallotManagerPage />}></Route>
         <Route path="/verification" element={<TwoStepPanel />}></Route>
+        <Route path="/verification" element={<TwoStepPanel />}></Route>
       </Routes>
     </>
   );
