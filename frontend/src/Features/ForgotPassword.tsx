@@ -121,7 +121,7 @@ export default function ForgotPanel() {
     }
   };
 
-  //Send link button listener
+  //Send code button listener
   const handleSendCode = async () => {
     if (isValidAnswer && isSecurityPopUp) {
       await fetch("http://localhost:5000/forgot_password/send_code", {
@@ -140,7 +140,7 @@ export default function ForgotPanel() {
           //After sucessfully send an email, proceed to verification page
           if (data[0] === "True") {
             setAlertMessage(
-              "The link has been sent. Proceeding to verification page..."
+              "The verification code has been sent. Proceeding to verification page..."
             );
             Navigate(true, data[1]);
           }
@@ -183,7 +183,7 @@ export default function ForgotPanel() {
             <Text>Let's get into your account!</Text>
             <Text mb={3}>
               First, provide us your registered email so that we can send you a
-              link to change your password.
+              verification code to change your password.
             </Text>
             <Input
               name="email"
@@ -266,8 +266,8 @@ export default function ForgotPanel() {
               }}
             >
               <Text mb={3}>
-                <b>Verification completed</b>. Please click the button to
-                receive an email with a verification code
+                <b>Verification completed</b>. For extra security, please click the button to
+                receive an email with a verification code.
               </Text>
               <AlertAfterCompletion></AlertAfterCompletion>
               <Button
@@ -278,7 +278,7 @@ export default function ForgotPanel() {
                   onOpen();
                 }}
               >
-                Send the link
+                Send the code
               </Button>
             </Stack>
           </Wrap>

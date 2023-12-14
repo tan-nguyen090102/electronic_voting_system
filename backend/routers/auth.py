@@ -28,6 +28,7 @@ def login(db=db, input_bcrypt=bcrypt):
         login_check = "false"
     return jsonify(login_check)
 
+# Send the user's information to the user profile frontend
 @auth_bp.route("/user_profile", methods=["POST"])
 @cross_origin()
 def user_profile(database=db):
@@ -36,6 +37,7 @@ def user_profile(database=db):
     print (get_voter[0])
     return jsonify(get_voter[0])
 
+# Update the user's info' using the values entered by the user in the user profile
 @auth_bp.route("/user_profile/update", methods=["POST"])
 @cross_origin()
 def user_profile_update(database=db):
@@ -98,3 +100,17 @@ def forgot_password_code(database=db):
     email_server.sendmail(sender_email, voter_email, message.as_string())
 
     return jsonify(["True", verification_code])
+
+@auth_bp.route("/change_password", methods=["POST"])
+@cross_origin()
+def change_password(database=db):
+    json_object = request.json
+    check_voter = execute_stored_proc(database, "check_voter", (json_object["email"],))
+    voter = check_voter[0]
+    if bcrypt.check_password_hash(voter[6], json_object["password"]):
+        return jsonify("False")
+    else:
+        password_hash = bcrypt.generate_password_hash(json_object["password"]).decode("utf-8")
+        execute_stored_proc(database, "update_table", ("voters", "password = '" + password_hash + "'", "email = '" + json_object["email"] + "'"))
+        return jsonify("True")
+
